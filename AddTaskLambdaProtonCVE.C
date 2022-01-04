@@ -13,8 +13,8 @@
 AliAnalysisTaskLambdaProtonCVE* AddTaskLambdaProtonCVE(
     int                              debug=0, // debug level controls amount of output statements
     double                        Harmonic=2,
-    TString                  trigger="kINT7",
-    int                        filterBit=768, // AOD filter bit selection
+    TString                    trigger="kMB",
+    int                          filterBit=1, // AOD filter bit selection
     int                           nclscut=70, // ncls cut for all tracks 
     float                        chi2max=4.0,
     float                        chi2min=0.1,
@@ -28,7 +28,7 @@ AliAnalysisTaskLambdaProtonCVE* AddTaskLambdaProtonCVE(
     bool                          doNUE=true,
     bool                          doNUA=true,
     float                        centcut=7.5, // centrality restriction for V0M and TRK
-		TString                  period="LHC15o",
+		TString                  period="LHC10h",
     TString	                     uniqueID=""
     )
 {	
@@ -67,7 +67,6 @@ AliAnalysisTaskLambdaProtonCVE* AddTaskLambdaProtonCVE(
 	task->SetPeriod(period);
 	task->SetV0CalibOn(v0calibOn);
 	task->SetV0QAOn(QAV0);
-	task->SetTPCQAOn(QATPC);
 	task->SetNUEOn(doNUE);
 	task->SetNUAOn(doNUA);	
 	task->SetCentCut(centcut);
@@ -155,8 +154,9 @@ if(doNUE) {
 		} 
 
 		else if (period.EqualTo("LHC15o")) {
+			TFile *inNUA;
 			if(!AllContainers->FindObject("NUA")) {
-				if (task->GetFilterBit() ==768) inNUA = TFile::Open("alien:///alice/cern.ch/user/w/wenya/refData/reflhc15o/wgtPion_NUAFB768DeftwPUcut_LHC15op2_24Aug2021.root");
+				inNUA = TFile::Open("alien:///alice/cern.ch/user/w/wenya/refData/reflhc15o/wgtPion_NUAFB768DeftwPUcut_LHC15op2_24Aug2021.root");
 				// Ref NUA data from alien:///alice/cern.ch/user/p/prottay/nuarootfiles_p5_one_two_two_FB768_15op2_withpileup
 				// /wgtPion_NUAFB768DeftwPUcut_LHC15op2_24Aug2021.root  (15o_pass2)
 				TDirectoryFile* wNUA_directoryfile = (TDirectoryFile*)inNUA->Get("ZDCgains");
