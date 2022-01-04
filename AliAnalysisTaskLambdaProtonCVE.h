@@ -241,8 +241,8 @@ private:
   float       fV0NegProtonTOFNsigma; //!
   float         fV0PosPionTOFNsigma; //!
   //Lambda Mass
-  bool                    fMassMean; //!
-  bool               fLambdaMassCut; //!
+  double                    fMassMean; //!
+  double               fLambdaMassCut; //!
 
   /// chunzheng: V0 QA Histograms
   TH1D           *fHistV0Pt;              //! Raw V0s' pT

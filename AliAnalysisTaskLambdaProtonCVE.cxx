@@ -253,7 +253,7 @@ AliAnalysisTaskLambdaProtonCVE::AliAnalysisTaskLambdaProtonCVE() :
   for (int i = 0; i < 3; ++i) hQyCentRecenter[i] = nullptr;
   for (int i = 0; i < 3; ++i) hQyVtxRecenter[i]  = nullptr;
   for (int i = 0; i < 3; ++i) hQnCentRecenter[i] = nullptr;
-  for (int i = 0; i < 10; ++i) for (int j = 0; j < 3; ++j) hPsiV0Recenter[i][j];
+  for (int i = 0; i < 10; ++i) for (int j = 0; j < 3; ++j) hPsiV0Recenter[i][j] = nullptr;
 
   for (int i = 0; i < 2; i++) {
     fHistLambdaPt[i]                  = nullptr;            
@@ -460,7 +460,7 @@ AliAnalysisTaskLambdaProtonCVE::AliAnalysisTaskLambdaProtonCVE(const char *name,
   for (int i = 0; i < 3; ++i) hQyCentRecenter[i] = nullptr;
   for (int i = 0; i < 3; ++i) hQyVtxRecenter[i]  = nullptr;
   for (int i = 0; i < 3; ++i) hQnCentRecenter[i] = nullptr;
-  for (int i = 0; i < 10; ++i) for (int j = 0; j < 3; ++j) hPsiV0Recenter[i][j];
+  for (int i = 0; i < 10; ++i) for (int j = 0; j < 3; ++j) hPsiV0Recenter[i][j] = nullptr;
 
   for (int i = 0; i < 2; i++) {
     fHistLambdaPt[i]                  = nullptr;            
