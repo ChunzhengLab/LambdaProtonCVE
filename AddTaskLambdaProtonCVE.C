@@ -12,23 +12,15 @@
 
 AliAnalysisTaskLambdaProtonCVE* AddTaskLambdaProtonCVE(
     int                              debug=0, // debug level controls amount of output statements
-    double                        Harmonic=2,
     TString                    trigger="kMB",
+		TString                  period="LHC10h",
+    float                        centcut=7.5, // centrality restriction for V0M and TRK
     int                          filterBit=1, // AOD filter bit selection
-    int                           nclscut=70, // ncls cut for all tracks 
-    float                        chi2max=4.0,
-    float                        chi2min=0.1,
-    float                        dcacutz=3.2, // dcaz cut for all tracks
-    float                       dcacutxy=2.4, // dcaxy cut for all tracks
-    float                          ptmin=0.2, // minimum pt for Q-vector components
-    float                          ptmax=5.0, // maximum pt for Q-vector components
     bool                      v0calibOn=true,
     bool                           QAV0=true,
     bool                         QATPC=false,
-    bool                          doNUE=true,
+    bool                         doNUE=false,
     bool                          doNUA=true,
-    float                        centcut=7.5, // centrality restriction for V0M and TRK
-		TString                  period="LHC10h",
     TString	                     uniqueID=""
     )
 {	
@@ -57,13 +49,6 @@ AliAnalysisTaskLambdaProtonCVE* AddTaskLambdaProtonCVE(
 	task->SetDebug(debug);
 	task->SetTrigger(trigger);
 	task->SetFilterBit(filterBit);
-	task->SetNclsCut(nclscut);
-  task->SetChi2Max(chi2max);
-  task->SetChi2Min(chi2min);
-	task->SetDCAcutZ(dcacutz);
-	task->SetDCAcutXY(dcacutxy);
-	task->SetPtMin(ptmin);
-	task->SetPtMax(ptmax);
 	task->SetPeriod(period);
 	task->SetV0CalibOn(v0calibOn);
 	task->SetV0QAOn(QAV0);
@@ -197,7 +182,7 @@ if(doNUE) {
 			}
 		} else if (period.EqualTo("LHC11h")) {
                 			printf("lhc11h Calib not been calculated!\n");
-      } else if (period.EqualTo("LHC15o")) {}
+    }
 	}
 	
 

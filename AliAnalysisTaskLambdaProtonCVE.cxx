@@ -83,7 +83,19 @@ ClassImp(AliAnalysisTaskLambdaProtonCVE);
 AliAnalysisTaskLambdaProtonCVE::AliAnalysisTaskLambdaProtonCVE() : 
   AliAnalysisTaskSE(), 
   fDebug(0),
-  fTrigger(1),
+  fTrigger("kMB"),
+  fPeriod("LHC10h"),
+
+  fCentDiffCut(7.5),
+  fQAV0(true),
+  fV0CalibOn(true),
+  fTPCCalibOn(false),
+
+  fPlanePtMin(0.2),
+  fPlanePtMax(2.0),
+  fEtaGapPos( 0.1),
+  fEtaGapNeg(-0.1),
+
   fFltbit(1),
   fNclsCut(70),
   fChi2Max(4.0),
@@ -92,42 +104,66 @@ AliAnalysisTaskLambdaProtonCVE::AliAnalysisTaskLambdaProtonCVE() :
   fDcaCutxy(2.4),
   fPtMin(0.2),
   fPtMax(5.0),
-  fPeriod("LHC10h"),
-  fMultComp("none"),
-  fEtaGapPosforEP(0.3),
-  fEtaGapNegforEP(-0.3),
-  fV0CalibOn(true),
-  fTPCCalibOn(false),
-  fQAV0(true),
   fDoNUE(true),
   fDoNUA(true),
-  fCentDiffCut(7.5),
 
-  fRunNum(-999),
-  fRunNumBin(-999),
-  fVzBin(-999),
-  fCentBin(-999),
-  fCent(-999),
+  fNSigmaTPCCut(4),
+  fNSigmaTOFCut(4),
+
+  fV0PtMin(0.5),
+  fV0CPAMin(0.995),
+  fV0RapidityMax(0.5),
+  fV0DecayLengthMin(3.),
+  fV0DecayLengthMax(100.),
+  fV0DCAToPrimVtxMax(1.5),
+  fV0DcaBetweenDaughtersMax(1.),
+
+  fDaughtersPtMax(20.),
+  fDaughtersNsigma(3.),
+  fDaughtersEtaMax(0.8),
+  fDaughtersTPCNclsMin(70),
+  fDaughtersDCAToPrimVtxMin(0.02),
+  fV0PosProtonTPCNsigma(4.),
+  fV0NegPionTPCNsigma(4.),
+  fV0NegProtonTPCNsigma(4.),
+  fV0PosPionTPCNsigma(4.),
+  fV0DaughterUseTOF(false),
+  fV0PosProtonTOFNsigma(4.),
+  fV0NegPionTOFNsigma(4.),
+  fV0NegProtonTOFNsigma(4.),
+  fV0PosPionTOFNsigma(4.),
+
+  fMassMean(1.115683),
+  fLambdaMassCut(0.005),
+
+  fIsCheckPIDFlow(false),
+
   fEtaCut(0.8),
   fDedxCut(10.0),
   fZvtxCut(10.0),
   fPUSyst(-1),
 
-  fProtonPtMin(0.2), // minimum proton pt for Lambda-Proton Pair
-  fProtonPtMax(5), // maximum proton pt for Lambda-Proton Pair
-  fNSigmaTPCCut(4),
-  fNSigmaTOFCut(4),
-  bCheckPIDFlow(kFALSE),
 
-  fListNUE(nullptr),
-  fListNUA(nullptr),
-  fListVZEROCALIB(nullptr),
-
-  // Handles
   fAOD(nullptr),         //! aod Event
   fPIDResponse(nullptr), //! PID Handler
   fUtils(nullptr),       //! Event Selection Options
   fVtx(nullptr),
+
+  fRunNum(-999), // runnumber
+  fRunNumBin(-999), // runnumer bin, 10:139510..., 11:170387..., 15HIR:246994...
+  fVzBin(-999), // vertex z bin
+  fCentBin(-999), // centrality bin: 0-10
+  fCent(-999), // value of centrality 
+  fPsi2V0M(-999),
+  fPsi2V0C(-999),
+  fPsi2V0A(-999),
+  fPsi2TPCPos(-999),
+  fPsi2TPCNeg(-999),
+
+
+  fListNUE(nullptr),
+  fListNUA(nullptr),
+  fListVZEROCALIB(nullptr),
 
   hNUEweightPlus(nullptr),
   hNUEweightMinus(nullptr), 
@@ -148,41 +184,12 @@ AliAnalysisTaskLambdaProtonCVE::AliAnalysisTaskLambdaProtonCVE() :
   hPt(nullptr),
   hPDedx(nullptr),
 
-  fPsi2V0M(-999),
-  fPsi2V0C(-999),
-  fPsi2V0A(-999),
-  fPsi2TPCPos(-999),
-  fPsi2TPCNeg(-999),
 
   hV0CV0APsi2Correlation(nullptr),
   hV0CTPCPosPsi2Correlation(nullptr),
   hV0ATPCPosPsi2Correlation(nullptr),
   hV0CTPCNegPsi2Correlation(nullptr),
   hV0ATPCNegPsi2Correlation(nullptr),
-
-  fV0PtMin(0.5),
-  fV0CPAMin(0.995),
-  fV0RapidityMax(0.5),
-  fV0DecayLengthMin(3.),
-  fV0DecayLengthMax(100.),
-  fV0DCAToPrimVtxMax(1.5),
-  fV0DcaBetweenDaughtersMax(1.),
-  fDaughtersPtMax(20.),
-  fDaughtersNsigma(3.),
-  fDaughtersEtaMax(0.8),
-  fDaughtersTPCNclsMin(70),
-  fDaughtersDCAToPrimVtxMin(0.02),
-  fV0PosProtonTPCNsigma(4.),
-  fV0NegPionTPCNsigma(4.),
-  fV0NegProtonTPCNsigma(4.),
-  fV0PosPionTPCNsigma(4.),
-  fV0DaughterUseTOF(kFALSE),
-  fV0PosProtonTOFNsigma(4.),
-  fV0NegPionTOFNsigma(4.),
-  fV0NegProtonTOFNsigma(4.),
-  fV0PosPionTOFNsigma(4.),
-  fMassMean(1.115683),
-  fLambdaMassCut(0.005),
 
   fHistV0Pt(nullptr),              
   fHistV0Eta(nullptr),              
@@ -222,14 +229,13 @@ AliAnalysisTaskLambdaProtonCVE::AliAnalysisTaskLambdaProtonCVE() :
   fProfileGammaV0A_AntiLambda_Proton(nullptr),
   fProfileGammaV0A_AntiLambda_AntiProton(nullptr)
 {
-
+  for (int i = 0; i < 3; i++)    fVetex[i] = -999;
   for (int i = 0; i < 3; ++i)    pV0XMeanRead[i] = nullptr; 
   for (int i = 0; i < 3; ++i)    pV0YMeanRead[i] = nullptr;
 
   hMultV0=nullptr; //Dobrin
   for (int i = 0; i < 2; ++i)  hQx2mV0[i] = nullptr;
   for (int i = 0; i < 2; ++i)  hQy2mV0[i] = nullptr;
-  
   for (int i = 0; i < 64; ++i) fMultV0Ch[i] = -999.;
   for (int i = 0; i < 3; ++i)  fV0XMean[i]  = -999.;
   for (int i = 0; i < 3; ++i)  fV0YMean[i]  = -999.;
@@ -291,7 +297,19 @@ AliAnalysisTaskLambdaProtonCVE::AliAnalysisTaskLambdaProtonCVE() :
 AliAnalysisTaskLambdaProtonCVE::AliAnalysisTaskLambdaProtonCVE(const char *name, TString _PR, bool _NUE, bool _NUA, bool _V0Calib) : 
   AliAnalysisTaskSE(name), 
   fDebug(0),
-  fTrigger(1),
+  fTrigger("kMB"),
+  fPeriod("LHC10h"),
+
+  fCentDiffCut(7.5),
+  fQAV0(true),
+  fV0CalibOn(true),
+  fTPCCalibOn(false),
+
+  fPlanePtMin(0.2),
+  fPlanePtMax(2.0),
+  fEtaGapPos( 0.1),
+  fEtaGapNeg(-0.1),
+
   fFltbit(1),
   fNclsCut(70),
   fChi2Max(4.0),
@@ -300,42 +318,64 @@ AliAnalysisTaskLambdaProtonCVE::AliAnalysisTaskLambdaProtonCVE(const char *name,
   fDcaCutxy(2.4),
   fPtMin(0.2),
   fPtMax(5.0),
-  fPeriod("LHC10h"),
-  fMultComp("none"),
-  fEtaGapPosforEP(0.3),
-  fEtaGapNegforEP(-0.3),
-  fV0CalibOn(true),
-  fTPCCalibOn(false),
-  fQAV0(true),
   fDoNUE(true),
   fDoNUA(true),
-  fCentDiffCut(7.5),
 
-  fRunNum(-999),
-  fRunNumBin(-999),
-  fVzBin(-999),
-  fCentBin(-999),
-  fCent(-999),
+  fNSigmaTPCCut(4),
+  fNSigmaTOFCut(4),
+
+  fV0PtMin(0.5),
+  fV0CPAMin(0.995),
+  fV0RapidityMax(0.5),
+  fV0DecayLengthMin(3.),
+  fV0DecayLengthMax(100.),
+  fV0DCAToPrimVtxMax(1.5),
+  fV0DcaBetweenDaughtersMax(1.),
+
+  fDaughtersPtMax(20.),
+  fDaughtersNsigma(3.),
+  fDaughtersEtaMax(0.8),
+  fDaughtersTPCNclsMin(70),
+  fDaughtersDCAToPrimVtxMin(0.02),
+  fV0PosProtonTPCNsigma(4.),
+  fV0NegPionTPCNsigma(4.),
+  fV0NegProtonTPCNsigma(4.),
+  fV0PosPionTPCNsigma(4.),
+  fV0DaughterUseTOF(false),
+  fV0PosProtonTOFNsigma(4.),
+  fV0NegPionTOFNsigma(4.),
+  fV0NegProtonTOFNsigma(4.),
+  fV0PosPionTOFNsigma(4.),
+
+  fMassMean(1.115683),
+  fLambdaMassCut(0.005),
+
+  fIsCheckPIDFlow(false),
   fEtaCut(0.8),
   fDedxCut(10.0),
   fZvtxCut(10.0),
   fPUSyst(-1),
 
-  fProtonPtMin(0.2), // minimum proton pt for Lambda-Proton Pair
-  fProtonPtMax(5), // maximum proton pt for Lambda-Proton Pair
-  fNSigmaTPCCut(4),
-  fNSigmaTOFCut(4),
-  bCheckPIDFlow(kFALSE),
-
-  fListNUE(nullptr),
-  fListNUA(nullptr),
-  fListVZEROCALIB(nullptr),
-
-  // Handles
   fAOD(nullptr),         //! aod Event
   fPIDResponse(nullptr), //! PID Handler
   fUtils(nullptr),       //! Event Selection Options
   fVtx(nullptr),
+
+  fRunNum(-999), // runnumber
+  fRunNumBin(-999), // runnumer bin, 10:139510..., 11:170387..., 15HIR:246994...
+  fVzBin(-999), // vertex z bin
+  fCentBin(-999), // centrality bin: 0-10
+  fCent(-999), // value of centrality 
+  fPsi2V0M(-999),
+  fPsi2V0C(-999),
+  fPsi2V0A(-999),
+  fPsi2TPCPos(-999),
+  fPsi2TPCNeg(-999),
+
+
+  fListNUE(nullptr),
+  fListNUA(nullptr),
+  fListVZEROCALIB(nullptr),
 
   hNUEweightPlus(nullptr),
   hNUEweightMinus(nullptr), 
@@ -356,41 +396,12 @@ AliAnalysisTaskLambdaProtonCVE::AliAnalysisTaskLambdaProtonCVE(const char *name,
   hPt(nullptr),
   hPDedx(nullptr),
 
-  fPsi2V0M(-999),
-  fPsi2V0C(-999),
-  fPsi2V0A(-999),
-  fPsi2TPCPos(-999),
-  fPsi2TPCNeg(-999),
 
   hV0CV0APsi2Correlation(nullptr),
   hV0CTPCPosPsi2Correlation(nullptr),
   hV0ATPCPosPsi2Correlation(nullptr),
   hV0CTPCNegPsi2Correlation(nullptr),
   hV0ATPCNegPsi2Correlation(nullptr),
-
-  fV0PtMin(0.5),
-  fV0CPAMin(0.995),
-  fV0RapidityMax(0.5),
-  fV0DecayLengthMin(3.),
-  fV0DecayLengthMax(100.),
-  fV0DCAToPrimVtxMax(1.5),
-  fV0DcaBetweenDaughtersMax(1.),
-  fDaughtersPtMax(20.),
-  fDaughtersNsigma(3.),
-  fDaughtersEtaMax(0.8),
-  fDaughtersTPCNclsMin(70),
-  fDaughtersDCAToPrimVtxMin(0.02),
-  fV0PosProtonTPCNsigma(4.),
-  fV0NegPionTPCNsigma(4.),
-  fV0NegProtonTPCNsigma(4.),
-  fV0PosPionTPCNsigma(4.),
-  fV0DaughterUseTOF(kFALSE),
-  fV0PosProtonTOFNsigma(4.),
-  fV0NegPionTOFNsigma(4.),
-  fV0NegProtonTOFNsigma(4.),
-  fV0PosPionTOFNsigma(4.),
-  fMassMean(1.115683),
-  fLambdaMassCut(0.005),
 
   fHistV0Pt(nullptr),              
   fHistV0Eta(nullptr),              
@@ -430,13 +441,13 @@ AliAnalysisTaskLambdaProtonCVE::AliAnalysisTaskLambdaProtonCVE(const char *name,
   fProfileGammaV0A_AntiLambda_Proton(nullptr),
   fProfileGammaV0A_AntiLambda_AntiProton(nullptr)
 {
+  for (int i = 0; i < 3; i++)    fVetex[i] = -999;
   for (int i = 0; i < 3; ++i)    pV0XMeanRead[i] = nullptr; 
   for (int i = 0; i < 3; ++i)    pV0YMeanRead[i] = nullptr;
 
   hMultV0=nullptr; //Dobrin
   for (int i = 0; i < 2; ++i)  hQx2mV0[i] = nullptr;
   for (int i = 0; i < 2; ++i)  hQy2mV0[i] = nullptr;
-  
   for (int i = 0; i < 64; ++i) fMultV0Ch[i] = -999.;
   for (int i = 0; i < 3; ++i)  fV0XMean[i]  = -999.;
   for (int i = 0; i < 3; ++i)  fV0YMean[i]  = -999.;
@@ -683,13 +694,9 @@ void AliAnalysisTaskLambdaProtonCVE::UserCreateOutputObjects()
   hEvtCount->GetXaxis()->SetBinLabel(5,"vertex");
   hEvtCount->GetXaxis()->SetBinLabel(6,"centrality");
   hEvtCount->GetXaxis()->SetBinLabel(7,"pileup");
-  hEvtCount->GetXaxis()->SetBinLabel(8,"analysis");
-  hEvtCount->GetXaxis()->SetBinLabel(9,"loop1");
-  hEvtCount->GetXaxis()->SetBinLabel(10,"cumulant");
-  hEvtCount->GetXaxis()->SetBinLabel(11,"Ach");
-  hEvtCount->GetXaxis()->SetBinLabel(12,"q-vector");
-  hEvtCount->GetXaxis()->SetBinLabel(13,"loop2");
-  hEvtCount->GetXaxis()->SetBinLabel(14,"fill");
+  hEvtCount->GetXaxis()->SetBinLabel(8,"getVZEROplane");
+  hEvtCount->GetXaxis()->SetBinLabel(9,"analysis");
+  hEvtCount->GetXaxis()->SetBinLabel(10,"resolution");
   hEvtCount->GetXaxis()->SetBinLabel(20,"manager");
   hEvtCount->GetXaxis()->SetBinLabel(21,"handler");
   hEvtCount->GetXaxis()->SetBinLabel(22,"fAOD");
@@ -733,20 +740,20 @@ void AliAnalysisTaskLambdaProtonCVE::UserCreateOutputObjects()
   fOutputList->Add(hMultCentQA[0]);
   fOutputList->Add(hMultCentQA[1]);
 
-  if (fMultComp.EqualTo("pileupByEDSTPC128") || fMultComp.EqualTo("pileupByGlobalTPC1")){
-    hMultMultQA[0] = new TH2D("hMultMultQAmTPCmESDPileupBefCut", "befCut;multTPC;multESD", 50, 0, 5000, 160, 0, 16000);
-    hMultMultQA[1] = new TH2D("hMultMultQAmClobalmTPCEFPileupBefCut", "befCut;multGlobal;multTPCFE", 50, 0, 5000, 50, 0, 5000);
-    hMultMultQA[2] = new TH2D("hMultMultQAmFB32mTrkTOFBefCut", "befCut;multTrkTOF;nTrk", 201, 0, 20000, 201, 0, 20000);
-    hMultMultQA[3] = new TH2D("hMultMultQAmTPCmESDPileupAftCut", "aftCut;multTPC;multESD", 50, 0, 5000, 160, 0, 16000);
-    hMultMultQA[4] = new TH2D("hMultMultQAmClobalmTPCEFPileupAftCut", "aftCut;multGlobal;multTPCFE", 50, 0, 5000, 50, 0, 5000);
-    hMultMultQA[5] = new TH2D("hMultMultQAmFB32mTrkTOFAftCut", "aftCut;multTrkTOF;nTrk", 201, 0, 20000, 201, 0, 20000);
-    fOutputList->Add(hMultMultQA[0]);
-    fOutputList->Add(hMultMultQA[1]);
-    fOutputList->Add(hMultMultQA[2]);
-    fOutputList->Add(hMultMultQA[3]);
-    fOutputList->Add(hMultMultQA[4]);
-    fOutputList->Add(hMultMultQA[5]);
-  }
+  // if (fMultComp.EqualTo("pileupByEDSTPC128") || fMultComp.EqualTo("pileupByGlobalTPC1")){
+  //   hMultMultQA[0] = new TH2D("hMultMultQAmTPCmESDPileupBefCut", "befCut;multTPC;multESD", 50, 0, 5000, 160, 0, 16000);
+  //   hMultMultQA[1] = new TH2D("hMultMultQAmClobalmTPCEFPileupBefCut", "befCut;multGlobal;multTPCFE", 50, 0, 5000, 50, 0, 5000);
+  //   hMultMultQA[2] = new TH2D("hMultMultQAmFB32mTrkTOFBefCut", "befCut;multTrkTOF;nTrk", 201, 0, 20000, 201, 0, 20000);
+  //   hMultMultQA[3] = new TH2D("hMultMultQAmTPCmESDPileupAftCut", "aftCut;multTPC;multESD", 50, 0, 5000, 160, 0, 16000);
+  //   hMultMultQA[4] = new TH2D("hMultMultQAmClobalmTPCEFPileupAftCut", "aftCut;multGlobal;multTPCFE", 50, 0, 5000, 50, 0, 5000);
+  //   hMultMultQA[5] = new TH2D("hMultMultQAmFB32mTrkTOFAftCut", "aftCut;multTrkTOF;nTrk", 201, 0, 20000, 201, 0, 20000);
+  //   fOutputList->Add(hMultMultQA[0]);
+  //   fOutputList->Add(hMultMultQA[1]);
+  //   fOutputList->Add(hMultMultQA[2]);
+  //   fOutputList->Add(hMultMultQA[3]);
+  //   fOutputList->Add(hMultMultQA[4]);
+  //   fOutputList->Add(hMultMultQA[5]);
+  // }
 
 
   // track-wise
@@ -1156,25 +1163,32 @@ void AliAnalysisTaskLambdaProtonCVE::UserExec(Option_t *)
   if (fDebug) Printf("centrality done!");
 
   // pile up
-  if (fPeriod.EqualTo("LHC10h")) {if(!RemovalForRun1(fAOD, fUtils) ) return;}
-  if (fPeriod.EqualTo("LHC11h")) {if(!RemovalForRun1(fAOD, fUtils) ) return;}
+  if (fPeriod.EqualTo("LHC10h")) {if(!RemovalForRun1()) return;}
+  if (fPeriod.EqualTo("LHC11h")) {if(!RemovalForRun1()) return;}
   if (fPeriod.EqualTo("LHC15o")) {
     // hMultCentQA[0]->Fill(fCent, fAOD->GetNumberOfTracks()); // raw Trk Multi Vs Cent(V0M)
     // if (PileUpMultiVertex(fAOD)) return;
     // if (!RejectEvtMultComp(fAOD)) return;
     // hMultCentQA[1]->Fill(fCent, fAOD->GetNumberOfTracks()); // Mult_Cent QA
     // if (!AODPileupCheck (fAOD)) return;
-    if (!RejectEvtTFFit (fAOD)) return; // 15o_pass2
+    if (!RejectEvtTFFit ()) return; // 15o_pass2
   }
   hCent[1]->Fill(fCent);
   hEvtCount->Fill(7);
   if (fDebug) Printf("pile-up done!");
 
   if(!GetVZEROPlane()) return;
+  hEvtCount->Fill(8);
   // analysis 
   if (!AnalyzeAOD()) return;
-  hEvtCount->Fill(8);
+  hEvtCount->Fill(9);
 
+  //TODO
+  //1.  测试15o的数据
+  //2.  添加18o的支持
+  //3.  添加h-h关联
+
+  
   //------------------
   // done
   //------------------
@@ -1224,12 +1238,11 @@ bool AliAnalysisTaskLambdaProtonCVE::AnalyzeAOD()
       continue;
     }
     if (!track->TestFilterBit(fFltbit)) continue; 
-    if (!AcceptAODTrack(fAOD, track, fVtx)) continue;
+    if (!AcceptAODTrack(track)) continue;
     //------------------
     // NUE & NUA
     //------------------
     double phi = track->Phi();
-    double  vz = fVtx->GetZ();
     double  pt = track->Pt();
     double eta = track->Eta();
     int charge = track->Charge();
@@ -1238,35 +1251,38 @@ bool AliAnalysisTaskLambdaProtonCVE::AnalyzeAOD()
     hPhi[0]->Fill(phi);
     hEtaPhi[0]->Fill(phi,eta);
     double weight=1;
-    // if (fDoNUE) {
-    //   double wEffi = GetNUECor(charge, pt);
-    //   if (wEffi<0) continue;
-    //   else weight *= wEffi;
-    // }
+    if (fDoNUE) {
+      double wEffi = GetNUECor(charge, pt);
+      if (wEffi<0) continue;
+      else weight *= wEffi;
+    }
     if (fDoNUA){
-      double wAcc = GetNUACor(charge, phi, eta, vz);
+      double wAcc = GetNUACor(charge, phi, eta, fVetex[2]);
       if (wAcc<0) continue;
       else weight *= wAcc;
       hPhi[1]->Fill(phi, wAcc);
       hEtaPhi[1]->Fill(phi,eta,wAcc);
     }
-
-    ///TODO Use Pt as weight for Better resolution ?
-    if(eta >= fEtaGapPosforEP){
-      SumQ2xTPCPos   += weight*TMath::Cos(2*phi);
-      SumQ2yTPCPos   += weight*TMath::Sin(2*phi);      
-      fWgtMultTPCPos += weight; 
-      vecPosEPTrkID.push_back(id);
-      vecPosEPTrkPhi.push_back(phi);
-      vecPosEPTrkNUAWgt.push_back(weight);
-    }
-    else if(eta <= fEtaGapNegforEP){
-      SumQ2xTPCNeg   += weight*TMath::Cos(2*phi);
-      SumQ2yTPCNeg   += weight*TMath::Sin(2*phi);      
-      fWgtMultTPCNeg += weight;
-      vecNegEPTrkID.push_back(id);
-      vecNegEPTrkPhi.push_back(phi);
-      vecNegEPTrkNUAWgt.push_back(weight);
+    
+    if (pt > fPlanePtMin && pt < fPlanePtMax)
+    {
+      ///TODO Use Pt as weight for Better resolution ?
+      if(eta >= fEtaGapPos){
+        SumQ2xTPCPos   += weight*TMath::Cos(2*phi);
+        SumQ2yTPCPos   += weight*TMath::Sin(2*phi);      
+        fWgtMultTPCPos += weight; 
+        vecPosEPTrkID.push_back(id);
+        vecPosEPTrkPhi.push_back(phi);
+        vecPosEPTrkNUAWgt.push_back(weight);
+      }
+      else if(eta <= fEtaGapNeg){
+        SumQ2xTPCNeg   += weight*TMath::Cos(2*phi);
+        SumQ2yTPCNeg   += weight*TMath::Sin(2*phi);      
+        fWgtMultTPCNeg += weight;
+        vecNegEPTrkID.push_back(id);
+        vecNegEPTrkPhi.push_back(phi);
+        vecNegEPTrkNUAWgt.push_back(weight);
+      }
     }
 
     bool isItPiontrk = CheckPIDofParticle(track,1); // 1=pion
@@ -1504,7 +1520,7 @@ bool AliAnalysisTaskLambdaProtonCVE::AnalyzeAOD()
       Double_t fPsi2NegTPCNoAuto = GetEventPlane(fNegTPCQyTemp,fNegTPCQxTemp,2.);   //AutoCorrelation Removed Neg EP.
 
       //Check the PID Flow
-      if(bCheckPIDFlow) {
+      if(fIsCheckPIDFlow) {
         double phi_lambda_tmp = phi_lambda;
         if(phi_lambda < TMath::Pi()) phi_lambda_tmp += TMath::Pi();
         Double_t dPhiTPCPos = phi_lambda_tmp - fPsi2PosTPCNoAuto;
@@ -1605,7 +1621,7 @@ bool AliAnalysisTaskLambdaProtonCVE::AnalyzeAOD()
       }// (Anti)Lambda-X pair done 
     }/// loop over charge particle array
 
-    if(bCheckPIDFlow) {
+    if(fIsCheckPIDFlow) {
       for (std::vector<Double_t>::size_type iTrk = 0; iTrk < vecPhi.size(); iTrk++) {
         Int_t    code = vecPDGCode[iTrk];
         Double_t pt   = vecPt[iTrk];
@@ -1810,7 +1826,7 @@ double AliAnalysisTaskLambdaProtonCVE::GetEventPlane(double qx, double qy, doubl
 
 //---------------------------------------------------
 
-bool AliAnalysisTaskLambdaProtonCVE::RemovalForRun1(AliAODEvent* fAOD, AliAnalysisUtils* fUtils)
+bool AliAnalysisTaskLambdaProtonCVE::RemovalForRun1()
 {
   // pileup
   fUtils->SetUseOutOfBunchPileUp(true);
@@ -1824,7 +1840,7 @@ bool AliAnalysisTaskLambdaProtonCVE::RemovalForRun1(AliAODEvent* fAOD, AliAnalys
 
 //---------------------------------------------------
 
-bool AliAnalysisTaskLambdaProtonCVE::RejectEvtMultComp(AliAODEvent* fAOD) // 15o_pass1, old pile-up
+bool AliAnalysisTaskLambdaProtonCVE::RejectEvtMultComp() // 15o_pass1, old pile-up
 {
    // TPC cluster cut
     Int_t multEsd = ((AliAODHeader*)fAOD->GetHeader())->GetNumberOfESDTracks(); // multESD
@@ -1854,6 +1870,9 @@ bool AliAnalysisTaskLambdaProtonCVE::RejectEvtMultComp(AliAODEvent* fAOD) // 15o
     hMultMultQA[0]->Fill(multTPC,multEsd );
     hMultMultQA[1]->Fill(multGlobal,multTPCFE );
 
+    //TODO
+    TString fMultComp = "pileupByGlobalTPC1";
+
     if(fMultComp.EqualTo("pileupByEDSTPC128") ){ // Rihan
       if ((Double_t)(multEsd*(1/3.45) - 90.) < (Double_t)multTPC) 
       {
@@ -1876,7 +1895,7 @@ bool AliAnalysisTaskLambdaProtonCVE::RejectEvtMultComp(AliAODEvent* fAOD) // 15o
 
 //---------------------------------------------------
 
-bool AliAnalysisTaskLambdaProtonCVE::RejectEvtTFFit(AliAODEvent* fAOD)
+bool AliAnalysisTaskLambdaProtonCVE::RejectEvtTFFit()
 {
   Float_t centV0M=-1.;
   Float_t centCL1=-1.;
@@ -1944,7 +1963,7 @@ bool AliAnalysisTaskLambdaProtonCVE::RejectEvtTFFit(AliAODEvent* fAOD)
 
 //---------------------------------------------------
 
-bool AliAnalysisTaskLambdaProtonCVE::RejectEvtTPCITSfb32TOF (AliAODEvent* fAOD)
+bool AliAnalysisTaskLambdaProtonCVE::RejectEvtTPCITSfb32TOF ()
 {
     //TOD+FB32 pile-up removal
     // https://twiki.cern.ch/twiki/bin/viewauth/ALICE/AliDPGtoolsEventProp
@@ -1966,7 +1985,7 @@ bool AliAnalysisTaskLambdaProtonCVE::RejectEvtTPCITSfb32TOF (AliAODEvent* fAOD)
 
 //---------------------------------------------------
 
-bool AliAnalysisTaskLambdaProtonCVE::AODPileupCheck (AliAODEvent* fAOD)
+bool AliAnalysisTaskLambdaProtonCVE::AODPileupCheck ()
 {
   Int_t isPileup = fAOD->IsPileupFromSPD(3);
   if (isPileup !=0 && fPeriod.EqualTo("LHC16t")) return false; // LHC16t : pPb
@@ -1987,10 +2006,10 @@ bool AliAnalysisTaskLambdaProtonCVE::AODPileupCheck (AliAODEvent* fAOD)
 
 //---------------------------------------------------
 
-bool AliAnalysisTaskLambdaProtonCVE::PileUpMultiVertex(AliAODEvent* fAOD)
+bool AliAnalysisTaskLambdaProtonCVE::PileUpMultiVertex()
 {
   // check for multi-vertexer pile-up
-  const int        kMinPlpContrib = 5;
+  const int    kMinPlpContrib = 5;
   const double kMaxPlpChi2    = 5.0;
   const double kMinWDist      = 15;
 
@@ -2055,17 +2074,17 @@ double AliAnalysisTaskLambdaProtonCVE::GetWDist(const AliVVertex* v0, const AliV
 
 //---------------------------------------------------
 
-bool AliAnalysisTaskLambdaProtonCVE::RemovalForLHC18 (AliAODEvent* fAOD)
+bool AliAnalysisTaskLambdaProtonCVE::RemovalForLHC18 ()
 {}
 
 //---------------------------------------------------
 
-bool AliAnalysisTaskLambdaProtonCVE::RemovalForpPb (AliAODEvent* fAOD)
+bool AliAnalysisTaskLambdaProtonCVE::RemovalForpPb ()
 {}
 
 //---------------------------------------------------
 
-bool AliAnalysisTaskLambdaProtonCVE::AcceptAODTrack(AliAODEvent* fAOD, AliAODTrack *track, AliAODVertex* fVtx)
+bool AliAnalysisTaskLambdaProtonCVE::AcceptAODTrack(AliAODTrack *track)
 {
     //------------------
     // track cut  
@@ -2120,7 +2139,7 @@ bool AliAnalysisTaskLambdaProtonCVE::AcceptAODTrack(AliAODEvent* fAOD, AliAODTra
 
 //---------------------------------------------------
 
-bool AliAnalysisTaskLambdaProtonCVE::GetV0CalibHist(AliAODEvent* fAOD, AliAODVertex* fVtx)
+bool AliAnalysisTaskLambdaProtonCVE::GetV0CalibHist()
 {
   if (fPeriod.EqualTo("LHC10h") ){
       for(int iCh = 0; iCh < 64; ++iCh) {
@@ -2159,7 +2178,7 @@ bool AliAnalysisTaskLambdaProtonCVE::GetV0CalibHist(AliAODEvent* fAOD, AliAODVer
 
 bool AliAnalysisTaskLambdaProtonCVE::GetVZEROPlane()
 {
-  if (!GetV0CalibHist(fAOD, fVtx)) return false;
+  if (!GetV0CalibHist()) return false;
   double qxGE[3] = {0}, qyGE[3] = {0}, qxRecenter[3] = {0}, qyRecenter[3] = {0}; 
   double multRingGE[3] = {0};
   // [0]: M; [1]: C; [2]: A;
@@ -2415,11 +2434,6 @@ Bool_t AliAnalysisTaskLambdaProtonCVE::CheckPIDofParticle(AliAODTrack* ftrack,In
       bPIDokay = kTRUE;
     }
     return bPIDokay;
-  }
-  ///Lambda => 
-  else if(pidToCheck==4){///not defined yet. 
-    return kFALSE;
-    // Rihan: call Lamda PID function from Chunseng..
   }
   else{
     Printf("\n -Ve number not allowed! Choose among: 0,1,2,3,4  (Charge Pion, Kaon, Proton, Lambda)\n return with kFALSE \n");
