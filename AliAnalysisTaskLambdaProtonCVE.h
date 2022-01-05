@@ -260,13 +260,13 @@ private:
   TH2D*             hMultMultQA[6];
   // track-wise QA
   TH1D*             hPt;
-  TH2D*             hPDedx;
   TH1D*             hEta[2];
   TH1D*             hPhi[2];
   TH2D*             hEtaPhi[2];
+  TH1D*             hNhits[2];
+  TH2D*             hPDedx;
   TH1D*             hDcaXy[2];
   TH1D*             hDcaZ[2];
-  TH1D*             hNhits[2];
 
   // Qn & psi QA
   TH2D*             hQxCentRecenter[3];
@@ -287,6 +287,38 @@ private:
   TProfile*         hV0ATPCPosPsi2Correlation;  //!
   TProfile*         hV0CTPCNegPsi2Correlation;  //!
   TProfile*         hV0ATPCNegPsi2Correlation;  //!
+
+///V0 QA Histograms
+  TH1D*             fHistV0Pt;              //! Raw V0s' pT
+  TH1D*             fHistV0Eta;             //! Raw V0s' eta
+  TH1D*             fHistV0DcatoPrimVertex; //! Raw V0s' DcatoPV
+  TH1D*             fHistV0CPA;             //! Raw V0s' CPA(cosine pointing angle)
+  TH1D*             fHistV0DecayLength;     //! Raw V0s' DecayLength
+  ///Lambda QA Info
+  TH1D*             fHistLambdaPt[2];      //! [0]:Before the Mass Cut [1]:After the Mass Cut
+  TH1D*             fHistLambdaEta[2];     //!
+  TH1D*             fHistLambdaPhi[2];
+  TH1D*             fHistLambdaDcaToPrimVertex[2]; //!
+  TH1D*             fHistLambdaCPA[2];     //!
+  TH1D*             fHistLambdaDecayLength[2];     //!
+  TH1D*             fHistLambdaMass[2];    //!
+  TH1D*             fHistAntiLambdaPt[2];  //!
+  TH1D*             fHistAntiLambdaEta[2]; //!
+  TH1D*             fHistAntiLambdaPhi[2];
+  TH1D*             fHistAntiLambdaDcaToPrimVertex[2]; //!
+  TH1D*             fHistAntiLambdaCPA[2]; //!
+  TH1D*             fHistAntiLambdaDecayLength[2]; //!
+  TH1D*             fHistAntiLambdaMass[2];//!  
+  TProfile*         fProfileLambdaMassVsPt[2];     //!
+  TProfile*         fProfileAntiLambdaMassVsPt[2]; //!
+  //PID Flow
+  TH3D*             fHist3DdNdPhiCentPthPos[3];
+  TH3D*             fHist3DdNdPhiCentPthNeg[3];  
+  TH3D*             fHist3DdNdPhiCentPtProton[3];
+  TH3D*             fHist3DdNdPhiCentPtAntiProton[3];
+  TH3D*             fHist3DdNdPhiCentPtLambda[4];
+  TH3D*             fHist3DdNdPhiCentPtAntiLambda[4];
+
   ///Lambda-X correlators
   TProfile*         fProfileDelta_Lambda_hPos; //!
   TProfile*         fProfileDelta_Lambda_hNeg; //!
@@ -323,36 +355,6 @@ private:
   TProfile*         fProfileGammaV0A_AntiLambda_Proton;     //!
   TProfile*         fProfileGammaV0A_AntiLambda_AntiProton; //!
 
-  ///V0 QA Histograms
-  TH1D*             fHistV0Pt;              //! Raw V0s' pT
-  TH1D*             fHistV0Eta;             //! Raw V0s' eta
-  TH1D*             fHistV0DcatoPrimVertex; //! Raw V0s' DcatoPV
-  TH1D*             fHistV0CPA;             //! Raw V0s' CPA(cosine pointing angle)
-  TH1D*             fHistV0DecayLength;     //! Raw V0s' DecayLength
-  ///Lambda QA Info
-  TH1D*             fHistLambdaPt[2];      //! [0]:Before the Mass Cut [1]:After the Mass Cut
-  TH1D*             fHistLambdaEta[2];     //!
-  TH1D*             fHistLambdaPhi[2];
-  TH1D*             fHistLambdaDcaToPrimVertex[2]; //!
-  TH1D*             fHistLambdaCPA[2];     //!
-  TH1D*             fHistLambdaDecayLength[2];     //!
-  TH1D*             fHistLambdaMass[2];    //!
-  TH1D*             fHistAntiLambdaPt[2];  //!
-  TH1D*             fHistAntiLambdaEta[2]; //!
-  TH1D*             fHistAntiLambdaPhi[2];
-  TH1D*             fHistAntiLambdaDcaToPrimVertex[2]; //!
-  TH1D*             fHistAntiLambdaCPA[2]; //!
-  TH1D*             fHistAntiLambdaDecayLength[2]; //!
-  TH1D*             fHistAntiLambdaMass[2];//!  
-  TProfile*         fProfileLambdaMassVsPt[2];     //!
-  TProfile*         fProfileAntiLambdaMassVsPt[2]; //!
-  //PID Flow
-  TH3D*             fHist3DdNdPhiCentPthPos[3];
-  TH3D*             fHist3DdNdPhiCentPthNeg[3];  
-  TH3D*             fHist3DdNdPhiCentPtProton[3];
-  TH3D*             fHist3DdNdPhiCentPtAntiProton[3];
-  TH3D*             fHist3DdNdPhiCentPtLambda[4];
-  TH3D*             fHist3DdNdPhiCentPtAntiLambda[4];
 
 
   AliAnalysisTaskLambdaProtonCVE(const AliAnalysisTaskLambdaProtonCVE&);
