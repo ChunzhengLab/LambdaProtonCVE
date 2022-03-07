@@ -298,10 +298,12 @@ AliAnalysisTaskLambdaProtonCVE::AliAnalysisTaskLambdaProtonCVE() :
 
   for (int i = 0; i < 2; ++i) fHistCent[i] = nullptr;
   for (int i = 0; i < 2; ++i) fHistVz[i]   = nullptr;
-
   for (int i = 0; i < 8; ++i) fHist2DCentQA[i]     = nullptr;
   for (int i = 0; i < 2; ++i) fHist2DMultCentQA[i] = nullptr;
   for (int i = 0; i < 6; ++i) fHist2DMultMultQA[i] = nullptr;
+
+  for (int i = 0; i < 2; ++i) fHistPhi[i] = nullptr;
+  for (int i = 0; i < 2; i++) fHist2DEtaPhi[i] = nullptr;
 
   for (int i = 0; i < 2; ++i) fProfileV0CQxCent[i] = nullptr;
   for (int i = 0; i < 2; ++i) fProfileV0CQyCent[i] = nullptr;
@@ -576,10 +578,12 @@ AliAnalysisTaskLambdaProtonCVE::AliAnalysisTaskLambdaProtonCVE(const char *name)
 
   for (int i = 0; i < 2; ++i) fHistCent[i] = nullptr;
   for (int i = 0; i < 2; ++i) fHistVz[i]   = nullptr;
-
   for (int i = 0; i < 8; ++i) fHist2DCentQA[i]     = nullptr;
   for (int i = 0; i < 2; ++i) fHist2DMultCentQA[i] = nullptr;
   for (int i = 0; i < 6; ++i) fHist2DMultMultQA[i] = nullptr;
+
+  for (int i = 0; i < 2; ++i) fHistPhi[i] = nullptr;
+  for (int i = 0; i < 2; i++) fHist2DEtaPhi[i] = nullptr;
 
   for (int i = 0; i < 2; ++i) fProfileV0CQxCent[i] = nullptr;
   for (int i = 0; i < 2; ++i) fProfileV0CQyCent[i] = nullptr;
@@ -622,7 +626,7 @@ AliAnalysisTaskLambdaProtonCVE::AliAnalysisTaskLambdaProtonCVE(const char *name)
   for (int i = 0; i < 2; ++i) fHistAntiLambdaMass[i]            = nullptr;
   for (int i = 0; i < 2; ++i) fProfileLambdaMassVsPt[i]         = nullptr;
   for (int i = 0; i < 2; ++i) fProfileAntiLambdaMassVsPt[i]     = nullptr;
-  
+
   for (int i = 0; i < 4; ++i) fProfile2DRawFlowCentPthPos[i]       = nullptr;
   for (int i = 0; i < 4; ++i) fProfile2DRawFlowCentPthNeg[i]       = nullptr;  
   for (int i = 0; i < 4; ++i) fProfile2DRawFlowCentPtProton[i]     = nullptr;
