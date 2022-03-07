@@ -1,2 +1,6 @@
 # LambdaProtonCVE
-Plan to work on ALICE 10, 15 & 18 data
+|       | 10h | 15o | 18q | 18r |
+|-------|-----|-----|-----|-----|
+| TPC   | ✅   | ✅   |     |     |
+| VZERO | ✅   | ✅   |     |     |
+| ZDC   | ✅   | ❌   |     |     |

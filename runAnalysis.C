@@ -21,7 +21,7 @@ void runAnalysis()
     // if you run on grid, specify test mode (kTRUE) or full grid model (kFALSE)
     Bool_t gridTest = kTRUE;
 
-    Int_t  groupNumber = 8;
+    Int_t groupNumber = 8;
     
     // since we will compile a class, tell root where to look for headers  
 #if !defined (__CINT__) || defined (__CLING__)
@@ -40,8 +40,8 @@ void runAnalysis()
     TMacro PIDadd(gSystem->ExpandPathName("$ALICE_ROOT/ANALYSIS/macros/AddTaskPIDResponse.C"));
     AliAnalysisTaskPIDResponse* PIDresponseTask = reinterpret_cast<AliAnalysisTaskPIDResponse*>(PIDadd.Exec());
    
-    TMacro multSelection(gSystem->ExpandPathName("$ALICE_PHYSICS/OADB/COMMON/MULTIPLICITY/macros/AddTaskMultSelection.C"));
-    AliMultSelectionTask* multSelectionTask = reinterpret_cast<AliMultSelectionTask*>(multSelection.Exec());
+    // TMacro multSelection(gSystem->ExpandPathName("$ALICE_PHYSICS/OADB/COMMON/MULTIPLICITY/macros/AddTaskMultSelection.C"));
+    // AliMultSelectionTask* multSelectionTask = reinterpret_cast<AliMultSelectionTask*>(multSelection.Exec());
 
     // compile the class and load the add task macro
     // here we have to differentiate between using the just-in-time compiler
@@ -230,10 +230,11 @@ void runAnalysis()
         // (see below) mode, set SetMergeViaJDL(kFALSE) 
         // to collect final results
         alienHandler->SetMaxMergeStages(1);
-        //alienHandler->SetMergeViaJDL(kTRUE);
-	alienHandler->SetMergeViaJDL(kFALSE);
+        alienHandler->SetMergeViaJDL(kTRUE);
+	      //alienHandler->SetMergeViaJDL(kFALSE);
 
         // define the output folders
+        alienHandler->SetGridWorkingDir("LambdaProtonCVE");
         if(groupNumber == 1) alienHandler->SetGridOutputDir("output_1");
         if(groupNumber == 2) alienHandler->SetGridOutputDir("output_2");
         if(groupNumber == 3) alienHandler->SetGridOutputDir("output_3");
@@ -253,8 +254,8 @@ void runAnalysis()
             mgr->StartAnalysis("grid");
         } else {
             // else launch the full grid analysis
-            alienHandler->SetRunMode("terminate");
-            //alienHandler->SetRunMode("full");
+            //alienHandler->SetRunMode("terminate");
+            alienHandler->SetRunMode("full");
             mgr->StartAnalysis("grid");
         }
     }

@@ -1,3 +1,13 @@
-.vscode
+*.d
+*.so
+*.pcm
+*.root
+*.xml
+*.sh
 ref
-readin
+.vscode
+.DS_Store
+*_bp*
+*copy*
+*_ACLiC_*
+CalibFiles
