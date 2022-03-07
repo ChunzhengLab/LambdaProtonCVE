@@ -13,7 +13,6 @@
 using std::cout;
 using std::endl;
 
-//TODO
 AliAnalysisTaskLambdaProtonCVE* AddTaskLambdaProtonCVE(
     int               debug=0, // debug level controls amount of output statements
     TString     trigger="kMB",
@@ -143,10 +142,11 @@ AliAnalysisTaskLambdaProtonCVE* AddTaskLambdaProtonCVE(
 	//======================================================================
     mgr->AddTask(task);
     AliAnalysisDataContainer* cinput  = mgr->GetCommonInputContainer();
-		const char* outputFileName = mgr->GetCommonFileName();
-  	AliAnalysisDataContainer* coutput = mgr->CreateContainer(Form("output_%s", uniqueID.Data()), TList::Class(), 
-                                                             AliAnalysisManager::kOutputContainer,                                                          
-                                                             Form("%s:%s", outputFileName, uniqueID.Data()));
+		TString outputFileName = mgr->GetCommonFileName();
+    cout<<"outputfileName::::==========:::"<<outputFileName<<endl;
+  	AliAnalysisDataContainer* coutput = mgr->CreateContainer("output", TList::Class(), 
+                                                             AliAnalysisManager::kOutputContainer,
+                                                             outputFileName.Data());
    	mgr->ConnectInput (task, 0, cinput);
   	mgr->ConnectOutput(task, 1, coutput);
 
