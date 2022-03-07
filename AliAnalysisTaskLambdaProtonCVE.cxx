@@ -1636,7 +1636,6 @@ bool AliAnalysisTaskLambdaProtonCVE::GetZDCPlane()
   if (TMath::IsNaN(psiCGE) || TMath::IsNaN(psiAGE)) return false;
 
   if (IsQAZDC) {
-    cout<<"hello"<<endl;
     //ZNC
     fProfileZNCQxCent[0] -> Fill(fCent, QxC);
     fProfileZNCQyCent[0] -> Fill(fCent, QyC);
@@ -1650,7 +1649,6 @@ bool AliAnalysisTaskLambdaProtonCVE::GetZDCPlane()
     fProfileZDCQxAQyCCent[0] -> Fill(fCent,-QxA*QyC);
     fProfileZDCQyAQxCCent[0] -> Fill(fCent, QyA*QxC);
     fProfileZDCQyAQyCCent[0] -> Fill(fCent, QyA*QyC);
-    cout<<"hello"<<endl;
   }
 
   //ZDC Recenter

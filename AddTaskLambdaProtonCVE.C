@@ -15,7 +15,7 @@ using std::endl;
 
 //TODO
 AliAnalysisTaskLambdaProtonCVE* AddTaskLambdaProtonCVE(
-    int               debug=1, // debug level controls amount of output statements
+    int               debug=0, // debug level controls amount of output statements
     TString     trigger="kMB",
 		TString   period="LHC10h",
     int           filterBit=1, // AOD filter bit selection
