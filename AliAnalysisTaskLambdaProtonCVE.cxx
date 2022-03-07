@@ -1692,7 +1692,6 @@ bool AliAnalysisTaskLambdaProtonCVE::GetZDCPlane()
   if (TMath::IsNaN(psiCRC) || TMath::IsNaN(psiARC)) return false;
 
   if (IsQAZDC) {
-    cout<<"hello"<<endl;
     //ZNC
     fProfileZNCQxCent[1] -> Fill(fCent, QxC);
     fProfileZNCQyCent[1] -> Fill(fCent, QyC);
@@ -1706,7 +1705,6 @@ bool AliAnalysisTaskLambdaProtonCVE::GetZDCPlane()
     fProfileZDCQxAQyCCent[1] -> Fill(fCent,-QxA*QyC);
     fProfileZDCQyAQxCCent[1] -> Fill(fCent, QyA*QxC);
     fProfileZDCQyAQyCCent[1] -> Fill(fCent, QyA*QyC);
-    cout<<"hello"<<endl;
   }
   
   //ZDC Shift
@@ -1723,10 +1721,8 @@ bool AliAnalysisTaskLambdaProtonCVE::GetZDCPlane()
 
   if (TMath::IsNaN(psiCSF) || TMath::IsNaN(psiASF)) return false;
   if (IsQAZDC) {
-    cout<<"hello"<<endl;
     fHist2DCalibPsi1ZNCCent[2] -> Fill(fCent, psiCSF);
     fHist2DCalibPsi1ZNACent[2] -> Fill(fCent, psiCSF);
-    cout<<"hello"<<endl;
   }
 
   fPsi1ZNC = psiCSF;
