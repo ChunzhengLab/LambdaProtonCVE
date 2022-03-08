@@ -347,12 +347,12 @@ AliAnalysisTaskLambdaProtonCVE::AliAnalysisTaskLambdaProtonCVE() :
   for (int i = 0; i < 2; ++i) fProfileLambdaMassVsPt[i]         = nullptr;
   for (int i = 0; i < 2; ++i) fProfileAntiLambdaMassVsPt[i]     = nullptr;
 
-  for (int i = 0; i < 4; ++i) fProfile2DRawFlowCentPthPos[i]       = nullptr;
-  for (int i = 0; i < 4; ++i) fProfile2DRawFlowCentPthNeg[i]       = nullptr;  
-  for (int i = 0; i < 4; ++i) fProfile2DRawFlowCentPtProton[i]     = nullptr;
-  for (int i = 0; i < 4; ++i) fProfile2DRawFlowCentPtAntiProton[i] = nullptr;
-  for (int i = 0; i < 4; ++i) fProfile2DRawFlowCentPtLambda[i]     = nullptr;
-  for (int i = 0; i < 4; ++i) fProfile2DRawFlowCentPtAntiLambda[i] = nullptr;
+  for (int i = 0; i < 5; ++i) fProfile2DRawFlowCentPthPos[i]       = nullptr;
+  for (int i = 0; i < 5; ++i) fProfile2DRawFlowCentPthNeg[i]       = nullptr;  
+  for (int i = 0; i < 5; ++i) fProfile2DRawFlowCentPtProton[i]     = nullptr;
+  for (int i = 0; i < 5; ++i) fProfile2DRawFlowCentPtAntiProton[i] = nullptr;
+  for (int i = 0; i < 5; ++i) fProfile2DRawFlowCentPtLambda[i]     = nullptr;
+  for (int i = 0; i < 5; ++i) fProfile2DRawFlowCentPtAntiLambda[i] = nullptr;
 }
 
 //---------------------------------------------------
@@ -627,12 +627,12 @@ AliAnalysisTaskLambdaProtonCVE::AliAnalysisTaskLambdaProtonCVE(const char *name)
   for (int i = 0; i < 2; ++i) fProfileLambdaMassVsPt[i]         = nullptr;
   for (int i = 0; i < 2; ++i) fProfileAntiLambdaMassVsPt[i]     = nullptr;
 
-  for (int i = 0; i < 4; ++i) fProfile2DRawFlowCentPthPos[i]       = nullptr;
-  for (int i = 0; i < 4; ++i) fProfile2DRawFlowCentPthNeg[i]       = nullptr;  
-  for (int i = 0; i < 4; ++i) fProfile2DRawFlowCentPtProton[i]     = nullptr;
-  for (int i = 0; i < 4; ++i) fProfile2DRawFlowCentPtAntiProton[i] = nullptr;
-  for (int i = 0; i < 4; ++i) fProfile2DRawFlowCentPtLambda[i]     = nullptr;
-  for (int i = 0; i < 4; ++i) fProfile2DRawFlowCentPtAntiLambda[i] = nullptr;
+  for (int i = 0; i < 5; ++i) fProfile2DRawFlowCentPthPos[i]       = nullptr;
+  for (int i = 0; i < 5; ++i) fProfile2DRawFlowCentPthNeg[i]       = nullptr;  
+  for (int i = 0; i < 5; ++i) fProfile2DRawFlowCentPtProton[i]     = nullptr;
+  for (int i = 0; i < 5; ++i) fProfile2DRawFlowCentPtAntiProton[i] = nullptr;
+  for (int i = 0; i < 5; ++i) fProfile2DRawFlowCentPtLambda[i]     = nullptr;
+  for (int i = 0; i < 5; ++i) fProfile2DRawFlowCentPtAntiLambda[i] = nullptr;
 
   DefineInput(0,TChain::Class());
   DefineOutput(1,TList::Class());

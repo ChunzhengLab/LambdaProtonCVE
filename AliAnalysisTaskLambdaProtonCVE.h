@@ -420,12 +420,12 @@ private:
   TProfile*       fProfileAntiLambdaMassVsPt[2]; //!
   //Flow 
   //[0]TPC [1]V0C [2]V0A [3]ZNC [4]ZNA
-  TProfile2D*          fProfile2DRawFlowCentPthPos[4];
-  TProfile2D*          fProfile2DRawFlowCentPthNeg[4];  
-  TProfile2D*        fProfile2DRawFlowCentPtProton[4];
-  TProfile2D*    fProfile2DRawFlowCentPtAntiProton[4];
-  TProfile2D*        fProfile2DRawFlowCentPtLambda[4];
-  TProfile2D*    fProfile2DRawFlowCentPtAntiLambda[4];
+  TProfile2D*          fProfile2DRawFlowCentPthPos[5];
+  TProfile2D*          fProfile2DRawFlowCentPthNeg[5];  
+  TProfile2D*        fProfile2DRawFlowCentPtProton[5];
+  TProfile2D*    fProfile2DRawFlowCentPtAntiProton[5];
+  TProfile2D*        fProfile2DRawFlowCentPtLambda[5];
+  TProfile2D*    fProfile2DRawFlowCentPtAntiLambda[5];
     
   /////////////
   // Results //
