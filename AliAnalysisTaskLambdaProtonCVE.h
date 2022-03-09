@@ -18,10 +18,6 @@
 #include "TH1D.h"
 #include "TH2D.h"
 #include "THnSparse.h"
-
-//class AliAnalysisUtils;
-
-#include "AliAnalysisTaskSE.h"
 #include "AliEventCuts.h"
 
 class AliAnalysisTaskLambdaProtonCVE : public AliAnalysisTaskSE
@@ -263,14 +259,14 @@ private:
 
   //Track Vector
   std::vector<int>            vecPDGCode;
-	std::vector<int>                 vecID;
-	std::vector<double>             vecPhi;
-	std::vector<double>             vecEta;
-	std::vector<double>              vecPt;
-	std::vector<double>       vecNUAWeight;
-	std::vector<double>       vecNUEWeight;
-	std::vector<double>    vecNUAWeightPID;
-	std::vector<double>    vecNUEWeightPID;
+  std::vector<int>                 vecID;
+  std::vector<double>             vecPhi;
+  std::vector<double>             vecEta;
+  std::vector<double>              vecPt;
+  std::vector<double>       vecNUAWeight;
+  std::vector<double>       vecNUEWeight;
+  std::vector<double>    vecNUAWeightPID;
+  std::vector<double>    vecNUEWeightPID;
 
   //Lambda Vector
   std::vector<int>          vecLambdaCode;

@@ -16,7 +16,7 @@ using std::endl;
 AliAnalysisTaskLambdaProtonCVE* AddTaskLambdaProtonCVE(
     int               debug=0, // debug level controls amount of output statements
     TString     trigger="kMB",
-		TString   period="LHC10h",
+    TString   period="LHC10h",
     int           filterBit=1, // AOD filter bit selection
     bool       v0calibOn=true,
     bool      zdccalibOn=true,
@@ -26,37 +26,37 @@ AliAnalysisTaskLambdaProtonCVE* AddTaskLambdaProtonCVE(
     bool          doNUE=false,
     bool           doNUA=true,
     bool    checkPIDFlow=true,
-    TString	      uniqueID=""
+    TString        uniqueID=""
     )
-{	
-	// Creates a pid task and adds it to the analysis manager
-	// Get the pointer to the existing analysis manager via the static
-	// access method
-	//=========================================================================
-	AliAnalysisManager *mgr = AliAnalysisManager::GetAnalysisManager();
-	if (!mgr) {
-		Error("AddTaskLambdaProtonCVE.C", "No analysis manager to connect to.");
-		return NULL;
-	}
+{  
+  // Creates a pid task and adds it to the analysis manager
+  // Get the pointer to the existing analysis manager via the static
+  // access method
+  //=========================================================================
+  AliAnalysisManager *mgr = AliAnalysisManager::GetAnalysisManager();
+  if (!mgr) {
+    Error("AddTaskLambdaProtonCVE.C", "No analysis manager to connect to.");
+    return NULL;
+  }
 
-	// Check the analysis type using the event handlers connected to the
-	// analysis manager The availability of MC handler can also be
-	// checked here.
-	// =========================================================================
-	if (!mgr->GetInputEventHandler()) {
-		Error("AddTaskLambdaProtonCVE.C", "This task requires an input event handler.");
-		return NULL;
-	}
-	//TString type = mgr->GetInputEventHandler()->GetDataType(); // can be "ESD" or "AOD"
+  // Check the analysis type using the event handlers connected to the
+  // analysis manager The availability of MC handler can also be
+  // checked here.
+  // =========================================================================
+  if (!mgr->GetInputEventHandler()) {
+    Error("AddTaskLambdaProtonCVE.C", "This task requires an input event handler.");
+    return NULL;
+  }
+  //TString type = mgr->GetInputEventHandler()->GetDataType(); // can be "ESD" or "AOD"
 
   // --- instantiate analysis task
   AliAnalysisTaskLambdaProtonCVE *task = new AliAnalysisTaskLambdaProtonCVE("TaskLambdaProtonCVE");
   task->SetDebug(debug);
-	task->SetTrigger(trigger);
-	task->SetPeriod(period);
-	task->SetFilterBit(filterBit);
-	task->SetNUEOn(doNUE);
-	task->SetNUAOn(doNUA);	
+  task->SetTrigger(trigger);
+  task->SetPeriod(period);
+  task->SetFilterBit(filterBit);
+  task->SetNUEOn(doNUE);
+  task->SetNUAOn(doNUA);  
   task->IfVZEROCalibOn(v0calibOn);
   task->IfZDCCalibOn(zdccalibOn);
   task->IfQAVZERO(QAVZERO);
@@ -136,24 +136,24 @@ AliAnalysisTaskLambdaProtonCVE* AddTaskLambdaProtonCVE(
     } else std::cout<<"!!!!!!!!!!!!!!!ZDC List not Found!!!!!!!!!!!!!!!"<<std::endl;
   }
 
-	// Create ONLY the output containers for the data produced by the
-	// task.  Get and connect other common input/output containers via
-	// the manager as below
-	//======================================================================
+  // Create ONLY the output containers for the data produced by the
+  // task.  Get and connect other common input/output containers via
+  // the manager as below
+  //======================================================================
     mgr->AddTask(task);
     AliAnalysisDataContainer* cinput  = mgr->GetCommonInputContainer();
-		TString outputFileName = mgr->GetCommonFileName();
+    TString outputFileName = mgr->GetCommonFileName();
     cout<<"outputfileName::::==========:::"<<outputFileName<<endl;
-  	AliAnalysisDataContainer* coutput = mgr->CreateContainer("output", TList::Class(), 
+    AliAnalysisDataContainer* coutput = mgr->CreateContainer("output", TList::Class(), 
                                                              AliAnalysisManager::kOutputContainer,
                                                              outputFileName.Data());
-   	mgr->ConnectInput (task, 0, cinput);
-  	mgr->ConnectOutput(task, 1, coutput);
+    mgr->ConnectInput (task, 0, cinput);
+    mgr->ConnectOutput(task, 1, coutput);
 
   //==============================================================
-	// Return task pointer at the end
+  // Return task pointer at the end
 
   cout<<"================  Return task ================="<<endl;
-	return task;
-}	
+  return task;
+}  
 
