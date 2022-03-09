@@ -16,6 +16,8 @@
 
 void runAnalysis()
 {
+    // Dataset
+    TString dataset = "LHC10h";
     // set if you want to run the analysis locally (kTRUE), or on grid (kFALSE)
     Bool_t local = kFALSE;
     // if you run on grid, specify test mode (kTRUE) or full grid model (kFALSE)
@@ -65,7 +67,10 @@ void runAnalysis()
         // if you want to run locally, we need to define some input
         TChain* chain = new TChain("aodTree");
         // add a few files to the chain (change this so that your local files are added)
-        chain->Add("AliAOD.root");
+        if(dataset.EqualTo("LHC10h")) chain->Add("/Users/wangchunzheng/alice/data/2010/LHC10h/000139510/ESDs/pass2/AOD160/0247/AliAOD.root");
+        if(dataset.EqualTo("LHC15o")) chain->Add("/Users/wangchunzheng/alice/data/2010/LHC10h/000139510/ESDs/pass2/AOD160/0247/AliAOD.root");
+        if(dataset.EqualTo("LHC18q")) chain->Add("/Users/wangchunzheng/alice/data/2010/LHC10h/000139510/ESDs/pass2/AOD160/0247/AliAOD.root");
+        if(dataset.EqualTo("LHC18r")) chain->Add("/Users/wangchunzheng/alice/data/2010/LHC10h/000139510/ESDs/pass2/AOD160/0247/AliAOD.root");
         // start the analysis locally, reading the events from the tchain
         mgr->StartAnalysis("local", chain);
     } else {

@@ -185,37 +185,37 @@ private:
   float             fNSigmaTOFCut;
 
   //V0
-  double                  fV0PtMin; //!
-  double                 fV0CPAMin; //!
-  double            fV0RapidityMax; //!
-  double         fV0DecayLengthMin; //!
-  double         fV0DecayLengthMax; //!
-  double        fV0DCAToPrimVtxMax; //!
-  double fV0DcaBetweenDaughtersMax; //!
+  double                  fV0PtMin; //
+  double                 fV0CPAMin; //
+  double            fV0RapidityMax; //
+  double         fV0DecayLengthMin; //
+  double         fV0DecayLengthMax; //
+  double        fV0DCAToPrimVtxMax; //
+  double fV0DcaBetweenDaughtersMax; //
 
   //V0 Daughter
-  double           fDaughtersPtMax; //!
-  double          fDaughtersEtaMax; //!
-  double      fDaughtersTPCNclsMin; //!
-  double fDaughtersDCAToPrimVtxMin; //!
-  float      fV0PosProtonTPCNsigma; //!
-  float        fV0NegPionTPCNsigma; //!
-  float      fV0NegProtonTPCNsigma; //!
-  float        fV0PosPionTPCNsigma; //!
-  bool          IsV0DaughterUseTOF; //!
-  float      fV0PosProtonTOFNsigma; //!
-  float        fV0NegPionTOFNsigma; //!
-  float      fV0NegProtonTOFNsigma; //!
-  float        fV0PosPionTOFNsigma; //!
+  double           fDaughtersPtMax; //
+  double          fDaughtersEtaMax; //
+  double      fDaughtersTPCNclsMin; //
+  double fDaughtersDCAToPrimVtxMin; //
+  float      fV0PosProtonTPCNsigma; //
+  float        fV0NegPionTPCNsigma; //
+  float      fV0NegProtonTPCNsigma; //
+  float        fV0PosPionTPCNsigma; //
+  bool          IsV0DaughterUseTOF; //
+  float      fV0PosProtonTOFNsigma; //
+  float        fV0NegPionTOFNsigma; //
+  float      fV0NegProtonTOFNsigma; //
+  float        fV0PosPionTOFNsigma; //
 
   //Lambda Mass
-  double            fLambdaMassCut; //!
+  double            fLambdaMassCut; //
 
   //Check PID Flow
   bool              IsCheckPIDFlow;
 
   // Global Variables Unchanged in an Evt
-  double                 fMassMean; //!
+  double                 fMassMean; //
   const float              fEtaCut; // eta cut
   const float             fDedxCut; // dedx cut
 
@@ -223,9 +223,9 @@ private:
   /////////////
   // Handles //
   /////////////
-  AliAODEvent*                fAOD;         //! aod Event
-  AliPIDResponse*     fPIDResponse; //! PID Handler
-  AliAnalysisUtils*         fUtils;       //! Event Selection Options
+  AliAODEvent*                fAOD; // aod Event
+  AliPIDResponse*     fPIDResponse; // PID Handler
+  AliAnalysisUtils*         fUtils; // Event Selection Options
 
   ////////////////////////////////
   // Global Variables from data //
@@ -369,24 +369,27 @@ private:
   TH1D*         fHistPhi[2];
   TH2D*    fHist2DEtaPhi[2];
   // Psi QA 
-  //[0]GE [1]RC [2]SF
-  //V0C
+  //V0C [0]GE [1]RC
   TProfile*          fProfileV0CQxCent[2];
   TProfile*          fProfileV0CQyCent[2];
   TProfile*           fProfileV0CQxVtx[2];
   TProfile*           fProfileV0CQyVtx[2];
   TH2D*        fHist2DCalibPsi2V0CCent[2];
-  //V0A
+  //V0A [0]GE [1]RC
   TProfile*          fProfileV0AQxCent[2];
   TProfile*          fProfileV0AQyCent[2];
   TProfile*           fProfileV0AQxVtx[2];
   TProfile*           fProfileV0AQyVtx[2];
   TH2D*        fHist2DCalibPsi2V0ACent[2];
-  //ZNC
+  //ZNC [0]Raw [1]GE
+  TProfile* fProfileZNCTowerMeanEnegry[2]; 
+  // [0]GE [1]RC
   TProfile*          fProfileZNCQxCent[2];
   TProfile*          fProfileZNCQyCent[2];
+  // [0]GE [1]RC [2]SF
   TH2D*        fHist2DCalibPsi1ZNCCent[3];
   //ZNA
+  TProfile* fProfileZNATowerMeanEnegry[2];
   TProfile*          fProfileZNAQxCent[2];
   TProfile*          fProfileZNAQyCent[2];
   TH2D*        fHist2DCalibPsi1ZNACent[3];
@@ -396,28 +399,29 @@ private:
   TProfile*    fProfileZDCQyAQxCCent[2];
   TProfile*    fProfileZDCQyAQyCCent[2];
   //V0s QA
-  TH1D*                 fHistV0Pt; //! Raw V0s' pT
-  TH1D*                fHistV0Eta; //! Raw V0s' eta
-  TH1D*    fHistV0DcatoPrimVertex; //! Raw V0s' DcatoPV
-  TH1D*                fHistV0CPA; //! Raw V0s' CPA(cosine pointing angle)
-  TH1D*        fHistV0DecayLength; //! Raw V0s' DecayLength
+  TH1D*                 fHistV0Pt; // Raw V0s' pT
+  TH1D*                fHistV0Eta; // Raw V0s' eta
+  TH1D*    fHistV0DcatoPrimVertex; // Raw V0s' DcatoPV
+  TH1D*                fHistV0CPA; // Raw V0s' CPA(cosine pointing angle)
+  TH1D*        fHistV0DecayLength; // Raw V0s' DecayLength
   ///Lambda QA
-  TH1D*                        fHistLambdaPt[2]; //! [0]:Before the Mass Cut [1]:After the Mass Cut
-  TH1D*                       fHistLambdaEta[2]; //!
-  TH1D*                       fHistLambdaPhi[2]; //!
-  TH1D*           fHistLambdaDcaToPrimVertex[2]; //!
-  TH1D*                       fHistLambdaCPA[2]; //!
-  TH1D*               fHistLambdaDecayLength[2]; //!
-  TH1D*                      fHistLambdaMass[2]; //!
-  TH1D*                    fHistAntiLambdaPt[2]; //!
-  TH1D*                   fHistAntiLambdaEta[2]; //!
-  TH1D*                   fHistAntiLambdaPhi[2]; //!
-  TH1D*       fHistAntiLambdaDcaToPrimVertex[2]; //!
-  TH1D*                   fHistAntiLambdaCPA[2]; //!
-  TH1D*           fHistAntiLambdaDecayLength[2]; //!
-  TH1D*                  fHistAntiLambdaMass[2]; //!  
-  TProfile*           fProfileLambdaMassVsPt[2]; //!
-  TProfile*       fProfileAntiLambdaMassVsPt[2]; //!
+  //[0]:Before the Mass Cut [1]:After the Mass Cut
+  TH1D*                        fHistLambdaPt[2]; // 
+  TH1D*                       fHistLambdaEta[2]; //
+  TH1D*                       fHistLambdaPhi[2]; //
+  TH1D*           fHistLambdaDcaToPrimVertex[2]; //
+  TH1D*                       fHistLambdaCPA[2]; //
+  TH1D*               fHistLambdaDecayLength[2]; //
+  TH1D*                      fHistLambdaMass[2]; //
+  TH1D*                    fHistAntiLambdaPt[2]; //
+  TH1D*                   fHistAntiLambdaEta[2]; //
+  TH1D*                   fHistAntiLambdaPhi[2]; //
+  TH1D*       fHistAntiLambdaDcaToPrimVertex[2]; //
+  TH1D*                   fHistAntiLambdaCPA[2]; //
+  TH1D*           fHistAntiLambdaDecayLength[2]; //
+  TH1D*                  fHistAntiLambdaMass[2]; //  
+  TProfile*           fProfileLambdaMassVsPt[2]; //
+  TProfile*       fProfileAntiLambdaMassVsPt[2]; //
   //Flow 
   //[0]TPC [1]V0C [2]V0A [3]ZNC [4]ZNA
   TProfile2D*          fProfile2DRawFlowCentPthPos[5];
@@ -438,69 +442,69 @@ private:
   TH2D*       fHist2DPsi1ZNCCent;
   TH2D*       fHist2DPsi1ZNACent;
   //Res
-  TProfile*          fProfileTPCPsi2Correlation; //!
-  TProfile*          fProfileV0MPsi2Correlation; //!
-  TProfile*          fProfileZDCPsi1Correlation; //!
-  TProfile*          fProfileZDCPsi2Correlation; //!
-  TProfile*    fProfileV0CTPCPosPsi2Correlation; //!
-  TProfile*    fProfileV0ATPCPosPsi2Correlation; //!
-  TProfile*    fProfileV0CTPCNegPsi2Correlation; //!
-  TProfile*    fProfileV0ATPCNegPsi2Correlation; //!
+  TProfile*          fProfileTPCPsi2Correlation; //
+  TProfile*          fProfileV0MPsi2Correlation; //
+  TProfile*          fProfileZDCPsi1Correlation; //
+  TProfile*          fProfileZDCPsi2Correlation; //
+  TProfile*    fProfileV0CTPCPosPsi2Correlation; //
+  TProfile*    fProfileV0ATPCPosPsi2Correlation; //
+  TProfile*    fProfileV0CTPCNegPsi2Correlation; //
+  TProfile*    fProfileV0ATPCNegPsi2Correlation; //
 
   ///Lambda-X correlators
-  TProfile*                 fProfileDelta_Lambda_hPos; //!
-  TProfile*                 fProfileDelta_Lambda_hNeg; //!
-  TProfile*               fProfileDelta_Lambda_Proton; //!
-  TProfile*           fProfileDelta_Lambda_AntiProton; //!
-  TProfile*             fProfileDelta_AntiLambda_hPos; //!
-  TProfile*             fProfileDelta_AntiLambda_hNeg; //!
-  TProfile*           fProfileDelta_AntiLambda_Proton; //!
-  TProfile*       fProfileDelta_AntiLambda_AntiProton; //!
+  TProfile*                 fProfileDelta_Lambda_hPos; //
+  TProfile*                 fProfileDelta_Lambda_hNeg; //
+  TProfile*               fProfileDelta_Lambda_Proton; //
+  TProfile*           fProfileDelta_Lambda_AntiProton; //
+  TProfile*             fProfileDelta_AntiLambda_hPos; //
+  TProfile*             fProfileDelta_AntiLambda_hNeg; //
+  TProfile*           fProfileDelta_AntiLambda_Proton; //
+  TProfile*       fProfileDelta_AntiLambda_AntiProton; //
 
-  TProfile*              fProfileGammaTPC_Lambda_hPos; //!
-  TProfile*              fProfileGammaTPC_Lambda_hNeg; //!
-  TProfile*            fProfileGammaTPC_Lambda_Proton; //!
-  TProfile*        fProfileGammaTPC_Lambda_AntiProton; //!
-  TProfile*          fProfileGammaTPC_AntiLambda_hPos; //!
-  TProfile*          fProfileGammaTPC_AntiLambda_hNeg; //!
-  TProfile*        fProfileGammaTPC_AntiLambda_Proton; //!
-  TProfile*    fProfileGammaTPC_AntiLambda_AntiProton; //!
+  TProfile*              fProfileGammaTPC_Lambda_hPos; //
+  TProfile*              fProfileGammaTPC_Lambda_hNeg; //
+  TProfile*            fProfileGammaTPC_Lambda_Proton; //
+  TProfile*        fProfileGammaTPC_Lambda_AntiProton; //
+  TProfile*          fProfileGammaTPC_AntiLambda_hPos; //
+  TProfile*          fProfileGammaTPC_AntiLambda_hNeg; //
+  TProfile*        fProfileGammaTPC_AntiLambda_Proton; //
+  TProfile*    fProfileGammaTPC_AntiLambda_AntiProton; //
    
-  TProfile*              fProfileGammaV0C_Lambda_hPos; //!
-  TProfile*              fProfileGammaV0C_Lambda_hNeg; //!
-  TProfile*            fProfileGammaV0C_Lambda_Proton; //!
-  TProfile*        fProfileGammaV0C_Lambda_AntiProton; //!
-  TProfile*          fProfileGammaV0C_AntiLambda_hPos; //!
-  TProfile*          fProfileGammaV0C_AntiLambda_hNeg; //!
-  TProfile*        fProfileGammaV0C_AntiLambda_Proton; //!
-  TProfile*    fProfileGammaV0C_AntiLambda_AntiProton; //!
+  TProfile*              fProfileGammaV0C_Lambda_hPos; //
+  TProfile*              fProfileGammaV0C_Lambda_hNeg; //
+  TProfile*            fProfileGammaV0C_Lambda_Proton; //
+  TProfile*        fProfileGammaV0C_Lambda_AntiProton; //
+  TProfile*          fProfileGammaV0C_AntiLambda_hPos; //
+  TProfile*          fProfileGammaV0C_AntiLambda_hNeg; //
+  TProfile*        fProfileGammaV0C_AntiLambda_Proton; //
+  TProfile*    fProfileGammaV0C_AntiLambda_AntiProton; //
             
-  TProfile*              fProfileGammaV0A_Lambda_hPos; //!
-  TProfile*              fProfileGammaV0A_Lambda_hNeg; //!
-  TProfile*            fProfileGammaV0A_Lambda_Proton; //!
-  TProfile*        fProfileGammaV0A_Lambda_AntiProton; //!
-  TProfile*          fProfileGammaV0A_AntiLambda_hPos; //!
-  TProfile*          fProfileGammaV0A_AntiLambda_hNeg; //!
-  TProfile*        fProfileGammaV0A_AntiLambda_Proton; //!
-  TProfile*    fProfileGammaV0A_AntiLambda_AntiProton; //!
+  TProfile*              fProfileGammaV0A_Lambda_hPos; //
+  TProfile*              fProfileGammaV0A_Lambda_hNeg; //
+  TProfile*            fProfileGammaV0A_Lambda_Proton; //
+  TProfile*        fProfileGammaV0A_Lambda_AntiProton; //
+  TProfile*          fProfileGammaV0A_AntiLambda_hPos; //
+  TProfile*          fProfileGammaV0A_AntiLambda_hNeg; //
+  TProfile*        fProfileGammaV0A_AntiLambda_Proton; //
+  TProfile*    fProfileGammaV0A_AntiLambda_AntiProton; //
 
-  TProfile*              fProfileGammaZNC_Lambda_hPos; //!
-  TProfile*              fProfileGammaZNC_Lambda_hNeg; //!
-  TProfile*            fProfileGammaZNC_Lambda_Proton; //!
-  TProfile*        fProfileGammaZNC_Lambda_AntiProton; //!
-  TProfile*          fProfileGammaZNC_AntiLambda_hPos; //!
-  TProfile*          fProfileGammaZNC_AntiLambda_hNeg; //!
-  TProfile*        fProfileGammaZNC_AntiLambda_Proton; //!
-  TProfile*    fProfileGammaZNC_AntiLambda_AntiProton; //!
+  TProfile*              fProfileGammaZNC_Lambda_hPos; //
+  TProfile*              fProfileGammaZNC_Lambda_hNeg; //
+  TProfile*            fProfileGammaZNC_Lambda_Proton; //
+  TProfile*        fProfileGammaZNC_Lambda_AntiProton; //
+  TProfile*          fProfileGammaZNC_AntiLambda_hPos; //
+  TProfile*          fProfileGammaZNC_AntiLambda_hNeg; //
+  TProfile*        fProfileGammaZNC_AntiLambda_Proton; //
+  TProfile*    fProfileGammaZNC_AntiLambda_AntiProton; //
             
-  TProfile*              fProfileGammaZNA_Lambda_hPos; //!
-  TProfile*              fProfileGammaZNA_Lambda_hNeg; //!
-  TProfile*            fProfileGammaZNA_Lambda_Proton; //!
-  TProfile*        fProfileGammaZNA_Lambda_AntiProton; //!
-  TProfile*          fProfileGammaZNA_AntiLambda_hPos; //!
-  TProfile*          fProfileGammaZNA_AntiLambda_hNeg; //!
-  TProfile*        fProfileGammaZNA_AntiLambda_Proton; //!
-  TProfile*    fProfileGammaZNA_AntiLambda_AntiProton; //!
+  TProfile*              fProfileGammaZNA_Lambda_hPos; //
+  TProfile*              fProfileGammaZNA_Lambda_hNeg; //
+  TProfile*            fProfileGammaZNA_Lambda_Proton; //
+  TProfile*        fProfileGammaZNA_Lambda_AntiProton; //
+  TProfile*          fProfileGammaZNA_AntiLambda_hPos; //
+  TProfile*          fProfileGammaZNA_AntiLambda_hNeg; //
+  TProfile*        fProfileGammaZNA_AntiLambda_Proton; //
+  TProfile*    fProfileGammaZNA_AntiLambda_AntiProton; //
 
   AliAnalysisTaskLambdaProtonCVE(const AliAnalysisTaskLambdaProtonCVE&);
   AliAnalysisTaskLambdaProtonCVE& operator=(const AliAnalysisTaskLambdaProtonCVE&);

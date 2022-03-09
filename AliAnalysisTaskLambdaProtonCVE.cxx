@@ -317,10 +317,12 @@ AliAnalysisTaskLambdaProtonCVE::AliAnalysisTaskLambdaProtonCVE() :
   for (int i = 0; i < 2; ++i) fProfileV0AQyVtx[i] = nullptr;
   for (int i = 0; i < 2; ++i) fHist2DCalibPsi2V0ACent[i] = nullptr;
 
+  for (int i = 0; i < 2; ++i) fProfileZNCTowerMeanEnegry[i] = nullptr;
   for (int i = 0; i < 2; ++i) fProfileZNCQxCent[i] = nullptr;
   for (int i = 0; i < 2; ++i) fProfileZNCQyCent[i] = nullptr;
   for (int i = 0; i < 3; ++i) fHist2DCalibPsi1ZNCCent[i] = nullptr;
 
+  for (int i = 0; i < 2; ++i) fProfileZNATowerMeanEnegry[i] = nullptr;
   for (int i = 0; i < 2; ++i) fProfileZNAQxCent[i] = nullptr;
   for (int i = 0; i < 2; ++i) fProfileZNAQyCent[i] = nullptr;
   for (int i = 0; i < 3; ++i) fHist2DCalibPsi1ZNACent[i] = nullptr;
@@ -597,10 +599,12 @@ AliAnalysisTaskLambdaProtonCVE::AliAnalysisTaskLambdaProtonCVE(const char *name)
   for (int i = 0; i < 2; ++i) fProfileV0AQyVtx[i] = nullptr;
   for (int i = 0; i < 2; ++i) fHist2DCalibPsi2V0ACent[i] = nullptr;
 
+  for (int i = 0; i < 2; ++i) fProfileZNCTowerMeanEnegry[i] = nullptr;
   for (int i = 0; i < 2; ++i) fProfileZNCQxCent[i] = nullptr;
   for (int i = 0; i < 2; ++i) fProfileZNCQyCent[i] = nullptr;
   for (int i = 0; i < 3; ++i) fHist2DCalibPsi1ZNCCent[i] = nullptr;
 
+  for (int i = 0; i < 2; ++i) fProfileZNATowerMeanEnegry[i] = nullptr;
   for (int i = 0; i < 2; ++i) fProfileZNAQxCent[i] = nullptr;
   for (int i = 0; i < 2; ++i) fProfileZNAQyCent[i] = nullptr;
   for (int i = 0; i < 3; ++i) fHist2DCalibPsi1ZNACent[i] = nullptr;
@@ -989,6 +993,15 @@ void AliAnalysisTaskLambdaProtonCVE::UserCreateOutputObjects()
     fHist2DCalibPsi1ZNACent[2] = new TH2D("fHist2DCalibPsi1ZNACentSF", "", 20, 0, 100, 100, 0, TMath::TwoPi());
     fOutputList->Add(fHist2DCalibPsi1ZNCCent[2]);
     fOutputList->Add(fHist2DCalibPsi1ZNACent[2]);
+
+    fProfileZNCTowerMeanEnegry[0] = new TProfile("fProfileZNCTowerMeanEnegryRW","",5,0,5);
+    fProfileZNCTowerMeanEnegry[1] = new TProfile("fProfileZNCTowerMeanEnegryGE","",5,0,5);
+    fProfileZNATowerMeanEnegry[0] = new TProfile("fProfileZNATowerMeanEnegryRW","",5,0,5);
+    fProfileZNATowerMeanEnegry[1] = new TProfile("fProfileZNATowerMeanEnegryGE","",5,0,5);
+    fOutputList->Add(fProfileZNCTowerMeanEnegry[0]);
+    fOutputList->Add(fProfileZNCTowerMeanEnegry[1]);
+    fOutputList->Add(fProfileZNATowerMeanEnegry[0]);
+    fOutputList->Add(fProfileZNATowerMeanEnegry[1]);
   }
 
   //V0s QA
@@ -1319,6 +1332,7 @@ void AliAnalysisTaskLambdaProtonCVE::UserExec(Option_t *)
   double vx = fVertex[0];
   double vy = fVertex[1];
   double vz = fVertex[2];
+  if (fabs(fVertex[0])<1e-6 || fabs(fVertex[1])<1e-6 || fabs(fVertex[2])<1e-6) return;
   double dz = vz - fAOD->GetPrimaryVertexSPD()->GetZ();
   if (fabs(vz) > fVzCut) return;
   if (!fVtx || fVtx->GetNContributors() < 2 || vtSPD->GetNContributors()<1) return;
@@ -1372,7 +1386,7 @@ void AliAnalysisTaskLambdaProtonCVE::UserExec(Option_t *)
   fHist2DCentQA[3]->Fill(centV0M,centTRK);
   fHist2DCentQA[5]->Fill(centV0M,centSPD0);
   fHist2DCentQA[7]->Fill(centSPD1,centSPD0);
-  if (fCent < 0 || fCent > 80) return;
+  if (fCent < 0 || fCent >= 80) return;
   // cent bin
   fCentBin = (int)fCent/10;
   fHistCent[0]->Fill(fCent);
@@ -1608,6 +1622,13 @@ bool AliAnalysisTaskLambdaProtonCVE::GetZDCPlane()
   float towerEnegryZNCGE[5] = {0};
   float towerEnegryZNAGE[5] = {0};
 
+  if(IsZDCCalibOn) {
+    for (int iTower = 0; iTower < 5; ++iTower) {
+      fProfileZNCTowerMeanEnegry[0]->Fill(iTower+0.5, towerEnegryZNC[iTower]);
+      fProfileZNATowerMeanEnegry[0]->Fill(iTower+0.5, towerEnegryZNA[iTower]);
+    }
+  }
+
   //Loop Over ZDC Towers
   //Gain Equalization
   for (int iTower = 0; iTower < 5; ++iTower) {
@@ -1615,15 +1636,22 @@ bool AliAnalysisTaskLambdaProtonCVE::GetZDCPlane()
     towerEnegryZNAGE[iTower] = towerEnegryZNA[iTower] / (fProfileForZNAGE->GetBinContent(iTower + 1)) * (fProfileForZNAGE->GetBinContent(2));
   }
 
+  if(IsZDCCalibOn) {
+    for (int iTower = 0; iTower < 5; ++iTower) {
+      fProfileZNCTowerMeanEnegry[1]->Fill(iTower+0.5, towerEnegryZNCGE[iTower]);
+      fProfileZNATowerMeanEnegry[1]->Fill(iTower+0.5, towerEnegryZNAGE[iTower]);
+    }
+  }
+
   float QxC = 0, QyC = 0, MC  = 0;
   float QxA = 0, QyA = 0, MA  = 0;
   for (int iTower = 0; iTower < 4; ++iTower) {
-    QxC += towerEnegryZNC[iTower + 1] * x[iTower];
-    QyC += towerEnegryZNC[iTower + 1] * y[iTower];
-    MC  += towerEnegryZNC[iTower + 1];
-    QxA += towerEnegryZNA[iTower + 1] * x[iTower];
-    QyA += towerEnegryZNA[iTower + 1] * y[iTower];
-    MA  += towerEnegryZNA[iTower + 1];
+    QxC += towerEnegryZNCGE[iTower + 1] * x[iTower];
+    QyC += towerEnegryZNCGE[iTower + 1] * y[iTower];
+    MC  += towerEnegryZNCGE[iTower + 1];
+    QxA += towerEnegryZNAGE[iTower + 1] * x[iTower];
+    QyA += towerEnegryZNAGE[iTower + 1] * y[iTower];
+    MA  += towerEnegryZNAGE[iTower + 1];
   }
   if (fabs(MC) < 1.e-6 || fabs(MA) < 1.e-6) return false;
   QxC /= MC;
@@ -1643,7 +1671,7 @@ bool AliAnalysisTaskLambdaProtonCVE::GetZDCPlane()
     //ZNA
     fProfileZNAQxCent[0] -> Fill(fCent,-QxA);
     fProfileZNAQyCent[0] -> Fill(fCent, QyA);
-    fHist2DCalibPsi1ZNACent[0] -> Fill(fCent, psiCGE);
+    fHist2DCalibPsi1ZNACent[0] -> Fill(fCent, psiAGE);
     //ZNC-ZNA
     fProfileZDCQxAQxCCent[0] -> Fill(fCent,-QxA*QxC);
     fProfileZDCQxAQyCCent[0] -> Fill(fCent,-QxA*QyC);
@@ -1699,7 +1727,7 @@ bool AliAnalysisTaskLambdaProtonCVE::GetZDCPlane()
     //ZNA
     fProfileZNAQxCent[1] -> Fill(fCent,-QxA);
     fProfileZNAQyCent[1] -> Fill(fCent, QyA);
-    fHist2DCalibPsi1ZNACent[1] -> Fill(fCent, psiCRC);
+    fHist2DCalibPsi1ZNACent[1] -> Fill(fCent, psiARC);
     //ZNC-ZNA
     fProfileZDCQxAQxCCent[1] -> Fill(fCent,-QxA*QxC);
     fProfileZDCQxAQyCCent[1] -> Fill(fCent,-QxA*QyC);
@@ -1722,7 +1750,7 @@ bool AliAnalysisTaskLambdaProtonCVE::GetZDCPlane()
   if (TMath::IsNaN(psiCSF) || TMath::IsNaN(psiASF)) return false;
   if (IsQAZDC) {
     fHist2DCalibPsi1ZNCCent[2] -> Fill(fCent, psiCSF);
-    fHist2DCalibPsi1ZNACent[2] -> Fill(fCent, psiCSF);
+    fHist2DCalibPsi1ZNACent[2] -> Fill(fCent, psiASF);
   }
 
   fPsi1ZNC = psiCSF;
@@ -1792,7 +1820,6 @@ bool AliAnalysisTaskLambdaProtonCVE::LoopTracks()
     //bool isItPiontrk = CheckPIDofParticle(track,1); // 1=pion
 	  //bool isItKaontrk = CheckPIDofParticle(track,2); // 2=Kaon
 	  bool isItProttrk = CheckPIDofParticle(track,3); // 3=proton
-
 
     int code = 0;
 	  if (charge > 0) {
