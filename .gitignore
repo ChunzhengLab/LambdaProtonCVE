@@ -1,7 +1,6 @@
 *.d
 *.so
 *.pcm
-*.root
 *.xml
 *.sh
 ref
@@ -10,4 +9,3 @@ ref
 *_bp*
 *copy*
 *_ACLiC_*
-CalibFiles
