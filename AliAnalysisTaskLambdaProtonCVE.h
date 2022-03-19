@@ -26,8 +26,6 @@ public:
 
   AliAnalysisTaskLambdaProtonCVE();
   AliAnalysisTaskLambdaProtonCVE(const char *name);
-  AliAnalysisTaskLambdaProtonCVE(const char *name, TString PR, bool NUE, bool NUA, bool V0Calib);
-
   virtual ~AliAnalysisTaskLambdaProtonCVE();
 
   virtual void UserCreateOutputObjects();
@@ -318,6 +316,8 @@ private:
   AliOADBContainer*     contQynam;
   TH1D*                hQx2mV0[2];
   TH1D*                hQy2mV0[2];
+  //18q
+  TH2F*       fHCorrectV0ChWeghts;
   ////////////////////////
   // ZDC
   ////////////////////////
