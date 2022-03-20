@@ -67,15 +67,15 @@
 #include "AliMultSelection.h"
 #include "AliOADBContainer.h"
 #include "AliCentrality.h"
-#include "AliAnalysisTaskLambdaProtonCVE.h"
+#include "AliAnalysisTaskLambdaProtonCVELocal.h"
 
 using std::cout;
 using std::endl;
 
-ClassImp(AliAnalysisTaskLambdaProtonCVE);
+ClassImp(AliAnalysisTaskLambdaProtonCVELocal);
 
 //---------------------------------------------------
-AliAnalysisTaskLambdaProtonCVE::AliAnalysisTaskLambdaProtonCVE() :
+AliAnalysisTaskLambdaProtonCVELocal::AliAnalysisTaskLambdaProtonCVELocal() :
   AliAnalysisTaskSE(),
   fDebug(0),
   fTrigger("kMB"),
@@ -89,7 +89,7 @@ AliAnalysisTaskLambdaProtonCVE::AliAnalysisTaskLambdaProtonCVE() :
   IsQAZDC(false),
   IsQATPC(false),
   fPlanePtMin(0.2),
-  fPlanePtMax(5.0),
+  fPlanePtMax(2.0),
   fEtaGapPos( 0.1),
   fEtaGapNeg(-0.1),
   fFilterBit(768),
@@ -359,7 +359,7 @@ AliAnalysisTaskLambdaProtonCVE::AliAnalysisTaskLambdaProtonCVE() :
 }
 
 //---------------------------------------------------
-AliAnalysisTaskLambdaProtonCVE::AliAnalysisTaskLambdaProtonCVE(const char *name) :
+AliAnalysisTaskLambdaProtonCVELocal::AliAnalysisTaskLambdaProtonCVELocal(const char *name) :
   AliAnalysisTaskSE(name),
   fDebug(0),
   fTrigger("kMB"),
@@ -373,7 +373,7 @@ AliAnalysisTaskLambdaProtonCVE::AliAnalysisTaskLambdaProtonCVE(const char *name)
   IsQAZDC(false),
   IsQATPC(false),
   fPlanePtMin(0.2),
-  fPlanePtMax(5.0),
+  fPlanePtMax(2.0),
   fEtaGapPos( 0.1),
   fEtaGapNeg(-0.1),
   fFilterBit(768),
@@ -647,7 +647,7 @@ AliAnalysisTaskLambdaProtonCVE::AliAnalysisTaskLambdaProtonCVE(const char *name)
 
 //------------------------------------------------
 
-AliAnalysisTaskLambdaProtonCVE::~AliAnalysisTaskLambdaProtonCVE()
+AliAnalysisTaskLambdaProtonCVELocal::~AliAnalysisTaskLambdaProtonCVELocal()
 {
   // Destructor
   // histograms are in the output list and deleted when the output
@@ -656,7 +656,7 @@ AliAnalysisTaskLambdaProtonCVE::~AliAnalysisTaskLambdaProtonCVE()
 
 //---------------------------------------------------
 
-void AliAnalysisTaskLambdaProtonCVE::Terminate(Option_t *)
+void AliAnalysisTaskLambdaProtonCVELocal::Terminate(Option_t *)
 {
   // Terminate loop
   Printf("Terminate");
@@ -664,7 +664,7 @@ void AliAnalysisTaskLambdaProtonCVE::Terminate(Option_t *)
 
 //---------------------------------------------------
 
-void AliAnalysisTaskLambdaProtonCVE::UserCreateOutputObjects()
+void AliAnalysisTaskLambdaProtonCVELocal::UserCreateOutputObjects()
 {
   fOutputList = new TList();
   fOutputList -> SetName(GetName());
@@ -1288,7 +1288,7 @@ void AliAnalysisTaskLambdaProtonCVE::UserCreateOutputObjects()
 
 //------------------------------------------------
 
-void AliAnalysisTaskLambdaProtonCVE::UserExec(Option_t *)
+void AliAnalysisTaskLambdaProtonCVELocal::UserExec(Option_t *)
 {
   if (fDebug) Printf("===============================We are in UserExec!================================");
   fEvtCount->Fill(1);
@@ -1453,11 +1453,13 @@ void AliAnalysisTaskLambdaProtonCVE::UserExec(Option_t *)
   //----------------------------
   if (!GetVZEROPlane()) return;
   fEvtCount->Fill(8);
+  if (fDebug) Printf("Get VZERO Plane done!");
   //----------------------------
   // ZDC Plane
   //----------------------------
   if (!GetZDCPlane()) return;
   fEvtCount->Fill(9);
+  if (fDebug) Printf("Get ZDC Plane done!");
   //----------------------------
   // Loop Tracks / Fill Vectors
   //----------------------------
@@ -1466,11 +1468,13 @@ void AliAnalysisTaskLambdaProtonCVE::UserExec(Option_t *)
   fEvtCount->Fill(10);
   if (!LoopTracks()) return;
   fEvtCount->Fill(11);
+  if (fDebug) Printf("Loop Tracks done!");
   //----------------------------
   // TPC Plane
   //----------------------------
   if (!GetTPCPlane()) return;
   fEvtCount->Fill(12);
+  if (fDebug) Printf("Get TPC Plane done!");
   //----------------------------
   // Fill Resolution
   //----------------------------
@@ -1496,11 +1500,13 @@ void AliAnalysisTaskLambdaProtonCVE::UserExec(Option_t *)
   //----------------------------
   if (!LoopV0s()) return;
   fEvtCount->Fill(14);
+  if (fDebug) Printf("Get Lambda Vector done!");
   //----------------------------
   // Pair
   //----------------------------
   if (!PairLambda()) return;
   fEvtCount->Fill(15);
+  if (fDebug) Printf("Pair done!");
   //------------------
   // Post output data.
   //------------------
@@ -1510,7 +1516,7 @@ void AliAnalysisTaskLambdaProtonCVE::UserExec(Option_t *)
 
 //---------------------------------------------------
 
-bool AliAnalysisTaskLambdaProtonCVE::GetVZEROPlane()
+bool AliAnalysisTaskLambdaProtonCVELocal::GetVZEROPlane()
 {
   double multV0Ch[64] = {0};
   double V0XMean[3] = {0};
@@ -1522,6 +1528,7 @@ bool AliAnalysisTaskLambdaProtonCVE::GetVZEROPlane()
   double multRingGE[3] = {0};
   double psi2GE[3] = {0};
   double psi2RC[3] = {0};
+
 
   //Load the GE and RC histograms
   if (fPeriod.EqualTo("LHC10h") ) {
@@ -1545,11 +1552,9 @@ bool AliAnalysisTaskLambdaProtonCVE::GetVZEROPlane()
       V0YMean[i+1] = hQy2mV0[i]->GetBinContent(iCentSPD+1);
     }
   }
-
   //Loop Over VZERO Channels
   //Gain Equalization
   for (int iCh = 0; iCh < 64; ++iCh) {
-    if (TMath::IsNaN(multV0Ch[iCh]) || multV0Ch[iCh]<=0) continue;
     double phi = TMath::Pi()/8. + TMath::Pi()/4.*(iCh%8);
     double multCh = 0.;
     // double multCh = fAOD->GetVZEROEqMultiplicity(iCh);
@@ -1659,7 +1664,7 @@ bool AliAnalysisTaskLambdaProtonCVE::GetVZEROPlane()
 
 //---------------------------------------------------
 
-bool AliAnalysisTaskLambdaProtonCVE::GetZDCPlane()
+bool AliAnalysisTaskLambdaProtonCVELocal::GetZDCPlane()
 {
   if(!fPeriod.EqualTo("LHC10h")) return true; //now we only have ZDC Calibration Files of LHC10h
   AliAODZDC* fZDC = fAOD -> GetZDCData();
@@ -1810,7 +1815,7 @@ bool AliAnalysisTaskLambdaProtonCVE::GetZDCPlane()
 
 //---------------------------------------------------
 
-bool AliAnalysisTaskLambdaProtonCVE::LoopTracks()
+bool AliAnalysisTaskLambdaProtonCVELocal::LoopTracks()
 {
   int nTrks = fAOD->GetNumberOfTracks();
   if (nTrks < 4) return false;
@@ -1848,8 +1853,8 @@ bool AliAnalysisTaskLambdaProtonCVE::LoopTracks()
       fHist2DEtaPhi[1]->Fill(eta,phi,wAcc);
     }
 
-    if (pt > fPlanePtMin && pt < fPlanePtMax) { //???
-      ///TODO Use Pt as weight for Better resolution?
+    if (pt > fPlanePtMin && pt < fPlanePtMax) { 
+      //TODO Use pT as weight for better resolution?
       if (eta >= fEtaGapPos) {
         SumQ2xTPCPos   += weight * TMath::Cos(2 * phi);
         SumQ2yTPCPos   += weight * TMath::Sin(2 * phi);
@@ -1889,7 +1894,7 @@ bool AliAnalysisTaskLambdaProtonCVE::LoopTracks()
 
 //---------------------------------------------------
 
-bool AliAnalysisTaskLambdaProtonCVE::GetTPCPlane()
+bool AliAnalysisTaskLambdaProtonCVELocal::GetTPCPlane()
 {
   double psi2TPCPos = GetEventPlane(SumQ2xTPCPos,SumQ2yTPCPos,2);
   double psi2TPCNeg = GetEventPlane(SumQ2xTPCNeg,SumQ2yTPCNeg,2);
@@ -1901,7 +1906,7 @@ bool AliAnalysisTaskLambdaProtonCVE::GetTPCPlane()
 
 //---------------------------------------------------
 
-bool AliAnalysisTaskLambdaProtonCVE::LoopV0s()
+bool AliAnalysisTaskLambdaProtonCVELocal::LoopV0s()
 {
   int nV0s = fAOD->GetNumberOfV0s();
   for (int iV0 = 0; iV0 < nV0s; iV0++) {
@@ -2003,7 +2008,7 @@ bool AliAnalysisTaskLambdaProtonCVE::LoopV0s()
 
 //---------------------------------------------------
 
-bool AliAnalysisTaskLambdaProtonCVE::PairLambda()
+bool AliAnalysisTaskLambdaProtonCVELocal::PairLambda()
 {
   //Lambda - X
   for (std::vector<double>::size_type jLambda = 0; jLambda < vecLambdaPhi.size(); jLambda++) {
@@ -2231,7 +2236,7 @@ bool AliAnalysisTaskLambdaProtonCVE::PairLambda()
 
 //---------------------------------------------------
 
-void AliAnalysisTaskLambdaProtonCVE::ResetVectors()
+void AliAnalysisTaskLambdaProtonCVELocal::ResetVectors()
 {
   SumQ2xTPCPos   = 0.;
   SumQ2yTPCPos   = 0.;
@@ -2267,7 +2272,7 @@ void AliAnalysisTaskLambdaProtonCVE::ResetVectors()
 
 //---------------------------------------------------
 
-bool AliAnalysisTaskLambdaProtonCVE::GetCalibHistForThisRun()
+bool AliAnalysisTaskLambdaProtonCVELocal::GetCalibHistForThisRun()
 {
   if (fPeriod.EqualTo("LHC10h")) {
     // 10h VZERO Calibration Histograms is Global
@@ -2393,7 +2398,7 @@ bool AliAnalysisTaskLambdaProtonCVE::GetCalibHistForThisRun()
 
 //---------------------------------------------------
 
-bool AliAnalysisTaskLambdaProtonCVE::RemovalForRun1()
+bool AliAnalysisTaskLambdaProtonCVELocal::RemovalForRun1()
 {
   // pileup
   fUtils->SetUseOutOfBunchPileUp(true);
@@ -2407,7 +2412,7 @@ bool AliAnalysisTaskLambdaProtonCVE::RemovalForRun1()
 
 //---------------------------------------------------
 
-bool AliAnalysisTaskLambdaProtonCVE::RejectEvtMultComp() // 15o_pass1, old pile-up
+bool AliAnalysisTaskLambdaProtonCVELocal::RejectEvtMultComp() // 15o_pass1, old pile-up
 {
    // TPC cluster cut
     Int_t multEsd = ((AliAODHeader*)fAOD->GetHeader())->GetNumberOfESDTracks(); // multESD
@@ -2462,7 +2467,7 @@ bool AliAnalysisTaskLambdaProtonCVE::RejectEvtMultComp() // 15o_pass1, old pile-
 
 //---------------------------------------------------
 
-bool AliAnalysisTaskLambdaProtonCVE::RejectEvtTFFit()
+bool AliAnalysisTaskLambdaProtonCVELocal::RejectEvtTFFit()
 {
   Float_t centV0M = -999;
   Float_t centCL1 = -999;
@@ -2527,7 +2532,7 @@ bool AliAnalysisTaskLambdaProtonCVE::RejectEvtTFFit()
 
 //---------------------------------------------------
 
-bool AliAnalysisTaskLambdaProtonCVE::RejectEvtTPCITSfb32TOF ()
+bool AliAnalysisTaskLambdaProtonCVELocal::RejectEvtTPCITSfb32TOF ()
 {
     //TOD+FB32 pile-up removal
     // https://twiki.cern.ch/twiki/bin/viewauth/ALICE/AliDPGtoolsEventProp
@@ -2549,7 +2554,7 @@ bool AliAnalysisTaskLambdaProtonCVE::RejectEvtTPCITSfb32TOF ()
 
 //---------------------------------------------------
 
-bool AliAnalysisTaskLambdaProtonCVE::AODPileupCheck ()
+bool AliAnalysisTaskLambdaProtonCVELocal::AODPileupCheck ()
 {
   Int_t isPileup = fAOD->IsPileupFromSPD(3);
   if (isPileup !=0 && fPeriod.EqualTo("LHC16t")) return false; // LHC16t : pPb
@@ -2570,7 +2575,7 @@ bool AliAnalysisTaskLambdaProtonCVE::AODPileupCheck ()
 
 //---------------------------------------------------
 
-bool AliAnalysisTaskLambdaProtonCVE::PileUpMultiVertex()
+bool AliAnalysisTaskLambdaProtonCVELocal::PileUpMultiVertex()
 {
   // check for multi-vertexer pile-up
   const int    kMinPlpContrib = 5;
@@ -2609,7 +2614,7 @@ bool AliAnalysisTaskLambdaProtonCVE::PileUpMultiVertex()
 
 //---------------------------------------------------
 
-double AliAnalysisTaskLambdaProtonCVE::GetWDist(const AliVVertex* v0, const AliVVertex* v1)
+double AliAnalysisTaskLambdaProtonCVELocal::GetWDist(const AliVVertex* v0, const AliVVertex* v1)
 {
     // calculate sqrt of weighted distance to other vertex
     if (!v0 || !v1) {
@@ -2638,7 +2643,7 @@ double AliAnalysisTaskLambdaProtonCVE::GetWDist(const AliVVertex* v0, const AliV
 
 //---------------------------------------------------
 
-bool AliAnalysisTaskLambdaProtonCVE::AcceptAODTrack(AliAODTrack *track)
+bool AliAnalysisTaskLambdaProtonCVELocal::AcceptAODTrack(AliAODTrack *track)
 {
     //------------------
     // track cut
@@ -2650,42 +2655,44 @@ bool AliAnalysisTaskLambdaProtonCVE::AcceptAODTrack(AliAODTrack *track)
     double chi2   = track->Chi2perNDF();
     int    charge = track->Charge();
 
-    if ( pt < fPtMin   ||  pt > fPtMax
-    ||  fabs(eta) > fEtaCut
-    ||  fabs(nhits) < fNclsCut
-    ||  chi2 < fChi2Min ||  chi2 > fChi2Max
-    ||  dedx < fDedxCut) return false;
+    if ( pt < fPtMin
+      || pt > fPtMax
+      || fabs(eta) > fEtaCut
+      || fabs(nhits) < fNclsCut
+      || chi2 < fChi2Min 
+      || chi2 > fChi2Max
+      || dedx < fDedxCut) 
+    return false;
 
-    if (fPeriod.EqualTo("LHC10h")) {
-      //------------------
-      // dca cut
-      //------------------
-      double mag = fAOD->GetMagneticField();
-      double dcaxy  = 999.;
-      double dcaz   = 999.;
-      double r[3];
-      double dca[2];
-      double cov[3];
-      double vx = fVertex[0];
-      double vy = fVertex[1];
-      double vz = fVertex[2];
-      bool proptodca = track->PropagateToDCA(fAOD->GetPrimaryVertex(), mag, 100., dca, cov);
-      if (track->GetXYZ(r)) {
-        dcaxy = r[0];
-        dcaz  = r[1];
-      } else {
-        double dcax = r[0] - vx;
-        double dcay = r[1] - vy;
-        dcaz  = r[2] - vz;
-        dcaxy = sqrt(dcax*dcax + dcay*dcay);
-        // dcaxy = dca[0];
-      }
-      if (fFilterBit != 768){
+    if (fFilterBit != 768){
+      if (fPeriod.EqualTo("LHC10h")) {
+        //------------------
+        // dca cut
+        //------------------
+        double mag = fAOD->GetMagneticField();
+        double dcaxy  = 999.;
+        double dcaz   = 999.;
+        double r[3];
+        double dca[2];
+        double cov[3];
+        double vx = fVertex[0];
+        double vy = fVertex[1];
+        double vz = fVertex[2];
+        bool proptodca = track->PropagateToDCA(fAOD->GetPrimaryVertex(), mag, 100., dca, cov);
+        if (track->GetXYZ(r)) {
+          dcaxy = r[0];
+          dcaz  = r[1];
+        } else {
+          double dcax = r[0] - vx;
+          double dcay = r[1] - vy;
+          dcaz  = r[2] - vz;
+          dcaxy = sqrt(dcax*dcax + dcay*dcay);
+        }
         if (fabs(dcaxy)>fDcaCutxy) return false;
         if (fabs(dcaz)>fDcaCutz) return false;
+        fHistDcaXY->Fill(dcaxy);
+        fHistDcaZ->Fill(dcaz);
       }
-      fHistDcaXY->Fill(dcaxy);
-      fHistDcaZ->Fill(dcaz);
     }
 
     fHistPt->Fill(pt);
@@ -2698,7 +2705,7 @@ bool AliAnalysisTaskLambdaProtonCVE::AcceptAODTrack(AliAODTrack *track)
 
 //---------------------------------------------------
 
-bool AliAnalysisTaskLambdaProtonCVE::CheckPIDofParticle(AliAODTrack* ftrack, int pidToCheck)
+bool AliAnalysisTaskLambdaProtonCVELocal::CheckPIDofParticle(AliAODTrack* ftrack, int pidToCheck)
 {
   if (pidToCheck==0) return kTRUE;    //// Charge Particles do not need PID check
   bool bPIDokay = kFALSE;
@@ -2761,7 +2768,7 @@ bool AliAnalysisTaskLambdaProtonCVE::CheckPIDofParticle(AliAODTrack* ftrack, int
 
 //---------------------------------------------------
 
-double AliAnalysisTaskLambdaProtonCVE::GetNUECor(int charge, double pt)
+double AliAnalysisTaskLambdaProtonCVELocal::GetNUECor(int charge, double pt)
 {
   double weightNUE = 1;
   if (fPeriod.EqualTo("LHC10h")) {
@@ -2809,7 +2816,7 @@ double AliAnalysisTaskLambdaProtonCVE::GetNUECor(int charge, double pt)
 
 //---------------------------------------------------
 
-double AliAnalysisTaskLambdaProtonCVE::GetNUACor(int charge, double phi, double eta, double vz)
+double AliAnalysisTaskLambdaProtonCVELocal::GetNUACor(int charge, double phi, double eta, double vz)
 {
   double weightNUA = 1;
   if (fVzBin<0 || fCentBin<0 || fRunNum<0) return -1;
@@ -2848,7 +2855,7 @@ double AliAnalysisTaskLambdaProtonCVE::GetNUACor(int charge, double phi, double 
 
 //---------------------------------------------------
 
-bool AliAnalysisTaskLambdaProtonCVE::IsGoodV0(AliAODv0 *aodV0)
+bool AliAnalysisTaskLambdaProtonCVELocal::IsGoodV0(AliAODv0 *aodV0)
 {
   // Offline reconstructed V0 only
   if (aodV0->GetOnFlyStatus()) return false;
@@ -2884,7 +2891,7 @@ bool AliAnalysisTaskLambdaProtonCVE::IsGoodV0(AliAODv0 *aodV0)
 
 //---------------------------------------------------
 
-bool AliAnalysisTaskLambdaProtonCVE::IsGoodDaughterTrack(const AliAODTrack *track)
+bool AliAnalysisTaskLambdaProtonCVELocal::IsGoodDaughterTrack(const AliAODTrack *track)
 {
   // TPC refit
   if (!track->IsOn(AliAODTrack::kTPCrefit)) return false;
@@ -2909,7 +2916,7 @@ bool AliAnalysisTaskLambdaProtonCVE::IsGoodDaughterTrack(const AliAODTrack *trac
 
 //---------------------------------------------------
 
-int AliAnalysisTaskLambdaProtonCVE::GetLambdaCode(const AliAODTrack *pTrack, const AliAODTrack *nTrack)
+int AliAnalysisTaskLambdaProtonCVELocal::GetLambdaCode(const AliAODTrack *pTrack, const AliAODTrack *nTrack)
 {
   bool IsLambda     = kFALSE;
   bool IsAntiLambda = kFALSE;
@@ -2943,7 +2950,7 @@ int AliAnalysisTaskLambdaProtonCVE::GetLambdaCode(const AliAODTrack *pTrack, con
 
 //---------------------------------------------------
 
-double AliAnalysisTaskLambdaProtonCVE::GetEventPlane(double qx, double qy, double harmonic)
+double AliAnalysisTaskLambdaProtonCVELocal::GetEventPlane(double qx, double qy, double harmonic)
 {
   double psi = (1./harmonic)*TMath::ATan2(qy,qx);
   if (psi < 0) return psi += TMath::TwoPi()/harmonic;

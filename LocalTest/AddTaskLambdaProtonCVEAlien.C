@@ -7,16 +7,16 @@
 
 #include "AliAnalysisManager.h"
 #include "AliAnalysisDataContainer.h"
-#include "AliAnalysisTaskLambdaProtonCVE.h"
+#include "AliAnalysisTaskLambdaProtonCVELocal.h"
 #endif
 
 using std::cout;
 using std::endl;
 
-AliAnalysisTaskLambdaProtonCVE* AddTaskLambdaProtonCVE(
+AliAnalysisTaskLambdaProtonCVELocal* AddTaskLambdaProtonCVEAlien(
   int               debug=0, // debug level controls amount of output statements
   TString   trigger="kINT7",
-  TString   period="LHC18q",
+  TString   period="LHC15o",
   int         filterBit=768, // AOD filter bit selection
   bool       v0calibOn=true,
   bool      zdccalibOn=true,
@@ -24,7 +24,7 @@ AliAnalysisTaskLambdaProtonCVE* AddTaskLambdaProtonCVE(
   bool           QAZDC=true,
   bool           QATPC=true,
   bool          doNUE=false,
-  bool          doNUA=false,
+  bool           doNUA=true,
   bool    checkPIDFlow=true,
   TString        uniqueID=""
   )
@@ -35,7 +35,7 @@ AliAnalysisTaskLambdaProtonCVE* AddTaskLambdaProtonCVE(
   //=========================================================================
   AliAnalysisManager *mgr = AliAnalysisManager::GetAnalysisManager();
   if (!mgr) {
-    Error("AddTaskLambdaProtonCVE.C", "No analysis manager to connect to.");
+    Error("AddTaskLambdaProtonCVEAlien.C", "No analysis manager to connect to.");
     return NULL;
   }
 
@@ -44,13 +44,13 @@ AliAnalysisTaskLambdaProtonCVE* AddTaskLambdaProtonCVE(
   // checked here.
   // =========================================================================
   if (!mgr->GetInputEventHandler()) {
-    Error("AddTaskLambdaProtonCVE.C", "This task requires an input event handler.");
+    Error("AddTaskLambdaProtonCVEAlien.C", "This task requires an input event handler.");
     return NULL;
   }
   //TString type = mgr->GetInputEventHandler()->GetDataType(); // can be "ESD" or "AOD"
 
   // --- instantiate analysis task
-  AliAnalysisTaskLambdaProtonCVE *task = new AliAnalysisTaskLambdaProtonCVE("TaskLambdaProtonCVE");
+  AliAnalysisTaskLambdaProtonCVELocal *task = new AliAnalysisTaskLambdaProtonCVELocal("TaskLambdaProtonCVE");
   task->SetDebug(debug);
   task->SetTrigger(trigger);
   task->SetPeriod(period);

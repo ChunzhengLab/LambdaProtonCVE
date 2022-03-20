@@ -14,6 +14,9 @@
 #include "TF1.h"
 #include "TGraphAsymmErrors.h"
 
+bool isZDCR2fromR1 = 0;
+bool isZDCR2fromData = 1;
+
 template <class TH>
 void SetStyle(TH &hist, unsigned int color, unsigned int markerStyle, double markerSize = 1, double lineWidth = 1) 
 {
@@ -36,33 +39,33 @@ void DrawFlow(){
   // ci[3] = TColor::GetFreeColorIndex();
   // color[3] = new TColor(ci[3], 65/255.,  182/255., 230/255.);//light blue
 
-  int ci[5];
-  TColor* color[5];
-  ci[0] = TColor::GetFreeColorIndex();
-  color[0] = new TColor(ci[0],  24/255.,  63/255.,  94/255.);//深蓝
-  ci[1] = TColor::GetFreeColorIndex();
-  color[1] = new TColor(ci[1],  33/255.,  99/255., 154/255.);//浅蓝
-  ci[2] = TColor::GetFreeColorIndex();
-  color[2] = new TColor(ci[2], 246/255., 213/255., 101/255.);//黄
-  ci[3] = TColor::GetFreeColorIndex();
-  color[3] = new TColor(ci[3],  62/255., 174/255., 164/255.);//绿
-  ci[4] = TColor::GetFreeColorIndex();
-  color[4] = new TColor(ci[4], 236/255.,  85/255.,  60/255.);//红
-  
-  // int ci[6];
-  // TColor* color[6];
+  // int ci[5];
+  // TColor* color[5];
   // ci[0] = TColor::GetFreeColorIndex();
-  // color[0] = new TColor(ci[0],  240/255.,  102/255.,   70/255.);//红
+  // color[0] = new TColor(ci[0],  24/255.,  63/255.,  94/255.);//深蓝
   // ci[1] = TColor::GetFreeColorIndex();
-  // color[1] = new TColor(ci[1],   79/255.,  194/255.,  216/255.);//蓝
+  // color[1] = new TColor(ci[1],  33/255.,  99/255., 154/255.);//浅蓝
   // ci[2] = TColor::GetFreeColorIndex();
-  // color[2] = new TColor(ci[2],  254/255.,  198/255.,  101/255.);//黄
+  // color[2] = new TColor(ci[2], 246/255., 213/255., 101/255.);//黄
   // ci[3] = TColor::GetFreeColorIndex();
-  // color[3] = new TColor(ci[3],  146/255.,  100/255.,  140/255.);//紫
+  // color[3] = new TColor(ci[3],  62/255., 174/255., 164/255.);//绿
   // ci[4] = TColor::GetFreeColorIndex();
-  // color[4] = new TColor(ci[4],  125/255.,  200/255.,  165/255.);//绿
-  // ci[5] = TColor::GetFreeColorIndex();
-  // color[5] = new TColor(ci[5],   64/255.,   64/255.,   64/255.);//黑
+  // color[4] = new TColor(ci[4], 236/255.,  85/255.,  60/255.);//红
+  
+  int ci[6];
+  TColor* color[6];
+  ci[0] = TColor::GetFreeColorIndex();
+  color[0] = new TColor(ci[0],  240/255.,  102/255.,   70/255.);//红
+  ci[1] = TColor::GetFreeColorIndex();
+  color[1] = new TColor(ci[1],   79/255.,  194/255.,  216/255.);//蓝
+  ci[2] = TColor::GetFreeColorIndex();
+  color[2] = new TColor(ci[2],  254/255.,  198/255.,  101/255.);//黄
+  ci[3] = TColor::GetFreeColorIndex();
+  color[3] = new TColor(ci[3],  146/255.,  100/255.,  140/255.);//紫
+  ci[4] = TColor::GetFreeColorIndex();
+  color[4] = new TColor(ci[4],  125/255.,  200/255.,  165/255.);//绿
+  ci[5] = TColor::GetFreeColorIndex();
+  color[5] = new TColor(ci[5],   64/255.,   64/255.,   64/255.);//黑
 
 
   gStyle->SetOptStat(0);
@@ -154,7 +157,7 @@ void DrawFlow(){
   TH1D* hV0CTPCNegPsi2Correlation = fProfileV0CTPCNegPsi2Correlation -> ProjectionX("hProfileV0CTPCNegPsi2Correlation");
   TH1D* hV0ATPCNegPsi2Correlation = fProfileV0ATPCNegPsi2Correlation -> ProjectionX("hProfileV0ATPCNegPsi2Correlation");
 
-  cout<<"Get the resonlution"<<endl;
+  std::cout<<"Get the resonlution"<<std::endl;
 
   hRes[0] -> Multiply(hV0CTPCNegPsi2Correlation, hV0ATPCNegPsi2Correlation,1,1);
   hRes[0] -> Divide(hV0MPsi2Correlation);
@@ -162,22 +165,39 @@ void DrawFlow(){
   hRes[1] -> Divide(hV0ATPCNegPsi2Correlation);
   hRes[2] -> Multiply(hV0ATPCNegPsi2Correlation, hV0MPsi2Correlation,1,1);
   hRes[2] -> Divide(hV0CTPCNegPsi2Correlation);
-  hRes[3] = (TH1D*)hZDCPsi2Correlation -> Clone("hRes_ZNC");
-  //hRes[3] -> Scale(-1);
-  hRes[4] = (TH1D*)hZDCPsi2Correlation -> Clone("hRes_ZNA");
-  //hRes[4] -> Scale(-1);
+
   hRes[5] = (TH1D*)hZDCPsi1Correlation -> Clone("hRes_ZDCR1");
   hRes[5] -> Scale(-1);
 
 
-  for (int i = 0; i < 6; i++) {
-    for (int iBin = 1; iBin < 8; iBin++) {
-      double resSquare = hRes[i] -> GetBinContent(iBin);
-      if (resSquare < 0.) continue;
-      hRes[i] -> SetBinContent(iBin, TMath::Sqrt(resSquare));
+  if(isZDCR2fromData) {
+    hRes[3] = (TH1D*)hZDCPsi2Correlation -> Clone("hRes_ZNC");
+    hRes[4] = (TH1D*)hZDCPsi2Correlation -> Clone("hRes_ZNA");
+    for (int i = 0; i < 6; i++) {
+      for (int iBin = 1; iBin < 8; iBin++) {
+        double resSquare = hRes[i] -> GetBinContent(iBin);
+        if (resSquare < 0.) continue;
+        hRes[i] -> SetBinContent(iBin, TMath::Sqrt(resSquare));
+      }
     }
-  }
-
+  } else if (isZDCR2fromR1) {
+    for (int i = 0; i < 3; i++) {
+      for (int iBin = 1; iBin < 8; iBin++) {
+        double resSquare = hRes[i] -> GetBinContent(iBin);
+        if (resSquare < 0.) continue;
+        hRes[i] -> SetBinContent(iBin, TMath::Sqrt(resSquare));
+      }
+    }
+    hRes[3] = (TH1D*)hRes[5] -> Clone("hRes_ZNC");
+    hRes[3] -> Scale(2./TMath::Pi());
+    hRes[4] = (TH1D*)hRes[5] -> Clone("hRes_ZNA");
+    hRes[4] -> Scale(2./TMath::Pi());
+    for (int iBin = 1; iBin < 8; iBin++) {
+      double resSquare = hRes[5] -> GetBinContent(iBin);
+      if (resSquare < 0.) continue;
+      hRes[5] -> SetBinContent(iBin, TMath::Sqrt(resSquare));
+    }
+  } else return;
 
   TProfile*  fProfileRawFlowCenthPos[5];
   TProfile*  fProfileRawFlowCenthNeg[5];
@@ -341,6 +361,7 @@ void DrawFlow(){
     hRes[i]->Draw("P SAME");
   }
   legendRes->Draw("SAME");
+
 
   TCanvas* cV2Cent = new TCanvas("cV2Cent","v_{2} vs. Centrality",10,10,500,400);
   cV2Cent->cd();

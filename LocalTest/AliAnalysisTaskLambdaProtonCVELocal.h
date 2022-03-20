@@ -1,5 +1,5 @@
-#ifndef AliAnalysisTaskLambdaProtonCVE_cxx
-#define AliAnalysisTaskLambdaProtonCVE_cxx
+#ifndef AliAnalysisTaskLambdaProtonCVELocalLocal_cxx
+#define AliAnalysisTaskLambdaProtonCVELocalLocal_cxx
 #include "AliAnalysisTaskSE.h"
 #include "AliEventCuts.h"
 #include "AliAODTrack.h"
@@ -20,13 +20,13 @@
 #include "THnSparse.h"
 #include "AliEventCuts.h"
 
-class AliAnalysisTaskLambdaProtonCVE : public AliAnalysisTaskSE
+class AliAnalysisTaskLambdaProtonCVELocal : public AliAnalysisTaskSE
 {
 public:
 
-  AliAnalysisTaskLambdaProtonCVE();
-  AliAnalysisTaskLambdaProtonCVE(const char *name);
-  virtual ~AliAnalysisTaskLambdaProtonCVE();
+  AliAnalysisTaskLambdaProtonCVELocal();
+  AliAnalysisTaskLambdaProtonCVELocal(const char *name);
+  virtual ~AliAnalysisTaskLambdaProtonCVELocal();
 
   virtual void UserCreateOutputObjects();
   virtual void UserExec(Option_t *option);
@@ -501,10 +501,10 @@ private:
   TProfile*        fProfileGammaZNA_AntiLambda_Proton; //
   TProfile*    fProfileGammaZNA_AntiLambda_AntiProton; //
 
-  AliAnalysisTaskLambdaProtonCVE(const AliAnalysisTaskLambdaProtonCVE&);
-  AliAnalysisTaskLambdaProtonCVE& operator=(const AliAnalysisTaskLambdaProtonCVE&);
+  AliAnalysisTaskLambdaProtonCVELocal(const AliAnalysisTaskLambdaProtonCVELocal&);
+  AliAnalysisTaskLambdaProtonCVELocal& operator=(const AliAnalysisTaskLambdaProtonCVELocal&);
 
-  ClassDef(AliAnalysisTaskLambdaProtonCVE, 1);
+  ClassDef(AliAnalysisTaskLambdaProtonCVELocal, 1);
 };
 
 #endif

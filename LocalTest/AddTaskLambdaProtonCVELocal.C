@@ -7,16 +7,16 @@
 
 #include "AliAnalysisManager.h"
 #include "AliAnalysisDataContainer.h"
-#include "AliAnalysisTaskLambdaProtonCVE.h"
+#include "AliAnalysisTaskLambdaProtonCVELocal.h"
 #endif
 
 using std::cout;
 using std::endl;
 
-AliAnalysisTaskLambdaProtonCVE* AddTaskLambdaProtonCVE(
+AliAnalysisTaskLambdaProtonCVELocal* AddTaskLambdaProtonCVELocal(
   int               debug=0, // debug level controls amount of output statements
   TString   trigger="kINT7",
-  TString   period="LHC18q",
+  TString   period="LHC15o",
   int         filterBit=768, // AOD filter bit selection
   bool       v0calibOn=true,
   bool      zdccalibOn=true,
@@ -24,7 +24,7 @@ AliAnalysisTaskLambdaProtonCVE* AddTaskLambdaProtonCVE(
   bool           QAZDC=true,
   bool           QATPC=true,
   bool          doNUE=false,
-  bool          doNUA=false,
+  bool           doNUA=true,
   bool    checkPIDFlow=true,
   TString        uniqueID=""
   )
@@ -35,7 +35,7 @@ AliAnalysisTaskLambdaProtonCVE* AddTaskLambdaProtonCVE(
   //=========================================================================
   AliAnalysisManager *mgr = AliAnalysisManager::GetAnalysisManager();
   if (!mgr) {
-    Error("AddTaskLambdaProtonCVE.C", "No analysis manager to connect to.");
+    Error("AddTaskLambdaProtonCVELocal.C", "No analysis manager to connect to.");
     return NULL;
   }
 
@@ -44,13 +44,13 @@ AliAnalysisTaskLambdaProtonCVE* AddTaskLambdaProtonCVE(
   // checked here.
   // =========================================================================
   if (!mgr->GetInputEventHandler()) {
-    Error("AddTaskLambdaProtonCVE.C", "This task requires an input event handler.");
+    Error("AddTaskLambdaProtonCVELocal.C", "This task requires an input event handler.");
     return NULL;
   }
   //TString type = mgr->GetInputEventHandler()->GetDataType(); // can be "ESD" or "AOD"
 
   // --- instantiate analysis task
-  AliAnalysisTaskLambdaProtonCVE *task = new AliAnalysisTaskLambdaProtonCVE("TaskLambdaProtonCVE");
+  AliAnalysisTaskLambdaProtonCVELocal *task = new AliAnalysisTaskLambdaProtonCVELocal("TaskLambdaProtonCVE");
   task->SetDebug(debug);
   task->SetTrigger(trigger);
   task->SetPeriod(period);
@@ -75,18 +75,18 @@ AliAnalysisTaskLambdaProtonCVE* AddTaskLambdaProtonCVE(
   TList* fVZEROCalibList = nullptr;
   TList* fZDCCalibList = nullptr;
 
-  if (!gGrid) TGrid::Connect("alien://");
+  //if (!gGrid) TGrid::Connect("alien://");
   if (doNUE) {
     if (period.EqualTo("LHC10h")) {
-      fNUEFile = TFile::Open("alien:///alice/cern.ch/user/c/chunzhen/CalibFiles/LHC10h/Run1NUE.root","READ");
+      fNUEFile = TFile::Open("../CalibFiles/LHC10h/Run1NUE.root","READ");
       fListNUE = dynamic_cast <TList*> (fNUEFile->Get("listNUE"));
     }
     if (period.EqualTo("LHC15o")) {
-      fNUEFile = TFile::Open("alien:///alice/cern.ch/user/c/chunzhen/CalibFiles/LHC15o/efficiencyBothpol.root","READ");
+      fNUEFile = TFile::Open("../CalibFiles/LHC15o/efficiencyBothpol.root","READ");
       fListNUE = dynamic_cast <TList*> (fNUEFile->Get("fMcEffiHij"));
     }
     if (period.EqualTo("LHC18q")) {
-      fNUEFile = TFile::Open("alien:///alice/cern.ch/user/c/chunzhen/CalibFiles/LHC18q/efficiencyBothpol18qnew.root","READ");
+      fNUEFile = TFile::Open("../CalibFiles/LHC18q/efficiencyBothpol18qnew.root","READ");
       fListNUE = dynamic_cast <TList*> (fNUEFile->Get("fMcEffiHij"));
     }
     if(fListNUE) {
@@ -97,15 +97,15 @@ AliAnalysisTaskLambdaProtonCVE* AddTaskLambdaProtonCVE(
 
   if (doNUA) {
     if (period.EqualTo("LHC10h")) {
-      fNUAFile = TFile::Open("alien:///alice/cern.ch/user/c/chunzhen/CalibFiles/LHC10h/10hNUAFB768.root","READ");
+      fNUAFile = TFile::Open("../CalibFiles/LHC10h/10hNUAFB768.root","READ");
       fListNUA = dynamic_cast <TList*> (fNUAFile->Get("10hListNUA"));
     }
     if (period.EqualTo("LHC15o")) {
-      fNUAFile = TFile::Open("alien:///alice/cern.ch/user/c/chunzhen/CalibFiles/LHC15o/wgtPion_NUAFB768DeftwPUcut_LHC15op2_24Aug2021.root","READ");
+      fNUAFile = TFile::Open("../CalibFiles/LHC15o/wgtPion_NUAFB768DeftwPUcut_LHC15op2_24Aug2021.root","READ");
       fListNUA = dynamic_cast <TList*> (fNUAFile->Get("15oListNUA"));
     }
     if (period.EqualTo("LHC18q")) {
-      fNUAFile = TFile::Open("alien:///alice/cern.ch/user/c/chunzhen/CalibFiles/LHC18q/WgtsNUAChargeAndPion_LHC18qPass3_FB768_AlexPU_DeftMode_Sept2021NoAvgQ.root","READ");
+      fNUAFile = TFile::Open("../CalibFiles/LHC18q/WgtsNUAChargeAndPion_LHC18qPass3_FB768_AlexPU_DeftMode_Sept2021NoAvgQ.root","READ");
       fListNUA = dynamic_cast <TList*> (fNUAFile->Get("fNUA_ChPosChNeg"));
     }
     if(fListNUA) {
@@ -116,15 +116,15 @@ AliAnalysisTaskLambdaProtonCVE* AddTaskLambdaProtonCVE(
 
   if (v0calibOn) {
     if (period.EqualTo("LHC10h")) {
-      fVZEROCalibFile = TFile::Open("alien:///alice/cern.ch/user/c/chunzhen/CalibFiles/LHC10h/10hQnCalib.root","READ");
+      fVZEROCalibFile = TFile::Open("../CalibFiles/LHC10h/10hQnCalib.root","READ");
       fVZEROCalibList = dynamic_cast <TList*> (fVZEROCalibFile->Get("10hlistqncalib"));
     }
     if (period.EqualTo("LHC15o")) {
-      fVZEROCalibFile = TFile::Open("alien:///alice/cern.ch/user/c/chunzhen/CalibFiles/LHC15o/VZEROCalibFile.root","READ");
+      fVZEROCalibFile = TFile::Open("../CalibFiles/LHC15o/VZEROCalibFile.root","READ");
       fVZEROCalibList = dynamic_cast <TList*> (fVZEROCalibFile->Get("VZEROCalibList"));
     }
     if (period.EqualTo("LHC18q")) {
-      fVZEROCalibFile = TFile::Open("alien:///alice/cern.ch/user/c/chunzhen/CalibFiles/LHC18q/calibSpq2V0C18qP3.root","READ");
+      fVZEROCalibFile = TFile::Open("../CalibFiles/LHC18q/calibSpq2V0C18qP3.root","READ");
       fVZEROCalibList = dynamic_cast <TList*> (fVZEROCalibFile->Get("fWgtsV0ZDC"));
     }
     if(fVZEROCalibList) {
@@ -135,11 +135,11 @@ AliAnalysisTaskLambdaProtonCVE* AddTaskLambdaProtonCVE(
 
   if (zdccalibOn) {
     if (period.EqualTo("LHC10h")) {
-      fZDCCalibFile = TFile::Open("alien:///alice/cern.ch/user/c/chunzhen/CalibFiles/LHC10h/ZDCCalibFile.root","READ");
+      fZDCCalibFile = TFile::Open("../CalibFiles/LHC10h/ZDCCalibFile.root","READ");
       fZDCCalibList = dynamic_cast <TList*> (fZDCCalibFile->Get("ZDCCalibList"));
     }
     // if (period.EqualTo("LHC15o")) {
-    //   fZDCCalibFile = TFile::Open("alien:///alice/cern.ch/user/c/chunzhen/CalibFiles/LHC15o/10hQnCalib.root","READ");
+    //   fZDCCalibFile = TFile::Open("../CalibFiles/LHC15o/10hQnCalib.root","READ");
     //   fZDCCalibList = dynamic_cast <TList*> (fZDCCalibFile->Get("10hlistqncalib"));
     // }
     if(fZDCCalibList) {
