@@ -2,10 +2,15 @@
 *.so
 *.pcm
 *.xml
-*.sh
 ref
 .vscode
 .DS_Store
 *_bp*
 *copy*
 *_ACLiC_*
+*.log
+my*
+stdout
+stderr
+outputs_valid
+syswatch*

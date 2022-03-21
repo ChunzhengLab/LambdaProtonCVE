@@ -89,7 +89,7 @@ AliAnalysisTaskLambdaProtonCVE::AliAnalysisTaskLambdaProtonCVE() :
   IsQAZDC(false),
   IsQATPC(false),
   fPlanePtMin(0.2),
-  fPlanePtMax(5.0),
+  fPlanePtMax(2.0),
   fEtaGapPos( 0.1),
   fEtaGapNeg(-0.1),
   fFilterBit(768),
@@ -373,7 +373,7 @@ AliAnalysisTaskLambdaProtonCVE::AliAnalysisTaskLambdaProtonCVE(const char *name)
   IsQAZDC(false),
   IsQATPC(false),
   fPlanePtMin(0.2),
-  fPlanePtMax(5.0),
+  fPlanePtMax(2.0),
   fEtaGapPos( 0.1),
   fEtaGapNeg(-0.1),
   fFilterBit(768),
@@ -1453,11 +1453,13 @@ void AliAnalysisTaskLambdaProtonCVE::UserExec(Option_t *)
   //----------------------------
   if (!GetVZEROPlane()) return;
   fEvtCount->Fill(8);
+  if (fDebug) Printf("Get VZERO Plane done!");
   //----------------------------
   // ZDC Plane
   //----------------------------
   if (!GetZDCPlane()) return;
   fEvtCount->Fill(9);
+  if (fDebug) Printf("Get ZDC Plane done!");
   //----------------------------
   // Loop Tracks / Fill Vectors
   //----------------------------
@@ -1466,11 +1468,13 @@ void AliAnalysisTaskLambdaProtonCVE::UserExec(Option_t *)
   fEvtCount->Fill(10);
   if (!LoopTracks()) return;
   fEvtCount->Fill(11);
+  if (fDebug) Printf("Loop Tracks done!");
   //----------------------------
   // TPC Plane
   //----------------------------
   if (!GetTPCPlane()) return;
   fEvtCount->Fill(12);
+  if (fDebug) Printf("Get TPC Plane done!");
   //----------------------------
   // Fill Resolution
   //----------------------------
@@ -1496,11 +1500,13 @@ void AliAnalysisTaskLambdaProtonCVE::UserExec(Option_t *)
   //----------------------------
   if (!LoopV0s()) return;
   fEvtCount->Fill(14);
+  if (fDebug) Printf("Get Lambda Vector done!");
   //----------------------------
   // Pair
   //----------------------------
   if (!PairLambda()) return;
   fEvtCount->Fill(15);
+  if (fDebug) Printf("Pair done!");
   //------------------
   // Post output data.
   //------------------
@@ -1549,7 +1555,6 @@ bool AliAnalysisTaskLambdaProtonCVE::GetVZEROPlane()
   //Loop Over VZERO Channels
   //Gain Equalization
   for (int iCh = 0; iCh < 64; ++iCh) {
-    if (TMath::IsNaN(multV0Ch[iCh]) || multV0Ch[iCh]<=0) continue;
     double phi = TMath::Pi()/8. + TMath::Pi()/4.*(iCh%8);
     double multCh = 0.;
     // double multCh = fAOD->GetVZEROEqMultiplicity(iCh);
@@ -1848,7 +1853,7 @@ bool AliAnalysisTaskLambdaProtonCVE::LoopTracks()
       fHist2DEtaPhi[1]->Fill(eta,phi,wAcc);
     }
 
-    if (pt > fPlanePtMin && pt < fPlanePtMax) { //???
+    if (pt > fPlanePtMin && pt < fPlanePtMax) {
       ///TODO Use Pt as weight for Better resolution?
       if (eta >= fEtaGapPos) {
         SumQ2xTPCPos   += weight * TMath::Cos(2 * phi);
@@ -2650,42 +2655,44 @@ bool AliAnalysisTaskLambdaProtonCVE::AcceptAODTrack(AliAODTrack *track)
     double chi2   = track->Chi2perNDF();
     int    charge = track->Charge();
 
-    if ( pt < fPtMin   ||  pt > fPtMax
-    ||  fabs(eta) > fEtaCut
-    ||  fabs(nhits) < fNclsCut
-    ||  chi2 < fChi2Min ||  chi2 > fChi2Max
-    ||  dedx < fDedxCut) return false;
+    if ( pt < fPtMin
+      || pt > fPtMax
+      || fabs(eta) > fEtaCut
+      || fabs(nhits) < fNclsCut
+      || chi2 < fChi2Min 
+      || chi2 > fChi2Max
+      || dedx < fDedxCut) 
+    return false;
 
-    if (fPeriod.EqualTo("LHC10h")) {
-      //------------------
-      // dca cut
-      //------------------
-      double mag = fAOD->GetMagneticField();
-      double dcaxy  = 999.;
-      double dcaz   = 999.;
-      double r[3];
-      double dca[2];
-      double cov[3];
-      double vx = fVertex[0];
-      double vy = fVertex[1];
-      double vz = fVertex[2];
-      bool proptodca = track->PropagateToDCA(fAOD->GetPrimaryVertex(), mag, 100., dca, cov);
-      if (track->GetXYZ(r)) {
-        dcaxy = r[0];
-        dcaz  = r[1];
-      } else {
-        double dcax = r[0] - vx;
-        double dcay = r[1] - vy;
-        dcaz  = r[2] - vz;
-        dcaxy = sqrt(dcax*dcax + dcay*dcay);
-        // dcaxy = dca[0];
-      }
-      if (fFilterBit != 768){
+    if (fFilterBit != 768){
+      if (fPeriod.EqualTo("LHC10h")) {
+        //------------------
+        // dca cut
+        //------------------
+        double mag = fAOD->GetMagneticField();
+        double dcaxy  = 999.;
+        double dcaz   = 999.;
+        double r[3];
+        double dca[2];
+        double cov[3];
+        double vx = fVertex[0];
+        double vy = fVertex[1];
+        double vz = fVertex[2];
+        bool proptodca = track->PropagateToDCA(fAOD->GetPrimaryVertex(), mag, 100., dca, cov);
+        if (track->GetXYZ(r)) {
+          dcaxy = r[0];
+          dcaz  = r[1];
+        } else {
+          double dcax = r[0] - vx;
+          double dcay = r[1] - vy;
+          dcaz  = r[2] - vz;
+          dcaxy = sqrt(dcax*dcax + dcay*dcay);
+        }
         if (fabs(dcaxy)>fDcaCutxy) return false;
         if (fabs(dcaz)>fDcaCutz) return false;
+        fHistDcaXY->Fill(dcaxy);
+        fHistDcaZ->Fill(dcaz);
       }
-      fHistDcaXY->Fill(dcaxy);
-      fHistDcaZ->Fill(dcaz);
     }
 
     fHistPt->Fill(pt);

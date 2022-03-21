@@ -716,10 +716,10 @@ void AliAnalysisTaskLambdaProtonCVELocal::UserCreateOutputObjects()
     "296838","296836","296835","296799","296794","296793","296790","296787","296786","296785","296784","296781",
     "296752","296694","296693","296691","296690"};
   runNumList = new std::map<int,int>;
-  if      (fPeriod.EqualTo("LHC10h")) for (int i = 0; i < 90; i++) runNumList->insert(std::pair<int,int>(runNumList10h[i].Atoi(),i+1));
-  else if (fPeriod.EqualTo("LHC15o")) for (int i = 0; i <138; i++) runNumList->insert(std::pair<int,int>(runNumList15o[i].Atoi(),i+1));
-  else if (fPeriod.EqualTo("LHC18q")) for (int i = 0; i <125; i++) runNumList->insert(std::pair<int,int>(runNumList18q[i].Atoi(),i+1));
-  else if (fPeriod.EqualTo("LHC18r")) for (int i = 0; i < 89; i++) runNumList->insert(std::pair<int,int>(runNumList18r[i].Atoi(),i+1));
+  if      (fPeriod.EqualTo("LHC10h")) for (int i = 0; i < 90; i++) runNumList->insert(std::pair<int,int>(runNumList10h[i].Atoi(),i));
+  else if (fPeriod.EqualTo("LHC15o")) for (int i = 0; i <138; i++) runNumList->insert(std::pair<int,int>(runNumList15o[i].Atoi(),i));
+  else if (fPeriod.EqualTo("LHC18q")) for (int i = 0; i <125; i++) runNumList->insert(std::pair<int,int>(runNumList18q[i].Atoi(),i));
+  else if (fPeriod.EqualTo("LHC18r")) for (int i = 0; i < 89; i++) runNumList->insert(std::pair<int,int>(runNumList18r[i].Atoi(),i));
   else return;
 
   fHistRunNumBin = new TH1I("runNumBin","",(int)runNumList->size(),0,(int)runNumList->size());
@@ -1529,7 +1529,6 @@ bool AliAnalysisTaskLambdaProtonCVELocal::GetVZEROPlane()
   double psi2GE[3] = {0};
   double psi2RC[3] = {0};
 
-
   //Load the GE and RC histograms
   if (fPeriod.EqualTo("LHC10h") ) {
     for (int iCh = 0; iCh < 64; ++iCh) multV0Ch[iCh] = hMultV0Read->GetBinContent(iCh+1, fRunNumBin+1);
@@ -1552,6 +1551,7 @@ bool AliAnalysisTaskLambdaProtonCVELocal::GetVZEROPlane()
       V0YMean[i+1] = hQy2mV0[i]->GetBinContent(iCentSPD+1);
     }
   }
+
   //Loop Over VZERO Channels
   //Gain Equalization
   for (int iCh = 0; iCh < 64; ++iCh) {
@@ -1853,7 +1853,7 @@ bool AliAnalysisTaskLambdaProtonCVELocal::LoopTracks()
       fHist2DEtaPhi[1]->Fill(eta,phi,wAcc);
     }
 
-    if (pt > fPlanePtMin && pt < fPlanePtMax) { 
+    if (pt > fPlanePtMin && pt < fPlanePtMax) {
       //TODO Use pT as weight for better resolution?
       if (eta >= fEtaGapPos) {
         SumQ2xTPCPos   += weight * TMath::Cos(2 * phi);

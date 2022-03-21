@@ -23,8 +23,8 @@ void runAnalysis()
     // if you run on grid, specify test mode (kTRUE) or full grid model (kFALSE)
     Bool_t local      = kFALSE;
     Bool_t gridTest   = kFALSE;
-    Bool_t gridRun    = kTRUE;
-    Bool_t gridMerge  = kFALSE;
+    Bool_t gridRun    = kFALSE;
+    Bool_t gridMerge  = kTRUE;
     Bool_t localMerge = kFALSE;
 
     if (gridMerge || localMerge) gridRun = kFALSE;
@@ -222,7 +222,7 @@ void runAnalysis()
         if (dataset.EqualTo("LHC15o")) {
           // select the input data
           alienHandler->SetGridDataDir("/alice/data/2015/LHC15o");
-          alienHandler->SetDataPattern("pass2/AOD252/*/AliAOD.root");
+          alienHandler->SetDataPattern("pass2/AOD252/AOD/*/AliAOD.root");
           // MC has no prefix, data has prefix 000
           alienHandler->SetRunPrefix("000");
           groupNumber = 0;

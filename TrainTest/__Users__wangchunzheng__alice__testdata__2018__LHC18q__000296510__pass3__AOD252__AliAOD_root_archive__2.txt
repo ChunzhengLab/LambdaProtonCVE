@@ -1,0 +1,2 @@
+/Users/wangchunzheng/alice/testdata/2018/LHC18q/000296510/pass3/AOD252/AliAOD/001/AliAOD.root
+/Users/wangchunzheng/alice/testdata/2018/LHC18q/000296510/pass3/AOD252/AliAOD/002/AliAOD.root

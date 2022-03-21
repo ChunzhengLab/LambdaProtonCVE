@@ -1,0 +1,2 @@
+/Users/wangchunzheng/alice/testdata/2015/LHC15o/000246087/pass2/AOD252/AliAOD/0001/AliAOD.root
+/Users/wangchunzheng/alice/testdata/2015/LHC15o/000246087/pass2/AOD252/AliAOD/0002/AliAOD.root
