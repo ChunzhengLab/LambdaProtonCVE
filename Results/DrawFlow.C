@@ -94,8 +94,8 @@ void DrawFlow(){
   Table46->GetObject("Graph1D_y1",v2LambdaPtCent4050);
 
   TList* outputList = nullptr;
-  TFile* outputFile = TFile::Open("AnalysisResults_default.root", "READ");
-  outputList = (TList*) outputFile->Get("output"); 
+  TFile* outputFile = TFile::Open("AnalysisResults.root", "READ");
+  outputList = (TList*) outputFile->Get("output_"); 
 
   TProfile2D*  fProfile2DRawFlowCentPthPos[5];
   TProfile2D*  fProfile2DRawFlowCentPthNeg[5];

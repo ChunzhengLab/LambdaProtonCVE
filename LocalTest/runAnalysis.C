@@ -24,8 +24,8 @@ void runAnalysis()
     Bool_t local      = kFALSE;
     Bool_t gridTest   = kFALSE;
     Bool_t gridRun    = kFALSE;
-    Bool_t gridMerge  = kTRUE;
-    Bool_t localMerge = kFALSE;
+    Bool_t gridMerge  = kFALSE;
+    Bool_t localMerge = kTRUE;
 
     if (gridMerge || localMerge) gridRun = kFALSE;
     if (gridRun) {

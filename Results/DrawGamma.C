@@ -38,8 +38,8 @@ void DrawGamma(){
   color[4] = new TColor(ci[4], 236/255.,  85/255.,  60/255.);//红
 
   gStyle->SetOptStat(0);
-  TFile* outputFile = TFile::Open("AnalysisResults_default.root", "READ");
-  TList* outputList = (TList*) outputFile->Get("output"); 
+  TFile* outputFile = TFile::Open("AnalysisResults.root", "READ");
+  TList* outputList = (TList*) outputFile->Get("output_"); 
 
   ///Lambda-X correlators
   ///Delta Correlators:
@@ -176,15 +176,27 @@ void DrawGamma(){
 
   double xbins[12] = {0,5,10,20,30,40,50,60,70,80,90,100};
   fProfileDeltaLambdaHadronOppo = (TProfile*)fProfileDeltaLambdaHadronOppo -> Rebin(11,"",xbins);
-  fProfileDeltaLambdaHadronOppo = (TProfile*)fProfileDeltaLambdaHadronOppo -> Rebin(11,"",xbins);
-  fProfileDeltaLambdaHadronSame = (TProfile*)fProfileDeltaLambdaHadronSame -> Rebin(11,"",xbins);
   fProfileDeltaLambdaHadronSame = (TProfile*)fProfileDeltaLambdaHadronSame -> Rebin(11,"",xbins);
   fProfileDeltaLambdaProtonOppo = (TProfile*)fProfileDeltaLambdaProtonOppo -> Rebin(11,"",xbins);
-  fProfileDeltaLambdaProtonOppo = (TProfile*)fProfileDeltaLambdaProtonOppo -> Rebin(11,"",xbins);
-  fProfileDeltaLambdaProtonSame = (TProfile*)fProfileDeltaLambdaProtonSame -> Rebin(11,"",xbins);
   fProfileDeltaLambdaProtonSame = (TProfile*)fProfileDeltaLambdaProtonSame -> Rebin(11,"",xbins);
 
+  TH1D* hDeltaLambdaHadronOppo = (TH1D*)fProfileDeltaLambdaHadronOppo -> ProjectionX("hDeltaLambdaHadronOppo");
+  TH1D* hDeltaLambdaHadronSame = (TH1D*)fProfileDeltaLambdaHadronSame -> ProjectionX("hDeltaLambdaHadronSame");
+  TH1D* hDeltaLambdaProtonOppo = (TH1D*)fProfileDeltaLambdaProtonOppo -> ProjectionX("hDeltaLambdaProtonOppo");
+  TH1D* hDeltaLambdaProtonSame = (TH1D*)fProfileDeltaLambdaProtonSame -> ProjectionX("hDeltaLambdaProtonSame");
 
+  TH1D* hDeltaDeltaLambdaHadron = new TH1D("hDeltaDeltaHadron","",11,xbins);
+  TH1D* hDeltaDeltaLambdaProton = new TH1D("hDeltaDeltaProton","",11,xbins);
+  hDeltaDeltaLambdaHadron->Add(hDeltaLambdaHadronOppo,hDeltaLambdaHadronSame,1,-1);
+  hDeltaDeltaLambdaProton->Add(hDeltaLambdaProtonOppo,hDeltaLambdaProtonSame,1,-1);
+
+
+  TH1D* hGammaLambdaHadronOppo[5];
+  TH1D* hGammaLambdaHadronSame[5];
+  TH1D* hGammaLambdaProtonOppo[5];
+  TH1D* hGammaLambdaProtonSame[5];
+
+  
   for (int i = 0; i < 5; i++){
     fProfileGammaLambdaHadronOppo[i] -> Add(fProfileGamma_AntiLambda_hPos[i]);
     fProfileGammaLambdaHadronOppo[i] -> Add(fProfileGamma_Lambda_hNeg[i]);
@@ -196,15 +208,29 @@ void DrawGamma(){
     fProfileGammaLambdaProtonSame[i] -> Add(fProfileGamma_AntiLambda_AntiProton[i]);
 
     fProfileGammaLambdaHadronOppo[i] = (TProfile*)fProfileGammaLambdaHadronOppo[i]->Rebin(11,"",xbins);
-    fProfileGammaLambdaHadronOppo[i] = (TProfile*)fProfileGammaLambdaHadronOppo[i]->Rebin(11,"",xbins);
-    fProfileGammaLambdaHadronSame[i] = (TProfile*)fProfileGammaLambdaHadronSame[i]->Rebin(11,"",xbins);
     fProfileGammaLambdaHadronSame[i] = (TProfile*)fProfileGammaLambdaHadronSame[i]->Rebin(11,"",xbins);
     fProfileGammaLambdaProtonOppo[i] = (TProfile*)fProfileGammaLambdaProtonOppo[i]->Rebin(11,"",xbins);
-    fProfileGammaLambdaProtonOppo[i] = (TProfile*)fProfileGammaLambdaProtonOppo[i]->Rebin(11,"",xbins);
     fProfileGammaLambdaProtonSame[i] = (TProfile*)fProfileGammaLambdaProtonSame[i]->Rebin(11,"",xbins);
-    fProfileGammaLambdaProtonSame[i] = (TProfile*)fProfileGammaLambdaProtonSame[i]->Rebin(11,"",xbins);
+
+    if (i==0) sprintf(chPlaneType,"TPC");
+    if (i==1) sprintf(chPlaneType,"V0C");
+    if (i==2) sprintf(chPlaneType,"V0A");
+    if (i==3) sprintf(chPlaneType,"ZNC");
+    if (i==4) sprintf(chPlaneType,"ZNA");
+    hGammaLambdaHadronOppo[i] = (TH1D*) fProfileGammaLambdaHadronOppo[i]->ProjectionX(Form("hGammaLambdaHadronOppo_%s",chPlaneType));
+    hGammaLambdaHadronSame[i] = (TH1D*) fProfileGammaLambdaHadronSame[i]->ProjectionX(Form("hGammaLambdaHadronSame_%s",chPlaneType));
+    hGammaLambdaProtonOppo[i] = (TH1D*) fProfileGammaLambdaProtonOppo[i]->ProjectionX(Form("hGammaLambdaProtonOppo_%s",chPlaneType));
+    hGammaLambdaProtonSame[i] = (TH1D*) fProfileGammaLambdaProtonSame[i]->ProjectionX(Form("hGammaLambdaProtonSame_%s",chPlaneType));
   }
 
+  TH1D* hDeltaGammaLambdaHadron[5];
+  TH1D* hDeltaGammaLambdaProton[5];
+  for (int i = 0; i < 5; i++){
+    hDeltaGammaLambdaHadron[i] = new TH1D(Form("hDeltaGammaLambdaHadron_%s",chPlaneType),"",11,xbins);
+    hDeltaGammaLambdaProton[i] = new TH1D(Form("hDeltaGammaLambdaProton_%s",chPlaneType),"",11,xbins);
+    hDeltaGammaLambdaHadron[i] ->Add(hGammaLambdaHadronOppo[i],hGammaLambdaHadronSame[i],1,-1);
+    hDeltaGammaLambdaProton[i] ->Add(hGammaLambdaProtonOppo[i],hGammaLambdaProtonSame[i],1,-1);
+  }
 
   TLegend *legend1 = new TLegend(0.1,0.7,0.48,0.9);
   legend1->AddEntry(fProfileGammaLambdaHadronOppo[0],"TPC","lp");
@@ -213,38 +239,61 @@ void DrawGamma(){
   legend1->AddEntry(fProfileGammaLambdaHadronOppo[3],"ZNC","lp");
   legend1->AddEntry(fProfileGammaLambdaHadronOppo[4],"ZNA","lp");
 
-  TCanvas* cDeltaCent = new TCanvas("cDeltaCent","v_{2} vs. Centrality",10,10,500,400);
+  TCanvas* cDeltaCent = new TCanvas("cDeltaCent","v_{2} vs. Centrality",10,10,1000,400);
   cDeltaCent->cd();
+  cDeltaCent->Divide(2,1);
+  cDeltaCent->cd(1);
   TH2D* dummyDeltaCent = new TH2D("","",1,0,70,1,-0.015,0.015);
   dummyDeltaCent->GetXaxis()->SetTitle("");
   dummyDeltaCent->GetXaxis()->SetTitle("Centrality (%)");
   dummyDeltaCent->GetYaxis()->SetTitle("v_{2}");
   dummyDeltaCent->GetYaxis()->SetTitleOffset(1.2);
   dummyDeltaCent->Draw("SAME");
-
-  SetStyle(fProfileDeltaLambdaHadronOppo ,kBlue, kFullCircle,1.2,1.1);
-  SetStyle(fProfileDeltaLambdaHadronSame ,kBlue, kOpenSquare,1.2,1.1);
-  fProfileDeltaLambdaHadronOppo -> Draw("SAME");
-  fProfileDeltaLambdaHadronSame -> Draw("SAME");
-
-  SetStyle(fProfileDeltaLambdaProtonOppo ,kRed, kFullCircle,1.2,1.1);
-  SetStyle(fProfileDeltaLambdaProtonSame ,kRed, kOpenSquare,1.2,1.1);
-  fProfileDeltaLambdaProtonOppo -> Draw("SAME");
-  fProfileDeltaLambdaProtonSame -> Draw("SAME");
+  SetStyle(hDeltaLambdaHadronOppo ,kBlue, kFullCircle,1.2,1.1);
+  SetStyle(hDeltaLambdaHadronSame ,kBlue, kOpenSquare,1.2,1.1);
+  hDeltaLambdaHadronOppo -> Draw("SAME");
+  hDeltaLambdaHadronSame -> Draw("SAME");
+  SetStyle(hDeltaLambdaProtonOppo ,kRed, kFullCircle,1.2,1.1);
+  SetStyle(hDeltaLambdaProtonSame ,kRed, kOpenSquare,1.2,1.1);
+  hDeltaLambdaProtonOppo -> Draw("SAME");
+  hDeltaLambdaProtonSame -> Draw("SAME");
+  cDeltaCent->cd(2);
+  TH2D* dummyDeltaDeltaCent = new TH2D("","",1,0,70,1,-0.002,0.015);
+  dummyDeltaDeltaCent->Draw("same");
+  hDeltaDeltaLambdaProton->Draw("SAME");
+  hDeltaDeltaLambdaHadron->Draw("SAME");
   
 
-  TCanvas* cGammaCent = new TCanvas("cGammaCent","v_{2} vs. Centrality",10,10,500,400);
-  cGammaCent->cd();
-  TH2D* dummyGammaCent = new TH2D("","",1,0,70,1,-0.0015,0.0015);
+  TCanvas* cGammaCent = new TCanvas("cGammaCent","v_{2} vs. Centrality",10,10,1000,800);
+  cGammaCent->Divide(2,2);
+  cGammaCent->cd(1);
+  TH2D* dummyGammaCent = new TH2D("","",1,0,70,1,-0.001,0.001);
   dummyGammaCent->GetXaxis()->SetTitle("");
   dummyGammaCent->GetXaxis()->SetTitle("Centrality (%)");
   dummyGammaCent->GetYaxis()->SetTitle("v_{2}");
   dummyGammaCent->GetYaxis()->SetTitleOffset(1.2);
   dummyGammaCent->Draw("SAME");
-  for (int i = 3; i < 4; i++){
-    SetStyle(fProfileGammaLambdaHadronOppo[i] ,ci[i], kFullCircle,1.2,1.1);
-    SetStyle(fProfileGammaLambdaHadronSame[i] ,ci[i], kOpenSquare,1.2,1.1);
-    fProfileGammaLambdaHadronOppo[i] -> Draw("SAME");
-    fProfileGammaLambdaHadronSame[i] -> Draw("SAME");
+  for (int i = 0; i < 3; i++){
+    SetStyle(hGammaLambdaHadronOppo[i] ,ci[i], kFullCircle,1.2,1.1);
+    SetStyle(hGammaLambdaHadronSame[i] ,ci[i], kOpenSquare,1.2,1.1);
+    hGammaLambdaHadronOppo[i] -> Draw("SAME");
+    hGammaLambdaHadronSame[i] -> Draw("SAME");
+  }
+  cGammaCent->cd(2);
+  for (int i = 0; i < 3; i++){
+    SetStyle(hGammaLambdaProtonOppo[i] ,ci[i], kFullCircle,1.2,1.1);
+    SetStyle(hGammaLambdaProtonSame[i] ,ci[i], kOpenSquare,1.2,1.1);
+    hGammaLambdaProtonOppo[i] -> Draw("SAME");
+    hGammaLambdaProtonSame[i] -> Draw("SAME");
+  }
+  cGammaCent->cd(3);
+  for (int i = 0; i < 3; i++){
+    SetStyle(hDeltaGammaLambdaHadron[i] ,ci[i], kFullCircle,1.2,1.1);
+    hDeltaGammaLambdaHadron[i] -> Draw("SAME");
+  }
+  cGammaCent->cd(4);
+  for (int i = 0; i < 3; i++){
+    SetStyle(hDeltaGammaLambdaProton[i] ,ci[i], kOpenSquare,1.2,1.1);
+    hDeltaGammaLambdaProton[i] -> Draw("SAME");
   }
 }

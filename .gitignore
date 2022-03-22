@@ -14,3 +14,5 @@ stdout
 stderr
 outputs_valid
 syswatch*
+event_stat.root
+EventStat_temp.root
