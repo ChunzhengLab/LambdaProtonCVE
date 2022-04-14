@@ -1350,7 +1350,7 @@ void AliAnalysisTaskLambdaProtonCVE::UserExec(Option_t *)
   else if (fTrigger.EqualTo("kINT7"))
   isTrigselected = mask & AliVEvent::kINT7;
   else if (fTrigger.EqualTo("kINT7+kCentral+kSemiCentral"))
-  isTrigselected = mask & AliVEvent::kINT7 + AliVEvent::kCentral + AliVEvent::kSemiCentral;
+  isTrigselected = mask & (AliVEvent::kINT7 + AliVEvent::kCentral + AliVEvent::kSemiCentral);
   if (isTrigselected == false) return;
   fEvtCount->Fill(3);
   if (fDebug) Printf("trigger done!");
@@ -1762,11 +1762,8 @@ bool AliAnalysisTaskLambdaProtonCVE::GetZDCPlane()
 
   float QxCMean = fHn4DForZNCQxRC -> GetBinContent(fHn4DForZNCQxRC->GetBin(fillPosition));
   float QyCMean = fHn4DForZNCQyRC -> GetBinContent(fHn4DForZNCQyRC->GetBin(fillPosition));
-  float MCMean  = fHn4DForZNCMtRC -> GetBinContent(fHn4DForZNCMtRC->GetBin(fillPosition));
   float QxAMean = fHn4DForZNAQxRC -> GetBinContent(fHn4DForZNAQxRC->GetBin(fillPosition));
   float QyAMean = fHn4DForZNAQyRC -> GetBinContent(fHn4DForZNAQyRC->GetBin(fillPosition));
-  float MAMean  = fHn4DForZNAMtRC -> GetBinContent(fHn4DForZNAMtRC->GetBin(fillPosition));
-
   int entriesC = fHn4DForZNCCountsRC -> GetBinContent(fHn4DForZNCCountsRC->GetBin(fillPosition));
   int entriesA = fHn4DForZNACountsRC -> GetBinContent(fHn4DForZNACountsRC->GetBin(fillPosition));
 
@@ -1863,7 +1860,7 @@ bool AliAnalysisTaskLambdaProtonCVE::GetZDCPlaneLsFit()
   for(int i = 0; i < 4; i++) {
     // ZNC 
     // get energy
-    EZNC = towZNC[i+1];
+    //EZNC = towZNC[i+1];
     // build ZDCC centroid
     wZNC = TMath::Max(0., 4.0 + TMath::Log(towZNC[i+1]/fZNCTowerRawAOD[0]));
     numXZNC += xZDCC[i]*wZNC;
@@ -1872,7 +1869,7 @@ bool AliAnalysisTaskLambdaProtonCVE::GetZDCPlaneLsFit()
         
     // ZNA part
     // get energy
-    EZNA = towZNA[i+1];
+    //EZNA = towZNA[i+1];
     // build ZDCA centroid
     wZNA = TMath::Max(0., 4.0 + TMath::Log(towZNA[i+1]/fZNATowerRawAOD[0]));
     numXZNA += xZDCA[i]*wZNA;
@@ -2471,7 +2468,7 @@ bool AliAnalysisTaskLambdaProtonCVE::LoadCalibHistForThisRun()
       hMultV0 -> Reset();
       for (int i = 0; i < 2; i++) {
         hQx2mV0[i] -> Reset();
-        hQx2mV0[i] -> Reset();
+        hQy2mV0[i] -> Reset();
       }
       hMultV0    = ((TH1D*) contMult ->GetObject(fRunNum));
       hQx2mV0[0] = ((TH1D*) contQxncm->GetObject(fRunNum));
@@ -2494,19 +2491,17 @@ bool AliAnalysisTaskLambdaProtonCVE::LoadCalibHistForThisRun()
       if (!hCorrectNUANeg) return false;
     }
   }
-  cout<<"Loading Calibration Histograms for Run "<<endl;
   if (fPeriod.EqualTo("LHC18q") || fPeriod.EqualTo("LHC18r")) {
+    //18q/r VZERO
     if (IsVZEROCalibOn) {
       for (int i = 0; i < 2; i++) {
-        hQx2mV0[i] -> Reset();
-        hQx2mV0[i] -> Reset();
+        hQx2mV0[i] ->Reset();
+        hQy2mV0[i] ->Reset();
       }
-      std::cout<<"fuck!!!"<<endl;
       hQx2mV0[0] = ((TH1D*) contQxncm->GetObject(fRunNum));
       hQy2mV0[0] = ((TH1D*) contQyncm->GetObject(fRunNum));
       hQx2mV0[1] = ((TH1D*) contQxnam->GetObject(fRunNum));
       hQy2mV0[1] = ((TH1D*) contQynam->GetObject(fRunNum));
-      if(!hQx2mV0[0]) std::cout<<"fuck!!!"<<endl;
       for (int i = 0; i < 2; i++) {
         if (!hQx2mV0[i]) return false;
         if (!hQy2mV0[i]) return false;
@@ -2535,7 +2530,6 @@ bool AliAnalysisTaskLambdaProtonCVE::LoadCalibHistForThisRun()
       if (!fHZDCAparameters) return false;
     }
   }
-  std::cout<<"end of Load"<<endl;
   return true;
 }
 
@@ -2570,7 +2564,6 @@ bool AliAnalysisTaskLambdaProtonCVE::RejectEvtMultComp() // 15o_pass1, old pile-
       double Eta  = aodTrk->Eta();
       double Pt    = aodTrk->Pt();
       double Phi  = aodTrk->Phi();
-      double charge = aodTrk->Charge();
       if (Pt<0.2 || Pt>5.0 || TMath::Abs(Eta)>0.8 || aodTrk->GetTPCNcls()<fNclsCut || aodTrk->GetTPCsignal()<10.0) continue;
       if (aodTrk->TestFilterBit(1) && aodTrk->Chi2perNDF()>0.2)  multTPCFE++;
       if (!aodTrk->TestFilterBit(16) || aodTrk->Chi2perNDF()<0.1)   continue;
@@ -2597,7 +2590,7 @@ bool AliAnalysisTaskLambdaProtonCVE::RejectEvtMultComp() // 15o_pass1, old pile-
       else return false;
     }
 
-    if (fMultComp.EqualTo("pileupByGlobalTPC1") ) { // A.Dobrin
+    if (fMultComp.EqualTo("pileupByGlobalTPC1")) { // A.Dobrin
       if (multTPCFE-1.78*multGlobal<62.87 && multTPCFE-1.48*multGlobal>-36.73) {
         fHist2DMultMultQA[4]->Fill(multGlobal,multTPCFE);
         return true;
