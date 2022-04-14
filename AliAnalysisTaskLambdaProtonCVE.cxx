@@ -102,6 +102,7 @@ AliAnalysisTaskLambdaProtonCVE::AliAnalysisTaskLambdaProtonCVE() :
   fPtMax(5.0),
   IsDoNUE(true),
   IsDoNUA(true),
+  fProtonPtMax(3.0),
   fNSigmaTPCCut(4),
   fNSigmaTOFCut(4),
   fV0PtMin(0.5),
@@ -388,6 +389,7 @@ AliAnalysisTaskLambdaProtonCVE::AliAnalysisTaskLambdaProtonCVE(const char *name)
   fPtMax(5.0),
   IsDoNUE(true),
   IsDoNUA(true),
+  fProtonPtMax(3.0),
   fNSigmaTPCCut(4),
   fNSigmaTOFCut(4),
   fV0PtMin(0.5),
@@ -1823,7 +1825,6 @@ bool AliAnalysisTaskLambdaProtonCVE::GetZDCPlane()
 }
 
 //---------------------------------------------------
-
 bool AliAnalysisTaskLambdaProtonCVE::GetZDCPlaneLsFit()
 {
   if(!(fPeriod.EqualTo("LHC18q") || fPeriod.EqualTo("LHC18r"))) return true;
@@ -1835,20 +1836,20 @@ bool AliAnalysisTaskLambdaProtonCVE::GetZDCPlaneLsFit()
     if(fZNATowerRawAOD[iTower] < 1.e-6) return false;
     if(fZNCTowerRawAOD[iTower] < 1.e-6) return false;
   }
-  
-	double towZNCraw1GainEq = 0, towZNCraw2GainEq = 0, towZNCraw3GainEq = 0, towZNCraw4GainEq = 0;
-	towZNCraw1GainEq = fZNCTowerRawAOD[1] * fHZDCCparameters->GetBinContent(1);
-	towZNCraw2GainEq = fZNCTowerRawAOD[2] * fHZDCCparameters->GetBinContent(2);
-	towZNCraw3GainEq = fZNCTowerRawAOD[3] * fHZDCCparameters->GetBinContent(3);
-	towZNCraw4GainEq = fZNCTowerRawAOD[4] * fHZDCCparameters->GetBinContent(4);
 
-	double towZNAraw1GainEq = 0, towZNAraw2GainEq = 0, towZNAraw3GainEq = 0, towZNAraw4GainEq = 0;
-	towZNAraw1GainEq = fZNATowerRawAOD[1] * fHZDCAparameters->GetBinContent(1);
-	towZNAraw2GainEq = fZNATowerRawAOD[2] * fHZDCAparameters->GetBinContent(2);
-	towZNAraw3GainEq = fZNATowerRawAOD[3] * fHZDCAparameters->GetBinContent(3);
-	towZNAraw4GainEq = fZNATowerRawAOD[4] * fHZDCAparameters->GetBinContent(4);
+  double towZNCraw1GainEq = 0, towZNCraw2GainEq = 0, towZNCraw3GainEq = 0, towZNCraw4GainEq = 0;
+  towZNCraw1GainEq = fZNCTowerRawAOD[1] * fHZDCCparameters->GetBinContent(1);
+  towZNCraw2GainEq = fZNCTowerRawAOD[2] * fHZDCCparameters->GetBinContent(2);
+  towZNCraw3GainEq = fZNCTowerRawAOD[3] * fHZDCCparameters->GetBinContent(3);
+  towZNCraw4GainEq = fZNCTowerRawAOD[4] * fHZDCCparameters->GetBinContent(4);
 
-	const double xZDCC[4] = {-1,  1, -1,  1}; // directional vector
+  double towZNAraw1GainEq = 0, towZNAraw2GainEq = 0, towZNAraw3GainEq = 0, towZNAraw4GainEq = 0;
+  towZNAraw1GainEq = fZNATowerRawAOD[1] * fHZDCAparameters->GetBinContent(1);
+  towZNAraw2GainEq = fZNATowerRawAOD[2] * fHZDCAparameters->GetBinContent(2);
+  towZNAraw3GainEq = fZNATowerRawAOD[3] * fHZDCAparameters->GetBinContent(3);
+  towZNAraw4GainEq = fZNATowerRawAOD[4] * fHZDCAparameters->GetBinContent(4);
+
+  const double xZDCC[4] = {-1,  1, -1,  1}; // directional vector
   const double yZDCC[4] = {-1, -1,  1,  1};
   const double xZDCA[4] = { 1, -1,  1, -1};
   const double yZDCA[4] = {-1, -1,  1,  1};
@@ -1878,8 +1879,8 @@ bool AliAnalysisTaskLambdaProtonCVE::GetZDCPlaneLsFit()
     numYZNA += yZDCA[i]*wZNA;
     denZNA += wZNA;
   }
-  if (denZNC==0) return false;
-  if (denZNA==0) return false;
+  if (fabs(denZNC) < 1.e-6) return false;
+  if (fabs(denZNA) < 1.e-6) return false;
 
   double ZDCCxPosFromLogWeight = numXZNC/denZNC;
   double ZDCCyPosFromLogWeight = numYZNC/denZNC;
@@ -1899,6 +1900,7 @@ bool AliAnalysisTaskLambdaProtonCVE::GetZDCPlaneLsFit()
 
   double psiZNCGE = GetEventPlane(ZDCCxPosFromLogWeight,ZDCCyPosFromLogWeight,1);
   double psiZNAGE = GetEventPlane(ZDCAxPosFromLogWeight,ZDCAyPosFromLogWeight,1);
+  if (TMath::IsNaN(psiZNCGE) || TMath::IsNaN(psiZNAGE)) return false;
 
   fHist2DCalibPsi1ZNCCent[0] ->Fill(fCent,psiZNCGE);
   fHist2DCalibPsi1ZNACent[0] ->Fill(fCent,psiZNAGE);
@@ -1928,13 +1930,16 @@ bool AliAnalysisTaskLambdaProtonCVE::GetZDCPlaneLsFit()
   fProfileZDCQyAQyCCent[1] -> Fill(fCent,QyZNA*QyZNC);
 
   double psiZNCRC = GetEventPlane(QxZNC,QyZNC,1);
-  double psiZNARC = GetEventPlane(QxZNA,QyZNC,1);
+  double psiZNARC = GetEventPlane(QxZNA,QyZNA,1);
+  if (TMath::IsNaN(psiZNCRC) || TMath::IsNaN(psiZNARC)) return false;
 
   fHist2DCalibPsi1ZNCCent[1] ->Fill(fCent,psiZNCRC);
   fHist2DCalibPsi1ZNACent[1] ->Fill(fCent,psiZNARC);
 
   fPsi1ZNC = psiZNCRC;
   fPsi1ZNA = psiZNARC;
+
+  return true;
 }
 //---------------------------------------------------
 
@@ -2489,17 +2494,19 @@ bool AliAnalysisTaskLambdaProtonCVE::LoadCalibHistForThisRun()
       if (!hCorrectNUANeg) return false;
     }
   }
-
+  cout<<"Loading Calibration Histograms for Run "<<endl;
   if (fPeriod.EqualTo("LHC18q") || fPeriod.EqualTo("LHC18r")) {
     if (IsVZEROCalibOn) {
       for (int i = 0; i < 2; i++) {
         hQx2mV0[i] -> Reset();
         hQx2mV0[i] -> Reset();
       }
+      std::cout<<"fuck!!!"<<endl;
       hQx2mV0[0] = ((TH1D*) contQxncm->GetObject(fRunNum));
       hQy2mV0[0] = ((TH1D*) contQyncm->GetObject(fRunNum));
       hQx2mV0[1] = ((TH1D*) contQxnam->GetObject(fRunNum));
       hQy2mV0[1] = ((TH1D*) contQynam->GetObject(fRunNum));
+      if(!hQx2mV0[0]) std::cout<<"fuck!!!"<<endl;
       for (int i = 0; i < 2; i++) {
         if (!hQx2mV0[i]) return false;
         if (!hQy2mV0[i]) return false;
@@ -2528,6 +2535,7 @@ bool AliAnalysisTaskLambdaProtonCVE::LoadCalibHistForThisRun()
       if (!fHZDCAparameters) return false;
     }
   }
+  std::cout<<"end of Load"<<endl;
   return true;
 }
 
@@ -2689,7 +2697,7 @@ bool AliAnalysisTaskLambdaProtonCVE::RejectEvtTPCITSfb32TOF ()
 
 //---------------------------------------------------
 
-bool AliAnalysisTaskLambdaProtonCVE::AODPileupCheck ()
+bool AliAnalysisTaskLambdaProtonCVE::AODPileupCheck()
 {
   Int_t isPileup = fAOD->IsPileupFromSPD(3);
   if (isPileup !=0 && fPeriod.EqualTo("LHC16t")) return false; // LHC16t : pPb

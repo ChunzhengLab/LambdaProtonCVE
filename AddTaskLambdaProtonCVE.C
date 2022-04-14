@@ -9,7 +9,7 @@
 AliAnalysisTaskLambdaProtonCVE* AddTaskLambdaProtonCVE(
   int               debug=0, // debug level controls amount of output statements
   TString   trigger="kINT7",
-  TString   period="LHC18q",
+  TString   period="LHC18r",
   int         filterBit=768, // AOD filter bit selection
   bool       v0calibOn=true,
   bool      zdccalibOn=true,
@@ -83,7 +83,7 @@ AliAnalysisTaskLambdaProtonCVE* AddTaskLambdaProtonCVE(
       fListNUE = dynamic_cast <TList*> (fNUEFile->Get("fMcEffiHij"));
     }
     if (period.EqualTo("LHC18r")) {
-      fNUEFile = TFile::Open("alien:///alice/cern.ch/user/c/chunzhen/CalibFiles/LHC18q/efficiencyBothpol18qnew.root","READ");
+      fNUEFile = TFile::Open("alien:///alice/cern.ch/user/c/chunzhen/CalibFiles/LHC18r/efficiencyBothpol18qnew.root","READ");
       fListNUE = dynamic_cast <TList*> (fNUEFile->Get("fMcEffiHij"));
     }
     if(fListNUE) {
@@ -129,7 +129,7 @@ AliAnalysisTaskLambdaProtonCVE* AddTaskLambdaProtonCVE(
       fVZEROCalibList = dynamic_cast <TList*> (fVZEROCalibFile->Get("fWgtsV0ZDC"));
     }
     if (period.EqualTo("LHC18r")) {
-      fVZEROCalibFile = TFile::Open("alien:///alice/cern.ch/user/c/chunzhen/CalibFiles/LHC18q/calibSpq2V0C18rP3.root","READ");
+      fVZEROCalibFile = TFile::Open("alien:///alice/cern.ch/user/c/chunzhen/CalibFiles/LHC18r/calibSpq2V0C18rP3.root","READ");
       fVZEROCalibList = dynamic_cast <TList*> (fVZEROCalibFile->Get("fWgtsV0ZDC"));
     }
     if(fVZEROCalibList) {
@@ -149,11 +149,11 @@ AliAnalysisTaskLambdaProtonCVE* AddTaskLambdaProtonCVE(
     // }
     if (period.EqualTo("LHC18q")) {
       fZDCCalibFile = TFile::Open("alien:///alice/cern.ch/user/c/chunzhen/CalibFiles/LHC18q/RecenteringResultFinal_2018q.root","READ");
-      fZDCCalibList = dynamic_cast <TList*> (fZDCCalibFile->Get("10hlistqncalib"));
+      fZDCCalibList = dynamic_cast <TList*> (fZDCCalibFile->Get("fOutputRecenter"));
     }
     if (period.EqualTo("LHC18r")) {
       fZDCCalibFile = TFile::Open("alien:///alice/cern.ch/user/c/chunzhen/CalibFiles/LHC18r/RecenteringResultFinal_2018r.root","READ");
-      fZDCCalibList = dynamic_cast <TList*> (fZDCCalibFile->Get("10hlistqncalib"));
+      fZDCCalibList = dynamic_cast <TList*> (fZDCCalibFile->Get("fOutputRecenter"));
     }
     if(fZDCCalibList) {
       task->SetListForZDCCalib(fZDCCalibList);

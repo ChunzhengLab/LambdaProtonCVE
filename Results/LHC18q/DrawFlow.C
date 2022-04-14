@@ -70,28 +70,28 @@ void DrawFlow(){
 
   gStyle->SetOptStat(0);
 
-  TFile* HEPDataFile_table1 = TFile::Open("runAnalysis.root", "READ");
-  TFile* HEPDataFile_table3 = TFile::Open("HEPData-ins877822-v1-Table_3.root", "READ");
-  TFile* HEPDataFile_table34 = TFile::Open("HEPData-ins1297103-v1-Table_34.root", "READ");
-  TFile* HEPDataFile_table46 = TFile::Open("HEPData-ins1297103-v1-Table_46.root", "READ");
+  // TFile* HEPDataFile_table1 = TFile::Open("runAnalysis.root", "READ");
+  // TFile* HEPDataFile_table3 = TFile::Open("HEPData-ins877822-v1-Table_3.root", "READ");
+  // TFile* HEPDataFile_table34 = TFile::Open("HEPData-ins1297103-v1-Table_34.root", "READ");
+  // TFile* HEPDataFile_table46 = TFile::Open("HEPData-ins1297103-v1-Table_46.root", "READ");
 
-  TDirectoryFile* Table1 = (TDirectoryFile*) HEPDataFile_table1->GetDirectory("Table 1");
-  TDirectoryFile* Table3 = (TDirectoryFile*) HEPDataFile_table3->GetDirectory("Table 3");
-  TDirectoryFile* Table34 = (TDirectoryFile*) HEPDataFile_table34->GetDirectory("Table 34");
-  TDirectoryFile* Table46 = (TDirectoryFile*) HEPDataFile_table46->GetDirectory("Table 46");
+  // TDirectoryFile* Table1 = (TDirectoryFile*) HEPDataFile_table1->GetDirectory("Table 1");
+  // TDirectoryFile* Table3 = (TDirectoryFile*) HEPDataFile_table3->GetDirectory("Table 3");
+  // TDirectoryFile* Table34 = (TDirectoryFile*) HEPDataFile_table34->GetDirectory("Table 34");
+  // TDirectoryFile* Table46 = (TDirectoryFile*) HEPDataFile_table46->GetDirectory("Table 46");
 
-  TGraphAsymmErrors* v2Cent;
-  Table3->cd();
-  Table3->GetObject("Graph1D_y1",v2Cent);
-  TGraphAsymmErrors* v2PtCent4050;
-  Table1->cd();
-  Table1->GetObject("Graph1D_y1",v2PtCent4050);
-  TGraphAsymmErrors* v2ProtonPtCent4050;
-  Table34->cd();
-  Table34->GetObject("Graph1D_y1",v2ProtonPtCent4050);
-  TGraphAsymmErrors* v2LambdaPtCent4050;
-  Table46->cd();
-  Table46->GetObject("Graph1D_y1",v2LambdaPtCent4050);
+  // TGraphAsymmErrors* v2Cent;
+  // Table3->cd();
+  // Table3->GetObject("Graph1D_y1",v2Cent);
+  // TGraphAsymmErrors* v2PtCent4050;
+  // Table1->cd();
+  // Table1->GetObject("Graph1D_y1",v2PtCent4050);
+  // TGraphAsymmErrors* v2ProtonPtCent4050;
+  // Table34->cd();
+  // Table34->GetObject("Graph1D_y1",v2ProtonPtCent4050);
+  // TGraphAsymmErrors* v2LambdaPtCent4050;
+  // Table46->cd();
+  // Table46->GetObject("Graph1D_y1",v2LambdaPtCent4050);
 
   TList* outputList = nullptr;
   TFile* outputFile = TFile::Open("AnalysisResults.root", "READ");
@@ -340,7 +340,7 @@ void DrawFlow(){
   legendV2->AddEntry(hRes[2],"V0A","lp");
   legendV2->AddEntry(hRes[3],"ZNC","lp");
   legendV2->AddEntry(hRes[4],"ZNA","lp");
-  legendV2->AddEntry(v2Cent ,"Published","lp");
+  //legendV2->AddEntry(v2Cent ,"Published","lp");
 
   TLegend *legendV2Diff = new TLegend(0.15,0.6,0.3,0.85);
   legendV2Diff->SetBorderSize(0);
@@ -377,7 +377,7 @@ void DrawFlow(){
     hFlowCenthPos[i]->Draw("SAME");
     hFlowCenthNeg[i]->Draw("SAME");
   }
-  v2Cent->Draw("SAME");
+  //v2Cent->Draw("SAME");
   legendV2->Draw("SAME");
 
 
@@ -399,7 +399,7 @@ void DrawFlow(){
     hFlowPt_hPos_Cent[4][i]->Draw("SAME");
     hFlowPt_hNeg_Cent[4][i]->Draw("SAME");
   }
-  v2PtCent4050->Draw("same");
+  //v2PtCent4050->Draw("same");
   legendV2->Draw("SAME");
 
   cV2Pt->cd(2);
@@ -412,7 +412,7 @@ void DrawFlow(){
     hFlowPt_Proton_Cent[4][i]->Draw("SAME");
     hFlowPt_AntiProton_Cent[4][i]->Draw("SAME");
   }
-  v2ProtonPtCent4050->Draw("same");
+  //v2ProtonPtCent4050->Draw("same");
   legendV2->Draw("SAME");
 
   cV2Pt->cd(3);
@@ -426,7 +426,7 @@ void DrawFlow(){
     hFlowPt_AntiLambda_Cent[4][i]->Draw("SAME");
     legendV2->Draw("SAME");
   }
-  v2LambdaPtCent4050->Draw("same");
+  //v2LambdaPtCent4050->Draw("same");
   legendV2->Draw("SAME");
 
 

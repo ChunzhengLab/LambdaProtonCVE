@@ -16,7 +16,7 @@
 using namespace std;
 void generate(const char *module = "__ALL__")
 {
-  Int_t nFiles = 2;                                                                               // TString(gSystem->Getenv("TEST_FILES_NO")).Atoi();//TEST_FILES_NO
+  Int_t nFiles = 1;                                                                               // TString(gSystem->Getenv("TEST_FILES_NO")).Atoi();//TEST_FILES_NO
   Int_t nTestEvents = TString(gSystem->Getenv("TEST_FILES_NO")).Atoi();                           // for the on the fly trains this contains the number of test events
   TString dataAnchor(gSystem->Getenv("FILE_PATTERN"));                                            // FILE_PATTERN
   Int_t splitMaxInputFileNumber = TString(gSystem->Getenv("SPLIT_MAX_INPUT_FILE_NUMBER")).Atoi(); // SPLIT_MAX_INPUT_FILE_NUMBER
