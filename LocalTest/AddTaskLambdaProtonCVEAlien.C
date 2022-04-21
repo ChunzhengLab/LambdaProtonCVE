@@ -8,17 +8,17 @@
 
 AliAnalysisTaskLambdaProtonCVELocal* AddTaskLambdaProtonCVEAlien(
   int               debug=1, // debug level controls amount of output statements
-  TString   trigger="kINT7",
-  TString   period="LHC18r",
-  int         filterBit=768, // AOD filter bit selection
+  TString     trigger="kMB",
+  TString   period="LHC10h",
+  int           filterBit=1, // AOD filter bit selection
   bool       v0calibOn=true,
   bool      zdccalibOn=true,
   bool         QAVZERO=true,
   bool           QAZDC=true,
   bool           QATPC=true,
   bool          doNUE=false,
-  bool           doNUA=true,
-  bool    checkPIDFlow=true,
+  bool          doNUA=false,
+  bool   checkPIDFlow=false,
   TString        uniqueID=""
   )
 {  
@@ -94,7 +94,8 @@ AliAnalysisTaskLambdaProtonCVELocal* AddTaskLambdaProtonCVEAlien(
 
   if (doNUA) {
     if (period.EqualTo("LHC10h")) {
-      fNUAFile = TFile::Open("alien:///alice/cern.ch/user/c/chunzhen/CalibFiles/LHC10h/10hNUAFB768.root","READ");
+      if(filterBit == 1)   fNUAFile = TFile::Open("alien:///alice/cern.ch/user/c/chunzhen/CalibFiles/LHC10h/10hNUAFB1.root","READ");
+      if(filterBit == 768) fNUAFile = TFile::Open("alien:///alice/cern.ch/user/c/chunzhen/CalibFiles/LHC10h/10hNUAFB768.root","READ");
       fListNUA = dynamic_cast <TList*> (fNUAFile->Get("10hListNUA"));
     }
     if (period.EqualTo("LHC15o")) {

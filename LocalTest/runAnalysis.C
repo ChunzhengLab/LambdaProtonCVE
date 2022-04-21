@@ -18,7 +18,7 @@
 void runAnalysis()
 {
     // Dataset
-    TString dataset = "LHC18r";
+    TString dataset = "LHC10h";
     // set if you want to run the analysis locally (kTRUE), or on grid (kFALSE)
     // if you run on grid, specify test mode (kTRUE) or full grid model (kFALSE)
     Bool_t local      = kFALSE;
@@ -33,7 +33,7 @@ void runAnalysis()
       local = kFALSE;
     }
 
-    Int_t groupNumber = 9;
+    Int_t groupNumber = 1;
     
     // since we will compile a class, tell root where to look for headers  
 #if !defined (__CINT__) || defined (__CLING__)
@@ -116,15 +116,15 @@ void runAnalysis()
             alienHandler->AddRunNumber(139510);
             alienHandler->AddRunNumber(139507);
             alienHandler->AddRunNumber(139505);
-            alienHandler->AddRunNumber(139503);
-            alienHandler->AddRunNumber(139465);
-            alienHandler->AddRunNumber(139438);
-            alienHandler->AddRunNumber(139437);
-            alienHandler->AddRunNumber(139360);
-            alienHandler->AddRunNumber(139329);
-            alienHandler->AddRunNumber(139328);
-            alienHandler->AddRunNumber(139314);
-            alienHandler->AddRunNumber(139310);
+            // alienHandler->AddRunNumber(139503);
+            // alienHandler->AddRunNumber(139465);
+            // alienHandler->AddRunNumber(139438);
+            // alienHandler->AddRunNumber(139437);
+            // alienHandler->AddRunNumber(139360);
+            // alienHandler->AddRunNumber(139329);
+            // alienHandler->AddRunNumber(139328);
+            // alienHandler->AddRunNumber(139314);
+            // alienHandler->AddRunNumber(139310);
             }
           if(groupNumber == 2) {
             alienHandler->AddRunNumber(139309);
@@ -436,11 +436,11 @@ void runAnalysis()
           // MC has no prefix, data has prefix 000
           alienHandler->SetRunPrefix("000");
           if(groupNumber == 1) {
-            alienHandler->AddRunNumber(296269);
-            alienHandler->AddRunNumber(296270); 
-            alienHandler->AddRunNumber(296547);
-            alienHandler->AddRunNumber(296472);
-            alienHandler->AddRunNumber(295581);
+            // alienHandler->AddRunNumber(296269);
+            // alienHandler->AddRunNumber(296270); 
+            // alienHandler->AddRunNumber(296547);
+            // alienHandler->AddRunNumber(296472);
+            // alienHandler->AddRunNumber(295581);
             alienHandler->AddRunNumber(295584);
             alienHandler->AddRunNumber(295585);
             alienHandler->AddRunNumber(295586);
@@ -625,13 +625,13 @@ void runAnalysis()
 
           //groupNumber = 0;
           if(groupNumber == 1) {
-            alienHandler->AddRunNumber(296690);
-            alienHandler->AddRunNumber(296691);
-            alienHandler->AddRunNumber(296693);
-            alienHandler->AddRunNumber(296694);
-            alienHandler->AddRunNumber(296752);
-            alienHandler->AddRunNumber(296784);
-            alienHandler->AddRunNumber(296785);
+            // alienHandler->AddRunNumber(296690);
+            // alienHandler->AddRunNumber(296691);
+            // alienHandler->AddRunNumber(296693);
+            // alienHandler->AddRunNumber(296694);
+            // alienHandler->AddRunNumber(296752);
+            // alienHandler->AddRunNumber(296784);
+            // alienHandler->AddRunNumber(296785);
             alienHandler->AddRunNumber(296786);
             alienHandler->AddRunNumber(296787);
           }

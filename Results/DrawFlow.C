@@ -16,6 +16,7 @@
 
 bool isZDCR2fromR1 = 0;
 bool isZDCR2fromData = 1;
+TString fPeriod = "LHC10h";
 
 template <class TH>
 void SetStyle(TH &hist, unsigned int color, unsigned int markerStyle, double markerSize = 1, double lineWidth = 1) 
@@ -27,31 +28,7 @@ void SetStyle(TH &hist, unsigned int color, unsigned int markerStyle, double mar
   hist->SetLineWidth(lineWidth);
 }
 
-void DrawFlow(){  
-  // int ci[4];
-  // TColor* color[4];
-  // ci[0] = TColor::GetFreeColorIndex();
-  // color[0] = new TColor(ci[0],   0/255.,  24/255., 113/255.);//dark blue
-  // ci[1] = TColor::GetFreeColorIndex();
-  // color[1] = new TColor(ci[1], 255/255.,  88/255.,  93/255.);//red
-  // ci[2] = TColor::GetFreeColorIndex();
-  // color[2] = new TColor(ci[2], 255/255., 181/255.,  73/255.);//yellow
-  // ci[3] = TColor::GetFreeColorIndex();
-  // color[3] = new TColor(ci[3], 65/255.,  182/255., 230/255.);//light blue
-
-  // int ci[5];
-  // TColor* color[5];
-  // ci[0] = TColor::GetFreeColorIndex();
-  // color[0] = new TColor(ci[0],  24/255.,  63/255.,  94/255.);//深蓝
-  // ci[1] = TColor::GetFreeColorIndex();
-  // color[1] = new TColor(ci[1],  33/255.,  99/255., 154/255.);//浅蓝
-  // ci[2] = TColor::GetFreeColorIndex();
-  // color[2] = new TColor(ci[2], 246/255., 213/255., 101/255.);//黄
-  // ci[3] = TColor::GetFreeColorIndex();
-  // color[3] = new TColor(ci[3],  62/255., 174/255., 164/255.);//绿
-  // ci[4] = TColor::GetFreeColorIndex();
-  // color[4] = new TColor(ci[4], 236/255.,  85/255.,  60/255.);//红
-  
+void DrawFlow(){
   int ci[6];
   TColor* color[6];
   ci[0] = TColor::GetFreeColorIndex();
@@ -70,32 +47,41 @@ void DrawFlow(){
 
   gStyle->SetOptStat(0);
 
-  TFile* HEPDataFile_table1 = TFile::Open("runAnalysis.root", "READ");
-  TFile* HEPDataFile_table3 = TFile::Open("HEPData-ins877822-v1-Table_3.root", "READ");
-  TFile* HEPDataFile_table34 = TFile::Open("HEPData-ins1297103-v1-Table_34.root", "READ");
-  TFile* HEPDataFile_table46 = TFile::Open("HEPData-ins1297103-v1-Table_46.root", "READ");
+  TFile* inputFile_IncFlow_sqrtsNN276 = TFile::Open("/Users/wangchunzheng/works/PublishedResults/Flow/Flow_2.76TeV_HEPData-ins877822-v1-root.root");
+  TFile* inputFile_PIDFlow_sqrtsNN276 = TFile::Open("/Users/wangchunzheng/works/PublishedResults/Flow/PIDFlow_2.76TeV_HEPData-ins1297103-v1-root.root");
+  TFile* inputFile_IncFlow_sqrtsNN502 = TFile::Open("/Users/wangchunzheng/works/PublishedResults/Flow/Flow_5.02TeV_HEPData-ins1419244-v2-root.root");
+  TFile* inputFile_PIDFlow_sqrtsNN502 = TFile::Open("/Users/wangchunzheng/works/PublishedResults/Flow/PIDFlow_5.02TeV_HEPData-ins1672822-v1-root.root");
 
-  TDirectoryFile* Table1 = (TDirectoryFile*) HEPDataFile_table1->GetDirectory("Table 1");
-  TDirectoryFile* Table3 = (TDirectoryFile*) HEPDataFile_table3->GetDirectory("Table 3");
-  TDirectoryFile* Table34 = (TDirectoryFile*) HEPDataFile_table34->GetDirectory("Table 34");
-  TDirectoryFile* Table46 = (TDirectoryFile*) HEPDataFile_table46->GetDirectory("Table 46");
+  //inc
+  TDirectoryFile* dir_v2_C2_cent_sqrtsNN276 = (TDirectoryFile*)inputFile_IncFlow_sqrtsNN276->Get("Table 3");
+  TDirectoryFile* dir_v2_C2_cent_sqrtsNN502 = (TDirectoryFile*)inputFile_IncFlow_sqrtsNN502->Get("Table 1");
+  
+  TDirectoryFile* dir_v2_C2_charge_pt_cent4050_sqrtsNN276 = (TDirectoryFile*)inputFile_IncFlow_sqrtsNN276->Get("Table 1");
+  TDirectoryFile* dir_v2_SP_proton_pt_cent4050_sqrtsNN276 = (TDirectoryFile*)inputFile_PIDFlow_sqrtsNN276->Get("Table 34");
+  TDirectoryFile* dir_v2_IM_lambda_pt_cent4050_sqrtsNN276 = (TDirectoryFile*)inputFile_PIDFlow_sqrtsNN276->Get("Table 46");
 
-  TGraphAsymmErrors* v2Cent;
-  Table3->cd();
-  Table3->GetObject("Graph1D_y1",v2Cent);
-  TGraphAsymmErrors* v2PtCent4050;
-  Table1->cd();
-  Table1->GetObject("Graph1D_y1",v2PtCent4050);
-  TGraphAsymmErrors* v2ProtonPtCent4050;
-  Table34->cd();
-  Table34->GetObject("Graph1D_y1",v2ProtonPtCent4050);
-  TGraphAsymmErrors* v2LambdaPtCent4050;
-  Table46->cd();
-  Table46->GetObject("Graph1D_y1",v2LambdaPtCent4050);
+  TDirectoryFile* dir_v2_C2_charge_pt_cent3040_sqrtsNN502 = (TDirectoryFile*)inputFile_IncFlow_sqrtsNN502->Get("Table 8");
+  TDirectoryFile* dir_v2_SP_proton_pt_cent3040_sqrtsNN502 = (TDirectoryFile*)inputFile_PIDFlow_sqrtsNN502->Get("Table 51");
+  TDirectoryFile* dir_v2_IM_lambda_pt_cent3040_sqrtsNN502 = (TDirectoryFile*)inputFile_PIDFlow_sqrtsNN502->Get("Table 87");
 
-  TList* outputList = nullptr;
-  TFile* outputFile = TFile::Open("AnalysisResults.root", "READ");
-  outputList = (TList*) outputFile->Get("output_"); 
+  TGraphAsymmErrors* v2_C2_cent_sqrtsNN276 = (TGraphAsymmErrors*)dir_v2_C2_cent_sqrtsNN276->Get("Graph1D_y1"); 
+  TGraphAsymmErrors* v2_C2_cent_sqrtsNN502 = (TGraphAsymmErrors*)dir_v2_C2_cent_sqrtsNN502->Get("Graph1D_y1"); 
+
+  TGraphAsymmErrors* v2_C2_charge_pt_cent4050_sqrtsNN276 = (TGraphAsymmErrors*)dir_v2_C2_charge_pt_cent4050_sqrtsNN276->Get("Graph1D_y1");
+  TGraphAsymmErrors* v2_SP_proton_pt_cent4050_sqrtsNN276 = (TGraphAsymmErrors*)dir_v2_SP_proton_pt_cent4050_sqrtsNN276->Get("Graph1D_y1");
+  TGraphAsymmErrors* v2_IM_lambda_pt_cent4050_sqrtsNN276 = (TGraphAsymmErrors*)dir_v2_IM_lambda_pt_cent4050_sqrtsNN276->Get("Graph1D_y1");
+
+  TGraphAsymmErrors* v2_C2_charge_pt_cent3040_sqrtsNN502 = (TGraphAsymmErrors*)dir_v2_C2_charge_pt_cent3040_sqrtsNN502->Get("Graph1D_y1");
+  TGraphAsymmErrors* v2_SP_proton_pt_cent3040_sqrtsNN502 = (TGraphAsymmErrors*)dir_v2_SP_proton_pt_cent3040_sqrtsNN502->Get("Graph1D_y1");
+  TGraphAsymmErrors* v2_IM_lambda_pt_cent3040_sqrtsNN502 = (TGraphAsymmErrors*)dir_v2_IM_lambda_pt_cent3040_sqrtsNN502->Get("Graph1D_y1");
+
+
+  TList* inputList = nullptr;
+  TFile* inputFile = nullptr;
+  if(fPeriod.EqualTo("LHC10h")) inputFile = TFile::Open("./LHC10h/AnalysisResults_10h_PlanePt5_ProtonPt3.root", "READ");
+  if(fPeriod.EqualTo("LHC18q")) inputFile = TFile::Open("./LHC18q/AnalysisResults_18q_PlanePt5_ProtonPt3.root", "READ");
+  if(fPeriod.EqualTo("LHC18r")) inputFile = TFile::Open("./LHC18r/AnalysisResults_18r_PlanePt5_ProtonPt3.root", "READ");
+  inputList = (TList*) inputFile->Get("output_"); 
 
   TProfile2D*  fProfile2DRawFlowCentPthPos[5];
   TProfile2D*  fProfile2DRawFlowCentPthNeg[5];
@@ -111,22 +97,22 @@ void DrawFlow(){
     if (i==2) sprintf(chPlaneType,"V0A");
     if (i==3) sprintf(chPlaneType,"ZNC");
     if (i==4) sprintf(chPlaneType,"ZNA");
-    fProfile2DRawFlowCentPthPos[i] = (TProfile2D*)outputList->FindObject(Form("fProfile2DRawFlowCentPthPos_%s",chPlaneType));
-    fProfile2DRawFlowCentPthNeg[i] = (TProfile2D*)outputList->FindObject(Form("fProfile2DRawFlowCentPthNeg_%s",chPlaneType));
-    fProfile2DRawFlowCentPtProton[i] = (TProfile2D*)outputList->FindObject(Form("fProfile2DRawFlowCentPtProton_%s",chPlaneType));
-    fProfile2DRawFlowCentPtAntiProton[i] = (TProfile2D*)outputList->FindObject(Form("fProfile2DRawFlowCentPtAntiProton_%s",chPlaneType));
-    fProfile2DRawFlowCentPtLambda[i] = (TProfile2D*)outputList->FindObject(Form("fProfile2DRawFlowCentPtLambda_%s",chPlaneType));
-    fProfile2DRawFlowCentPtAntiLambda[i] = (TProfile2D*)outputList->FindObject(Form("fProfile2DRawFlowCentPtAntiLambda_%s",chPlaneType));
+    fProfile2DRawFlowCentPthPos[i] = (TProfile2D*)inputList->FindObject(Form("fProfile2DRawFlowCentPthPos_%s",chPlaneType));
+    fProfile2DRawFlowCentPthNeg[i] = (TProfile2D*)inputList->FindObject(Form("fProfile2DRawFlowCentPthNeg_%s",chPlaneType));
+    fProfile2DRawFlowCentPtProton[i] = (TProfile2D*)inputList->FindObject(Form("fProfile2DRawFlowCentPtProton_%s",chPlaneType));
+    fProfile2DRawFlowCentPtAntiProton[i] = (TProfile2D*)inputList->FindObject(Form("fProfile2DRawFlowCentPtAntiProton_%s",chPlaneType));
+    fProfile2DRawFlowCentPtLambda[i] = (TProfile2D*)inputList->FindObject(Form("fProfile2DRawFlowCentPtLambda_%s",chPlaneType));
+    fProfile2DRawFlowCentPtAntiLambda[i] = (TProfile2D*)inputList->FindObject(Form("fProfile2DRawFlowCentPtAntiLambda_%s",chPlaneType));
   }
 
-  TProfile*  fProfileTPCPsi2Correlation = (TProfile*)outputList -> FindObject("fProfileTPCPsi2Correlation");
-  TProfile*  fProfileV0MPsi2Correlation = (TProfile*)outputList -> FindObject("fProfileV0MPsi2Correlation");
-  TProfile*  fProfileZDCPsi1Correlation = (TProfile*)outputList -> FindObject("fProfileZDCPsi1Correlation");
-  TProfile*  fProfileZDCPsi2Correlation = (TProfile*)outputList -> FindObject("fProfileZDCPsi2Correlation");
-  TProfile*  fProfileV0CTPCPosPsi2Correlation = (TProfile*)outputList -> FindObject("fProfileV0CTPCPosPsi2Correlation");
-  TProfile*  fProfileV0ATPCPosPsi2Correlation = (TProfile*)outputList -> FindObject("fProfileV0ATPCPosPsi2Correlation");
-  TProfile*  fProfileV0CTPCNegPsi2Correlation = (TProfile*)outputList -> FindObject("fProfileV0CTPCNegPsi2Correlation");
-  TProfile*  fProfileV0ATPCNegPsi2Correlation = (TProfile*)outputList -> FindObject("fProfileV0ATPCNegPsi2Correlation");
+  TProfile*  fProfileTPCPsi2Correlation = (TProfile*)inputList -> FindObject("fProfileTPCPsi2Correlation");
+  TProfile*  fProfileV0MPsi2Correlation = (TProfile*)inputList -> FindObject("fProfileV0MPsi2Correlation");
+  TProfile*  fProfileZDCPsi1Correlation = (TProfile*)inputList -> FindObject("fProfileZDCPsi1Correlation");
+  TProfile*  fProfileZDCPsi2Correlation = (TProfile*)inputList -> FindObject("fProfileZDCPsi2Correlation");
+  TProfile*  fProfileV0CTPCPosPsi2Correlation = (TProfile*)inputList -> FindObject("fProfileV0CTPCPosPsi2Correlation");
+  TProfile*  fProfileV0ATPCPosPsi2Correlation = (TProfile*)inputList -> FindObject("fProfileV0ATPCPosPsi2Correlation");
+  TProfile*  fProfileV0CTPCNegPsi2Correlation = (TProfile*)inputList -> FindObject("fProfileV0CTPCNegPsi2Correlation");
+  TProfile*  fProfileV0ATPCNegPsi2Correlation = (TProfile*)inputList -> FindObject("fProfileV0ATPCNegPsi2Correlation");
 
   fProfileTPCPsi2Correlation -> Rebin(10);
   fProfileV0MPsi2Correlation -> Rebin(10);
@@ -139,12 +125,12 @@ void DrawFlow(){
 
   TH1D* hRes[6];
   for (int i = 0; i < 5; i++) {
-    if (i==0) sprintf(chPlaneType,"TPC");
-    if (i==1) sprintf(chPlaneType,"V0C");
-    if (i==2) sprintf(chPlaneType,"V0A");
-    if (i==3) sprintf(chPlaneType,"ZNC");
-    if (i==4) sprintf(chPlaneType,"ZNA");
-    if (i==5) sprintf(chPlaneType,"ZDCR1");
+    if (i==0) sprintf(chPlaneType,"TPC Res_{2}");
+    if (i==1) sprintf(chPlaneType,"V0C Res_{2}");
+    if (i==2) sprintf(chPlaneType,"V0A Res_{2}");
+    if (i==3) sprintf(chPlaneType,"ZNC Res_{2}");
+    if (i==4) sprintf(chPlaneType,"ZNA Res_{2}");
+    if (i==5) sprintf(chPlaneType,"ZDC Res_{1}");
     hRes[i] = new TH1D (Form("hRes_%s",chPlaneType),"",10,0.,100.);
   }
 
@@ -250,20 +236,6 @@ void DrawFlow(){
     hFlowCentAntiLambda[i] -> Divide(hRes[i]);
   }
 
-    // hFlowCenthPos[2]       = fProfileRawFlowCenthPos[2]       -> ProjectionX(Form("hFlowCenthPos_%s","V0A"));
-    // hFlowCenthNeg[2]       = fProfileRawFlowCenthNeg[2]       -> ProjectionX(Form("hFlowCenthNeg_%s","V0A"));
-    // hFlowCentProton[2]     = fProfileRawFlowCentProton[2]     -> ProjectionX(Form("hFlowCentProton_%s","V0A"));
-    // hFlowCentAntiProton[2] = fProfileRawFlowCentAntiProton[2] -> ProjectionX(Form("hFlowCentAntiProton_%s","V0A"));
-    // hFlowCentLambda[2]     = fProfileRawFlowCentLambda[2]     -> ProjectionX(Form("hFlowCentLambda_%s","V0A"));
-    // hFlowCentAntiLambda[2] = fProfileRawFlowCentAntiLambda[2] -> ProjectionX(Form("hFlowCentAntiLambda_%s","V0A"));
-
-    // hFlowCenthPos[2]       -> Divide(hRes[1]);
-    // hFlowCenthNeg[2]       -> Divide(hRes[1]);
-    // hFlowCentProton[2]     -> Divide(hRes[1]);
-    // hFlowCentAntiProton[2] -> Divide(hRes[1]);
-    // hFlowCentLambda[2]     -> Divide(hRes[1]);
-    // hFlowCentAntiLambda[2] -> Divide(hRes[1]);
-
   TH1D*  hFlowPt_hPos_Cent[7][5];
   TH1D*  hFlowPt_hNeg_Cent[7][5];
   TH1D*  hFlowPt_Proton_Cent[7][5];
@@ -312,35 +284,24 @@ void DrawFlow(){
       hFlowPt_AntiLambda_Cent[iCent-1][iPlane]  -> Scale(1./hRes[iPlane]->GetBinContent(iCent));
     }
   }
-  
-  // //QC
-  // TProfile* fProfileC2Cent = (TProfile*) outputList->FindObject("fProfileC2Cent");
-  // TH1D* hFlowCent = new TH1D("hFlowCent", "hFlowCent", 10, 0, 100);
-  // for (int iBin = 0; iBin < 10; iBin++) {
-  //   double c2 = fProfileC2Cent->GetBinContent(iBin+1);
-  //   double c2Err = fProfileC2Cent->GetBinError(iBin+1);
-  //   hFlowCent -> SetBinContent(iBin+1, TMath::Sqrt(c2));
-  //   hFlowCent -> SetBinError(iBin+1, c2Err);
-  // }
 
-
-  TLegend *legendRes = new TLegend(0.7,0.6,0.9,0.88);
+  TLegend *legendRes = new TLegend(0.7,0.63,0.85,0.88);
   legendRes->SetBorderSize(0);
-  legendRes->AddEntry(hRes[0],"TPC","lp");
-  legendRes->AddEntry(hRes[1],"V0C","lp");
-  legendRes->AddEntry(hRes[2],"V0A","lp");
-  legendRes->AddEntry(hRes[3],"ZNC","lp");
-  legendRes->AddEntry(hRes[4],"ZNA","lp");
-  legendRes->AddEntry(hRes[5],"ZNA R1","lp");
+  legendRes->AddEntry(hRes[0],"TPC Res_{2}","lp");
+  legendRes->AddEntry(hRes[1],"V0C Res_{2}","lp");
+  legendRes->AddEntry(hRes[2],"V0A Res_{2}","lp");
+  legendRes->AddEntry(hRes[3],"ZNC Res_{2}","lp");
+  legendRes->AddEntry(hRes[4],"ZNA Res_{2}","lp");
+  legendRes->AddEntry(hRes[5],"ZNA Res_{1}","lp");
 
-  TLegend *legendV2 = new TLegend(0.15,0.6,0.3,0.88);
+  TLegend *legendV2 = new TLegend(0.15,0.6,0.35,0.88);
   legendV2->SetBorderSize(0);
   legendV2->AddEntry(hRes[0],"TPC","lp");
   legendV2->AddEntry(hRes[1],"V0C","lp");
   legendV2->AddEntry(hRes[2],"V0A","lp");
   legendV2->AddEntry(hRes[3],"ZNC","lp");
   legendV2->AddEntry(hRes[4],"ZNA","lp");
-  legendV2->AddEntry(v2Cent ,"Published","lp");
+  legendV2->AddEntry(v2_C2_cent_sqrtsNN276 ,"Published","lp");
 
   TLegend *legendV2Diff = new TLegend(0.15,0.6,0.3,0.85);
   legendV2Diff->SetBorderSize(0);
@@ -351,7 +312,10 @@ void DrawFlow(){
 
   TCanvas* cRes = new TCanvas("cRes","Resolution",10,10,500,400);
   cRes->cd();
-  TH2D* dummyRes = new TH2D("","",1,0,80,1,0,1.);
+  TH2D* dummyRes = new TH2D("","",1,0,80,1,-0.2,1.);
+  if(fPeriod.EqualTo("LHC10h")) dummyRes -> SetTitle("Resolution of 10h");
+  if(fPeriod.EqualTo("LHC18q")) dummyRes -> SetTitle("Resolution of 18q");
+  if(fPeriod.EqualTo("LHC18r")) dummyRes -> SetTitle("Resolution of 18r");
   dummyRes->SetXTitle("Centrality (%)");
   dummyRes->SetYTitle("Resolution");
   dummyRes->GetYaxis()->SetTitleOffset(1.2);
@@ -366,6 +330,9 @@ void DrawFlow(){
   TCanvas* cV2Cent = new TCanvas("cV2Cent","v_{2} vs. Centrality",10,10,500,400);
   cV2Cent->cd();
   TH2D* dummyV2Cent = new TH2D("","",1,0,70,1,-0.01,0.15);
+  if(fPeriod.EqualTo("LHC10h")) dummyV2Cent -> SetTitle("v_{2} vs. Centrality of 10h");
+  if(fPeriod.EqualTo("LHC18q")) dummyV2Cent -> SetTitle("v_{2} vs. Centrality of 18q");
+  if(fPeriod.EqualTo("LHC18r")) dummyV2Cent -> SetTitle("v_{2} vs. Centrality of 18r");
   dummyV2Cent->GetXaxis()->SetTitle("");
   dummyV2Cent->GetXaxis()->SetTitle("Centrality (%)");
   dummyV2Cent->GetYaxis()->SetTitle("v_{2}");
@@ -377,80 +344,99 @@ void DrawFlow(){
     hFlowCenthPos[i]->Draw("SAME");
     hFlowCenthNeg[i]->Draw("SAME");
   }
-  v2Cent->Draw("SAME");
+  if(fPeriod.EqualTo("LHC10h")) v2_C2_cent_sqrtsNN276->Draw("SAME");
+  if(fPeriod.EqualTo("LHC18q")) v2_C2_cent_sqrtsNN502->Draw("SAME");
+  if(fPeriod.EqualTo("LHC18r")) v2_C2_cent_sqrtsNN502->Draw("SAME");
   legendV2->Draw("SAME");
 
 
-  TCanvas* cV2Pt = new TCanvas("cV2Pt","v_{2} vs. pt cent40-50",10,10,1200,400);
+  TCanvas* cV2Pt = new TCanvas("cV2Pt","",10,10,1200,400);
   cV2Pt->Divide(3,1);
   TH2D* dummyV2Pt = new TH2D("","",1,0,5,1,0.,0.35);
   dummyV2Pt->GetXaxis()->SetTitle("");
   dummyV2Pt->GetXaxis()->SetTitle("p_{T}");
   dummyV2Pt->GetYaxis()->SetTitle("v_{2}");
-  dummyV2Pt->GetYaxis()->SetTitleOffset(1.2);
+  //dummyV2Pt->GetYaxis()->SetTitleOffset(1.2);
 
   cV2Pt->cd(1);
   TH2D* dummyV2PtHadron = (TH2D*)dummyV2Pt->Clone("dummyV2PtHadron");
-  dummyV2PtHadron ->SetTitle("Hadron Cent 40-50");
+  dummyV2PtHadron ->SetTitle("Hadron Centrality 40-50");
+  if(fPeriod.EqualTo("LHC10h")) dummyV2PtHadron -> SetTitle("Hadron v_{2} vs. p_{T} in Centrality 40-50% of 10h");
+  if(fPeriod.EqualTo("LHC18q")) dummyV2PtHadron -> SetTitle("Hadron v_{2} vs. p_{T} in Centrality 30-40% of 18q");
+  if(fPeriod.EqualTo("LHC18r")) dummyV2PtHadron -> SetTitle("Hadron v_{2} vs. p_{T} in Centrality 30-40% of 18r");
   dummyV2PtHadron->Draw("SAME");
-  for (int i = 0; i < 5; i++){
+  for (int i = 0; i < 3; i++){
+    SetStyle(hFlowPt_hPos_Cent[3][i],ci[i], kFullCircle,1,0);
+    SetStyle(hFlowPt_hNeg_Cent[3][i],ci[i], kOpenCircle,1,0);
     SetStyle(hFlowPt_hPos_Cent[4][i],ci[i], kFullCircle,1,0);
     SetStyle(hFlowPt_hNeg_Cent[4][i],ci[i], kOpenCircle,1,0);
-    hFlowPt_hPos_Cent[4][i]->Draw("SAME");
-    hFlowPt_hNeg_Cent[4][i]->Draw("SAME");
+    if(fPeriod.EqualTo("LHC10h")) hFlowPt_hPos_Cent[4][i]->Draw("SAME");
+    if(fPeriod.EqualTo("LHC10h")) hFlowPt_hNeg_Cent[4][i]->Draw("SAME");
+    if(fPeriod.EqualTo("LHC18q")||fPeriod.EqualTo("LHC18r")) hFlowPt_hPos_Cent[3][i]->Draw("SAME");
+    if(fPeriod.EqualTo("LHC18q")||fPeriod.EqualTo("LHC18r")) hFlowPt_hNeg_Cent[3][i]->Draw("SAME");
   }
-  v2PtCent4050->Draw("same");
-  legendV2->Draw("SAME");
+  if(fPeriod.EqualTo("LHC10h")) v2_C2_charge_pt_cent4050_sqrtsNN276->Draw("SAME");
+  if(fPeriod.EqualTo("LHC18q")) v2_C2_charge_pt_cent3040_sqrtsNN502->Draw("SAME");
+  if(fPeriod.EqualTo("LHC18r")) v2_C2_charge_pt_cent3040_sqrtsNN502->Draw("SAME");
+  legendV2Diff->Draw("SAME");
 
   cV2Pt->cd(2);
   TH2D* dummyV2PtProton = (TH2D*)dummyV2Pt->Clone("dummyV2PtProton");
-  dummyV2PtProton ->SetTitle("Proton Cent 40-50");
+  if(fPeriod.EqualTo("LHC10h")) dummyV2PtProton -> SetTitle("Proton v_{2} vs. p_{T} in Centrality 40-50% of 10h");
+  if(fPeriod.EqualTo("LHC18q")) dummyV2PtProton -> SetTitle("Proton v_{2} vs. p_{T} in Centrality 30-40% of 18q");
+  if(fPeriod.EqualTo("LHC18r")) dummyV2PtProton -> SetTitle("Proton v_{2} vs. p_{T} in Centrality 30-40% of 18r");
+  dummyV2PtProton ->GetXaxis()->SetLimits(0.6,3.0);
   dummyV2PtProton->Draw("SAME");
-  for (int i = 0; i < 5; i++){
+  for (int i = 0; i < 3; i++){
+    SetStyle(hFlowPt_Proton_Cent[3][i],ci[i], kFullCircle,1,0);
+    SetStyle(hFlowPt_AntiProton_Cent[3][i],ci[i], kOpenCircle,1,0);
     SetStyle(hFlowPt_Proton_Cent[4][i],ci[i], kFullCircle,1,0);
     SetStyle(hFlowPt_AntiProton_Cent[4][i],ci[i], kOpenCircle,1,0);
-    hFlowPt_Proton_Cent[4][i]->Draw("SAME");
-    hFlowPt_AntiProton_Cent[4][i]->Draw("SAME");
+    if(fPeriod.EqualTo("LHC10h")) hFlowPt_Proton_Cent[4][i]->Draw("SAME");
+    if(fPeriod.EqualTo("LHC10h")) hFlowPt_AntiProton_Cent[4][i]->Draw("SAME");
+    if(fPeriod.EqualTo("LHC18q")||fPeriod.EqualTo("LHC18r")) hFlowPt_Proton_Cent[3][i]->Draw("SAME");
+    if(fPeriod.EqualTo("LHC18q")||fPeriod.EqualTo("LHC18r")) hFlowPt_AntiProton_Cent[3][i]->Draw("SAME");
   }
-  v2ProtonPtCent4050->Draw("same");
-  legendV2->Draw("SAME");
+  if(fPeriod.EqualTo("LHC10h")) v2_SP_proton_pt_cent4050_sqrtsNN276->Draw("SAME");
+  if(fPeriod.EqualTo("LHC18q")) v2_SP_proton_pt_cent3040_sqrtsNN502->Draw("SAME");
+  if(fPeriod.EqualTo("LHC18r")) v2_SP_proton_pt_cent3040_sqrtsNN502->Draw("SAME");
+  legendV2Diff->Draw("SAME");
 
   cV2Pt->cd(3);
   TH2D* dummyV2PtLambda = (TH2D*)dummyV2Pt->Clone("dummyV2PtLambda");
-  dummyV2PtLambda ->SetTitle("Lambda Cent 40-50");
+  if(fPeriod.EqualTo("LHC10h")) dummyV2PtLambda -> SetTitle("Lambda v_{2} vs. p_{T} in Centrality 40-50% of 10h");
+  if(fPeriod.EqualTo("LHC18q")) dummyV2PtLambda -> SetTitle("Lambda v_{2} vs. p_{T} in Centrality 30-40% of 18q");
+  if(fPeriod.EqualTo("LHC18r")) dummyV2PtLambda -> SetTitle("Lambda v_{2} vs. p_{T} in Centrality 30-40% of 18r");
   dummyV2PtLambda->Draw("SAME");
-  for (int i = 0; i < 5; i++){
+  for (int i = 0; i < 3; i++){
+    SetStyle(hFlowPt_Lambda_Cent[3][i],ci[i], kFullCircle,1,0);
+    SetStyle(hFlowPt_AntiLambda_Cent[3][i],ci[i], kOpenCircle,1,0);
     SetStyle(hFlowPt_Lambda_Cent[4][i],ci[i], kFullCircle,1,0);
     SetStyle(hFlowPt_AntiLambda_Cent[4][i],ci[i], kOpenCircle,1,0);
-    hFlowPt_Lambda_Cent[4][i]->Draw("SAME");
-    hFlowPt_AntiLambda_Cent[4][i]->Draw("SAME");
-    legendV2->Draw("SAME");
+    if(fPeriod.EqualTo("LHC10h")) hFlowPt_Lambda_Cent[4][i]->Draw("SAME");
+    if(fPeriod.EqualTo("LHC10h")) hFlowPt_AntiLambda_Cent[4][i]->Draw("SAME");
+    if(fPeriod.EqualTo("LHC18q")||fPeriod.EqualTo("LHC18r")) hFlowPt_Lambda_Cent[3][i]->Draw("SAME");
+    if(fPeriod.EqualTo("LHC18q")||fPeriod.EqualTo("LHC18r")) hFlowPt_AntiLambda_Cent[3][i]->Draw("SAME");
   }
-  v2LambdaPtCent4050->Draw("same");
-  legendV2->Draw("SAME");
+  if(fPeriod.EqualTo("LHC10h")) v2_IM_lambda_pt_cent4050_sqrtsNN276->Draw("SAME");
+  if(fPeriod.EqualTo("LHC18q")) v2_IM_lambda_pt_cent3040_sqrtsNN502->Draw("SAME");
+  if(fPeriod.EqualTo("LHC18r")) v2_IM_lambda_pt_cent3040_sqrtsNN502->Draw("SAME");
+  legendV2Diff->Draw("SAME");
 
 
-  TCanvas* cV2PtCent = new TCanvas("cV2PtCent","v_{2} vs. pt",10,10,1200,600);
-  cV2PtCent->Divide(3,2);
-  TH2D* dummyV2PtCent[6];
-  for (int i = 0; i < 6; i++){
-    dummyV2PtCent[i] = new TH2D("",Form("Centrality %i0-%i0 %",i,i+1),1,0,5,1,0.,0.32);
-    dummyV2PtCent[i]->GetXaxis()->SetTitle("");
-    dummyV2PtCent[i]->GetXaxis()->SetTitle("p_{T}");
-    dummyV2PtCent[i]->GetYaxis()->SetTitle("v_{2}");
-    dummyV2PtCent[i]->GetYaxis()->SetTitleOffset(1.2);
+  if(fPeriod.EqualTo("LHC10h")) {
+    cRes->SaveAs("Resolution10h.pdf");
+    cV2Cent->SaveAs("V2Cent10h.pdf");
+    cV2Pt->SaveAs("V2Pt10h.pdf");
   }
-  
-  for (int iCent = 1; iCent <= 6; iCent++)
-  {
-    cV2PtCent->cd(iCent);
-    dummyV2PtCent[iCent-1]->Draw("SAME");
-    for (int iPlane = 0; iPlane < 3; iPlane++){
-      SetStyle(hFlowPt_hPos_Cent[iCent-1][iPlane],ci[iPlane], kFullCircle,1,0);
-      SetStyle(hFlowPt_hNeg_Cent[iCent-1][iPlane],ci[iPlane], kOpenCircle,1,0);
-      hFlowPt_hPos_Cent[iCent-1][iPlane]->Draw("SAME");
-      hFlowPt_hNeg_Cent[iCent-1][iPlane]->Draw("SAME");
-    }
-    legendV2Diff->Draw("SAME");
-  } 
+  if(fPeriod.EqualTo("LHC18q")) {
+    cRes->SaveAs("Resolution18q.pdf");
+    cV2Cent->SaveAs("V2Cent18q.pdf");
+    cV2Pt->SaveAs("V2Pt18q.pdf");
+  }
+  if(fPeriod.EqualTo("LHC18r")) {
+    cRes->SaveAs("Resolution18r.pdf");
+    cV2Cent->SaveAs("V2Cent18r.pdf");
+    cV2Pt->SaveAs("V2Pt18r.pdf");
+  }
 }

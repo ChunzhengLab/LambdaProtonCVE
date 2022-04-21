@@ -117,7 +117,8 @@ AliAnalysisTaskLambdaProtonCVELocal* AddTaskLambdaProtonCVELocal(
 
   if (v0calibOn) {
     if (period.EqualTo("LHC10h")) {
-      fVZEROCalibFile = TFile::Open("../CalibFiles/LHC10h/10hQnCalib.root","READ");
+      if(filterBit == 1)   fNUAFile = TFile::Open("../CalibFiles/LHC10h/10hNUAFB1.root","READ");
+      if(filterBit == 768) fNUAFile = TFile::Open("../CalibFiles/LHC10h/10hNUAFB768.root","READ");
       fVZEROCalibList = dynamic_cast <TList*> (fVZEROCalibFile->Get("10hlistqncalib"));
     }
     if (period.EqualTo("LHC15o")) {
