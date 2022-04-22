@@ -14,7 +14,7 @@
 #include "TF1.h"
 #include "TGraphAsymmErrors.h"
 
-TString fPeriod = "LHC10h";
+TString fPeriod = "LHC18r";
 bool isZDCR2fromR1 = 0;
 bool isZDCR2fromData = 1;
 int  points = 11;
@@ -50,8 +50,8 @@ void DrawGamma(){
   TList* inputList = nullptr;
   TFile* inputFile = nullptr;
   if(fPeriod.EqualTo("LHC10h")) {
-    inputFile = TFile::Open("./LHC10h/AnalysisResults_10h_PlanePt5_ProtonPt3.root", "READ");
-    inputList = (TList*) inputFile->Get("output_"); 
+    inputFile = TFile::Open("./LHC10h/AnalysisResults_10h_FB1_withNUA_PlanePt5.root", "READ");
+    inputList = (TList*) inputFile->Get("output"); 
   }
   if(fPeriod.EqualTo("LHC18q")) { 
     inputFile = TFile::Open("./LHC18q/AnalysisResults_18q_PlanePt5_ProtonPt3.root", "READ");
@@ -545,15 +545,15 @@ void DrawGamma(){
   cDeltaGamma->cd();
   dummyDeltaGammaLambdaHadronCent->Draw("SAME");
   for (int i = 0; i < 3; i++) {
-    SetStyle(hDeltaGammaLambdaHadron[i] ,ci[i], kOpenCircle,1,1);
-    SetStyle(hDeltaGammaLambdaProton[i] ,ci[i], kFullSquare,1,1);
+    SetStyle(hDeltaGammaLambdaHadron[i] ,ci[i], kOpenCircle,1.2,1);
+    SetStyle(hDeltaGammaLambdaProton[i] ,ci[i], kFullSquare,1.2,1);
     hDeltaGammaLambdaHadron[i] -> Draw("SAME");
     hDeltaGammaLambdaProton[i] -> Draw("SAME");
   }
   legendRes->Draw("SAME");
-  // if(fPeriod.EqualTo("LHC10h")) cDeltaGamma->SaveAs(Form("DeltaGammaTPCV0Cent10h.pdf"));
-  // if(fPeriod.EqualTo("LHC18q")) cDeltaGamma->SaveAs(Form("DeltaGammaTPCV0Cent18q.pdf"));
-  // if(fPeriod.EqualTo("LHC18r")) cDeltaGamma->SaveAs(Form("DeltaGammaTPCV0Cent18r.pdf"));
+  if(fPeriod.EqualTo("LHC10h")) cDeltaGamma->SaveAs(Form("DeltaGammaTPCV0Cent10h.pdf"));
+  if(fPeriod.EqualTo("LHC18q")) cDeltaGamma->SaveAs(Form("DeltaGammaTPCV0Cent18q.pdf"));
+  if(fPeriod.EqualTo("LHC18r")) cDeltaGamma->SaveAs(Form("DeltaGammaTPCV0Cent18r.pdf"));
 
   TH2D* dummyDeltaGammaLambdaHadronCentZDC = new TH2D("","ZNA/C Plane",1,0,70,1,-0.005,0.01);
   TLegend *legendResZDC = new TLegend(0.15,0.7,0.35,0.88);

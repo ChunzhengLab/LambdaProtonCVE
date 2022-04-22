@@ -15,11 +15,11 @@ void DrawTPCV0QA() {
   gStyle->SetOptStat(0);
 
   TList* inputList = nullptr;
-  TString fPeriod = "LHC18q";
+  TString fPeriod = "LHC18r";
   TFile* inputFile = nullptr;
   if(fPeriod.EqualTo("LHC10h")) inputFile = TFile::Open("./LHC10h/AnalysisResults_Run139507.root", "READ");
   if(fPeriod.EqualTo("LHC18q")) inputFile = TFile::Open("./LHC18q/AnalysisResults_Run295791.root", "READ");
-  if(fPeriod.EqualTo("LHC18r")) inputFile = TFile::Open("./LHC18r/AnalysisResults_18r_PlanePt5_ProtonPt3.root", "READ");
+  if(fPeriod.EqualTo("LHC18r")) inputFile = TFile::Open("./LHC18r/AnalysisResults_Run297479.root", "READ");
   inputList = (TList*) inputFile->Get("output_"); 
 
 
