@@ -16,7 +16,7 @@
 
 bool isZDCR2fromR1 = 0;
 bool isZDCR2fromData = 1;
-TString fPeriod = "LHC10h";
+TString fPeriod = "LHC18q";
 
 template <class TH>
 void SetStyle(TH &hist, unsigned int color, unsigned int markerStyle, double markerSize = 1, double lineWidth = 1) 
@@ -47,10 +47,10 @@ void DrawFlow(){
 
   gStyle->SetOptStat(0);
 
-  TFile* inputFile_IncFlow_sqrtsNN276 = TFile::Open("/Users/wangchunzheng/works/PublishedResults/Flow/Flow_2.76TeV_HEPData-ins877822-v1-root.root");
-  TFile* inputFile_PIDFlow_sqrtsNN276 = TFile::Open("/Users/wangchunzheng/works/PublishedResults/Flow/PIDFlow_2.76TeV_HEPData-ins1297103-v1-root.root");
-  TFile* inputFile_IncFlow_sqrtsNN502 = TFile::Open("/Users/wangchunzheng/works/PublishedResults/Flow/Flow_5.02TeV_HEPData-ins1419244-v2-root.root");
-  TFile* inputFile_PIDFlow_sqrtsNN502 = TFile::Open("/Users/wangchunzheng/works/PublishedResults/Flow/PIDFlow_5.02TeV_HEPData-ins1672822-v1-root.root");
+  TFile* inputFile_IncFlow_sqrtsNN276 = TFile::Open("/Users/wangchunzheng/Documents/PublishedResults/Flow/Flow_2.76TeV_HEPData-ins877822-v1-root.root");
+  TFile* inputFile_PIDFlow_sqrtsNN276 = TFile::Open("/Users/wangchunzheng/Documents/PublishedResults/Flow/PIDFlow_2.76TeV_HEPData-ins1297103-v1-root.root");
+  TFile* inputFile_IncFlow_sqrtsNN502 = TFile::Open("/Users/wangchunzheng/Documents/PublishedResults/Flow/Flow_5.02TeV_HEPData-ins1419244-v2-root.root");
+  TFile* inputFile_PIDFlow_sqrtsNN502 = TFile::Open("/Users/wangchunzheng/Documents/PublishedResults/Flow/PIDFlow_5.02TeV_HEPData-ins1672822-v1-root.root");
 
   //inc
   TDirectoryFile* dir_v2_C2_cent_sqrtsNN276 = (TDirectoryFile*)inputFile_IncFlow_sqrtsNN276->Get("Table 3");
@@ -77,11 +77,12 @@ void DrawFlow(){
 
 
   TList* inputList = nullptr;
-  TFile* inputFile = nullptr;
+  TFile* inputFile = nullptr;哲学学院资料室虞锋书室
   if(fPeriod.EqualTo("LHC10h")) inputFile = TFile::Open("./LHC10h/AnalysisResults_10h_PlanePt5_ProtonPt3.root", "READ");
   if(fPeriod.EqualTo("LHC18q")) inputFile = TFile::Open("./LHC18q/AnalysisResults_18q_PlanePt5_ProtonPt3.root", "READ");
   if(fPeriod.EqualTo("LHC18r")) inputFile = TFile::Open("./LHC18r/AnalysisResults_18r_PlanePt5_ProtonPt3.root", "READ");
-  inputList = (TList*) inputFile->Get("output_"); 
+  inputList = (TList*) inputFile->Find
+  ("output_"); 
 
   TProfile2D*  fProfile2DRawFlowCentPthPos[5];
   TProfile2D*  fProfile2DRawFlowCentPthNeg[5];

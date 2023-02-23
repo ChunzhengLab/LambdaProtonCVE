@@ -80,18 +80,25 @@ AliAnalysisTaskLambdaProtonCVELocal::AliAnalysisTaskLambdaProtonCVELocal() :
   fDebug(0),
   fTrigger("kMB"),
   fPeriod("LHC10h"),
+
   fVzCut(10.0),
   fCentDiffCut(7.5),
-  IsVZEROCalibOn(false),
-  IsZDCCalibOn(false),
-  IsTPCCalibOn(false),
+
+  IsUseVZEROPlane(false),
+  IsUseZDCPlane(false),
+
+  IsRightVZEROPlane(false),
+  IsRightZDCPlane(false),
+
   IsQAVZERO(false),
   IsQAZDC(false),
   IsQATPC(false),
+
   fPlanePtMin(0.2),
   fPlanePtMax(2.0),
   fEtaGapPos( 0.1),
   fEtaGapNeg(-0.1),
+
   fFilterBit(768),
   fNclsCut(70),
   fChi2Max(4.0),
@@ -102,9 +109,14 @@ AliAnalysisTaskLambdaProtonCVELocal::AliAnalysisTaskLambdaProtonCVELocal() :
   fPtMax(5.0),
   IsDoNUE(true),
   IsDoNUA(true),
-  fProtonPtMax(3.0),
+  fProtonPtMin(0.2),
+  fProtonPtMax(3.),
+  fAntiProtonPtMin(0.2),
+  fAntiProtonPtMax(3.),
+
   fNSigmaTPCCut(4),
   fNSigmaTOFCut(4),
+
   fV0PtMin(0.5),
   fV0CPAMin(0.995),
   fV0RapidityMax(0.5),
@@ -112,6 +124,7 @@ AliAnalysisTaskLambdaProtonCVELocal::AliAnalysisTaskLambdaProtonCVELocal() :
   fV0DecayLengthMax(100.),
   fV0DCAToPrimVtxMax(1.5),
   fV0DcaBetweenDaughtersMax(1.),
+
   fDaughtersPtMax(20.),
   fDaughtersEtaMax(0.8),
   fDaughtersTPCNclsMin(70),
@@ -125,14 +138,21 @@ AliAnalysisTaskLambdaProtonCVELocal::AliAnalysisTaskLambdaProtonCVELocal() :
   fV0NegPionTOFNsigma(4.),
   fV0NegProtonTOFNsigma(4.),
   fV0PosPionTOFNsigma(4.),
+
   fLambdaMassCut(0.005),
+
   IsCheckPIDFlow(false),
+  IsFillDiffResult(false),
+  IsFillDeltaPhiSumPhi(false),
+
   fMassMean(1.115683),
   fEtaCut(0.8),
   fDedxCut(10.0),
+
   fAOD(nullptr),         //! aod Event
   fPIDResponse(nullptr), //! PID Handler
   fUtils(nullptr),       //! Event Selection Options
+
   runNumList(0),
   fRunNum(-999), // runnumber
   fOldRunNum(-999), // old runnumber
@@ -140,6 +160,7 @@ AliAnalysisTaskLambdaProtonCVELocal::AliAnalysisTaskLambdaProtonCVELocal() :
   fVzBin(-999), // vertex z bin
   fCentBin(-999), // centrality bin: 0-10
   fCent(-999), // value of centrality
+
   fPsi1ZNC(-999),
   fPsi1ZNA(-999),
   fPsi2V0C(-999),
@@ -152,12 +173,14 @@ AliAnalysisTaskLambdaProtonCVELocal::AliAnalysisTaskLambdaProtonCVELocal() :
   SumQ2xTPCNeg(0.),
   SumQ2yTPCNeg(0.),
   fWgtMultTPCNeg(0.),
+
   vecPosEPTrkID(0),
   vecNegEPTrkID(0),
   vecPosEPTrkPhi(0),
   vecNegEPTrkPhi(0),
   vecPosEPTrkNUAWgt(0),
   vecNegEPTrkNUAWgt(0),
+
   vecPDGCode(0),
   vecID(0),
   vecPhi(0),
@@ -167,25 +190,31 @@ AliAnalysisTaskLambdaProtonCVELocal::AliAnalysisTaskLambdaProtonCVELocal() :
   vecNUEWeight(0),
   vecNUAWeightPID(0),
   vecNUEWeightPID(0),
+
   vecLambdaCode(0),
   vecLambdaPhi(0),
   vecLambdaPt(0),
+  vecLambdaEta(0),
   vecDaughterPosID(0),
   vecDaughterNegID(0),
+
   fSPDCutPU(nullptr),
   fV0CutPU(nullptr),
   fCenCutLowPU(nullptr),
   fCenCutHighPU(nullptr),
   fMultCutPU(nullptr),
+
   fListNUE(nullptr),
   hNUEweightPlus(nullptr),
   hNUEweightMinus(nullptr),
+
   fListNUA(nullptr),
   hNUAweightPlus(nullptr),
   hNUAweightMinus(nullptr),
   hCorrectNUAPos(nullptr),
   hCorrectNUANeg(nullptr),
   fListVZEROCalib(nullptr),
+
   hMultV0Read(nullptr),
   hMultV0(nullptr),
   contMult(nullptr),
@@ -193,8 +222,10 @@ AliAnalysisTaskLambdaProtonCVELocal::AliAnalysisTaskLambdaProtonCVELocal() :
   contQyncm(nullptr),
   contQxnam(nullptr),
   contQynam(nullptr),
+
   fHCorrectV0ChWeghts(nullptr),
   fListZDCCalib(nullptr),
+
   tree(nullptr),
   fProfileForZNCGE(nullptr),
   fProfileForZNAGE(nullptr),
@@ -210,28 +241,34 @@ AliAnalysisTaskLambdaProtonCVELocal::AliAnalysisTaskLambdaProtonCVELocal() :
   fProfile2DForSinC(nullptr),
   fProfile2DForCosA(nullptr),
   fProfile2DForSinA(nullptr),
+
   fHZDCCparameters(nullptr),
   fHZDCAparameters(nullptr),
+
   fOutputList(nullptr),
   fEvtCount(nullptr),
   fHistRunNumBin(nullptr),
+
   fHistPt(nullptr),
   fHistEta(nullptr),
   fHistNhits(nullptr),
   fHist2DPDedx(nullptr),
   fHistDcaXY(nullptr),
   fHistDcaZ(nullptr),
+
   fHistV0Pt(nullptr),
   fHistV0Eta(nullptr),
   fHistV0DcatoPrimVertex(nullptr),
   fHistV0CPA(nullptr),
   fHistV0DecayLength(nullptr),
+
   fHist2DPsi2TPCPosCent(nullptr),
   fHist2DPsi2TPCNegCent(nullptr),
   fHist2DPsi2V0CCent(nullptr),
   fHist2DPsi2V0ACent(nullptr),
   fHist2DPsi1ZNCCent(nullptr),
   fHist2DPsi1ZNACent(nullptr),
+
   fProfileTPCPsi2Correlation(nullptr),
   fProfileV0MPsi2Correlation(nullptr),
   fProfileZDCPsi1Correlation(nullptr),
@@ -240,6 +277,7 @@ AliAnalysisTaskLambdaProtonCVELocal::AliAnalysisTaskLambdaProtonCVELocal() :
   fProfileV0ATPCPosPsi2Correlation(nullptr),
   fProfileV0CTPCNegPsi2Correlation(nullptr),
   fProfileV0ATPCNegPsi2Correlation(nullptr),
+
   fProfileDelta_Lambda_hPos(nullptr),
   fProfileDelta_Lambda_hNeg(nullptr),
   fProfileDelta_Lambda_Proton(nullptr),
@@ -248,6 +286,7 @@ AliAnalysisTaskLambdaProtonCVELocal::AliAnalysisTaskLambdaProtonCVELocal() :
   fProfileDelta_AntiLambda_hNeg(nullptr),
   fProfileDelta_AntiLambda_Proton(nullptr),
   fProfileDelta_AntiLambda_AntiProton(nullptr),
+
   fProfileGammaTPC_Lambda_hPos(nullptr),
   fProfileGammaTPC_Lambda_hNeg(nullptr),
   fProfileGammaTPC_Lambda_Proton(nullptr),
@@ -256,6 +295,7 @@ AliAnalysisTaskLambdaProtonCVELocal::AliAnalysisTaskLambdaProtonCVELocal() :
   fProfileGammaTPC_AntiLambda_hNeg(nullptr),
   fProfileGammaTPC_AntiLambda_Proton(nullptr),
   fProfileGammaTPC_AntiLambda_AntiProton(nullptr),
+
   fProfileGammaV0C_Lambda_hPos(nullptr),
   fProfileGammaV0C_Lambda_hNeg(nullptr),
   fProfileGammaV0C_Lambda_Proton(nullptr),
@@ -272,6 +312,7 @@ AliAnalysisTaskLambdaProtonCVELocal::AliAnalysisTaskLambdaProtonCVELocal() :
   fProfileGammaV0A_AntiLambda_hNeg(nullptr),
   fProfileGammaV0A_AntiLambda_Proton(nullptr),
   fProfileGammaV0A_AntiLambda_AntiProton(nullptr),
+
   fProfileGammaZNC_Lambda_hPos(nullptr),
   fProfileGammaZNC_Lambda_hNeg(nullptr),
   fProfileGammaZNC_Lambda_Proton(nullptr),
@@ -287,7 +328,50 @@ AliAnalysisTaskLambdaProtonCVELocal::AliAnalysisTaskLambdaProtonCVELocal() :
   fProfileGammaZNA_AntiLambda_hPos(nullptr),
   fProfileGammaZNA_AntiLambda_hNeg(nullptr),
   fProfileGammaZNA_AntiLambda_Proton(nullptr),
-  fProfileGammaZNA_AntiLambda_AntiProton(nullptr)
+  fProfileGammaZNA_AntiLambda_AntiProton(nullptr),
+
+  fProfileDelta_dpt_Lambda_hPos(nullptr),
+  fProfileDelta_dpt_Lambda_hNeg(nullptr),
+  fProfileDelta_dpt_Lambda_Proton(nullptr),
+  fProfileDelta_dpt_Lambda_AntiProton(nullptr),
+  fProfileDelta_dpt_AntiLambda_hPos(nullptr),
+  fProfileDelta_dpt_AntiLambda_hNeg(nullptr),
+  fProfileDelta_dpt_AntiLambda_Proton(nullptr),
+  fProfileDelta_dpt_AntiLambda_AntiProton(nullptr),
+  fProfileDelta_deta_Lambda_hPos(nullptr),
+  fProfileDelta_deta_Lambda_hNeg(nullptr),
+  fProfileDelta_deta_Lambda_Proton(nullptr),
+  fProfileDelta_deta_Lambda_AntiProton(nullptr),
+  fProfileDelta_deta_AntiLambda_hPos(nullptr),
+  fProfileDelta_deta_AntiLambda_hNeg(nullptr),
+  fProfileDelta_deta_AntiLambda_Proton(nullptr),
+  fProfileDelta_deta_AntiLambda_AntiProton(nullptr),
+  fProfileDelta_mpt_Lambda_hPos(nullptr),
+  fProfileDelta_mpt_Lambda_hNeg(nullptr),
+  fProfileDelta_mpt_Lambda_Proton(nullptr),
+  fProfileDelta_mpt_Lambda_AntiProton(nullptr),
+  fProfileDelta_mpt_AntiLambda_hPos(nullptr),
+  fProfileDelta_mpt_AntiLambda_hNeg(nullptr),
+  fProfileDelta_mpt_AntiLambda_Proton(nullptr),
+  fProfileDelta_mpt_AntiLambda_AntiProton(nullptr),
+
+  fHistDelPhi_Lambda_hPos(nullptr),
+  fHistDelPhi_Lambda_hNeg(nullptr),
+  fHistDelPhi_Lambda_Proton(nullptr),
+  fHistDelPhi_Lambda_AntiProton(nullptr),
+  fHistDelPhi_AntiLambda_hPos(nullptr),
+  fHistDelPhi_AntiLambda_hNeg(nullptr),
+  fHistDelPhi_AntiLambda_Proton(nullptr),
+  fHistDelPhi_AntiLambda_AntiProton(nullptr),
+
+  fHistSumPhiTPC_Lambda_hPos(nullptr),
+  fHistSumPhiTPC_Lambda_hNeg(nullptr),
+  fHistSumPhiTPC_Lambda_Proton(nullptr),
+  fHistSumPhiTPC_Lambda_AntiProton(nullptr),
+  fHistSumPhiTPC_AntiLambda_hPos(nullptr),
+  fHistSumPhiTPC_AntiLambda_hNeg(nullptr),
+  fHistSumPhiTPC_AntiLambda_Proton(nullptr),
+  fHistSumPhiTPC_AntiLambda_AntiProton(nullptr)
 {
   for (int i = 0; i < 3; i++) fVertex[i] = -999;
 
@@ -367,18 +451,25 @@ AliAnalysisTaskLambdaProtonCVELocal::AliAnalysisTaskLambdaProtonCVELocal(const c
   fDebug(0),
   fTrigger("kMB"),
   fPeriod("LHC10h"),
+
   fVzCut(10.0),
   fCentDiffCut(7.5),
-  IsVZEROCalibOn(false),
-  IsZDCCalibOn(false),
-  IsTPCCalibOn(false),
+
+  IsUseVZEROPlane(false),
+  IsUseZDCPlane(false),
+
+  IsRightVZEROPlane(false),
+  IsRightZDCPlane(false),
+
   IsQAVZERO(false),
   IsQAZDC(false),
   IsQATPC(false),
+
   fPlanePtMin(0.2),
   fPlanePtMax(2.0),
   fEtaGapPos( 0.1),
   fEtaGapNeg(-0.1),
+
   fFilterBit(768),
   fNclsCut(70),
   fChi2Max(4.0),
@@ -389,9 +480,14 @@ AliAnalysisTaskLambdaProtonCVELocal::AliAnalysisTaskLambdaProtonCVELocal(const c
   fPtMax(5.0),
   IsDoNUE(true),
   IsDoNUA(true),
-  fProtonPtMax(3.0),
+  fProtonPtMin(0.2),
+  fProtonPtMax(3.),
+  fAntiProtonPtMin(0.2),
+  fAntiProtonPtMax(3.),
+
   fNSigmaTPCCut(4),
   fNSigmaTOFCut(4),
+
   fV0PtMin(0.5),
   fV0CPAMin(0.995),
   fV0RapidityMax(0.5),
@@ -399,6 +495,7 @@ AliAnalysisTaskLambdaProtonCVELocal::AliAnalysisTaskLambdaProtonCVELocal(const c
   fV0DecayLengthMax(100.),
   fV0DCAToPrimVtxMax(1.5),
   fV0DcaBetweenDaughtersMax(1.),
+
   fDaughtersPtMax(20.),
   fDaughtersEtaMax(0.8),
   fDaughtersTPCNclsMin(70),
@@ -412,14 +509,21 @@ AliAnalysisTaskLambdaProtonCVELocal::AliAnalysisTaskLambdaProtonCVELocal(const c
   fV0NegPionTOFNsigma(4.),
   fV0NegProtonTOFNsigma(4.),
   fV0PosPionTOFNsigma(4.),
+
   fLambdaMassCut(0.005),
+
   IsCheckPIDFlow(false),
+  IsFillDiffResult(false),
+  IsFillDeltaPhiSumPhi(false),
+
   fMassMean(1.115683),
   fEtaCut(0.8),
   fDedxCut(10.0),
+
   fAOD(nullptr),         //! aod Event
   fPIDResponse(nullptr), //! PID Handler
   fUtils(nullptr),       //! Event Selection Options
+
   runNumList(0),
   fRunNum(-999), // runnumber
   fOldRunNum(-999), // old runnumber
@@ -427,6 +531,7 @@ AliAnalysisTaskLambdaProtonCVELocal::AliAnalysisTaskLambdaProtonCVELocal(const c
   fVzBin(-999), // vertex z bin
   fCentBin(-999), // centrality bin: 0-10
   fCent(-999), // value of centrality
+
   fPsi1ZNC(-999),
   fPsi1ZNA(-999),
   fPsi2V0C(-999),
@@ -439,12 +544,14 @@ AliAnalysisTaskLambdaProtonCVELocal::AliAnalysisTaskLambdaProtonCVELocal(const c
   SumQ2xTPCNeg(0.),
   SumQ2yTPCNeg(0.),
   fWgtMultTPCNeg(0.),
+
   vecPosEPTrkID(0),
   vecNegEPTrkID(0),
   vecPosEPTrkPhi(0),
   vecNegEPTrkPhi(0),
   vecPosEPTrkNUAWgt(0),
   vecNegEPTrkNUAWgt(0),
+
   vecPDGCode(0),
   vecID(0),
   vecPhi(0),
@@ -454,25 +561,31 @@ AliAnalysisTaskLambdaProtonCVELocal::AliAnalysisTaskLambdaProtonCVELocal(const c
   vecNUEWeight(0),
   vecNUAWeightPID(0),
   vecNUEWeightPID(0),
+
   vecLambdaCode(0),
   vecLambdaPhi(0),
   vecLambdaPt(0),
+  vecLambdaEta(0),
   vecDaughterPosID(0),
   vecDaughterNegID(0),
+
   fSPDCutPU(nullptr),
   fV0CutPU(nullptr),
   fCenCutLowPU(nullptr),
   fCenCutHighPU(nullptr),
   fMultCutPU(nullptr),
+
   fListNUE(nullptr),
   hNUEweightPlus(nullptr),
   hNUEweightMinus(nullptr),
+
   fListNUA(nullptr),
   hNUAweightPlus(nullptr),
   hNUAweightMinus(nullptr),
   hCorrectNUAPos(nullptr),
   hCorrectNUANeg(nullptr),
   fListVZEROCalib(nullptr),
+
   hMultV0Read(nullptr),
   hMultV0(nullptr),
   contMult(nullptr),
@@ -480,8 +593,10 @@ AliAnalysisTaskLambdaProtonCVELocal::AliAnalysisTaskLambdaProtonCVELocal(const c
   contQyncm(nullptr),
   contQxnam(nullptr),
   contQynam(nullptr),
+
   fHCorrectV0ChWeghts(nullptr),
   fListZDCCalib(nullptr),
+
   tree(nullptr),
   fProfileForZNCGE(nullptr),
   fProfileForZNAGE(nullptr),
@@ -497,28 +612,34 @@ AliAnalysisTaskLambdaProtonCVELocal::AliAnalysisTaskLambdaProtonCVELocal(const c
   fProfile2DForSinC(nullptr),
   fProfile2DForCosA(nullptr),
   fProfile2DForSinA(nullptr),
+
   fHZDCCparameters(nullptr),
   fHZDCAparameters(nullptr),
+
   fOutputList(nullptr),
   fEvtCount(nullptr),
   fHistRunNumBin(nullptr),
+
   fHistPt(nullptr),
   fHistEta(nullptr),
   fHistNhits(nullptr),
   fHist2DPDedx(nullptr),
   fHistDcaXY(nullptr),
   fHistDcaZ(nullptr),
+
   fHistV0Pt(nullptr),
   fHistV0Eta(nullptr),
   fHistV0DcatoPrimVertex(nullptr),
   fHistV0CPA(nullptr),
   fHistV0DecayLength(nullptr),
+
   fHist2DPsi2TPCPosCent(nullptr),
   fHist2DPsi2TPCNegCent(nullptr),
   fHist2DPsi2V0CCent(nullptr),
   fHist2DPsi2V0ACent(nullptr),
   fHist2DPsi1ZNCCent(nullptr),
   fHist2DPsi1ZNACent(nullptr),
+
   fProfileTPCPsi2Correlation(nullptr),
   fProfileV0MPsi2Correlation(nullptr),
   fProfileZDCPsi1Correlation(nullptr),
@@ -527,6 +648,7 @@ AliAnalysisTaskLambdaProtonCVELocal::AliAnalysisTaskLambdaProtonCVELocal(const c
   fProfileV0ATPCPosPsi2Correlation(nullptr),
   fProfileV0CTPCNegPsi2Correlation(nullptr),
   fProfileV0ATPCNegPsi2Correlation(nullptr),
+
   fProfileDelta_Lambda_hPos(nullptr),
   fProfileDelta_Lambda_hNeg(nullptr),
   fProfileDelta_Lambda_Proton(nullptr),
@@ -535,6 +657,7 @@ AliAnalysisTaskLambdaProtonCVELocal::AliAnalysisTaskLambdaProtonCVELocal(const c
   fProfileDelta_AntiLambda_hNeg(nullptr),
   fProfileDelta_AntiLambda_Proton(nullptr),
   fProfileDelta_AntiLambda_AntiProton(nullptr),
+
   fProfileGammaTPC_Lambda_hPos(nullptr),
   fProfileGammaTPC_Lambda_hNeg(nullptr),
   fProfileGammaTPC_Lambda_Proton(nullptr),
@@ -543,6 +666,7 @@ AliAnalysisTaskLambdaProtonCVELocal::AliAnalysisTaskLambdaProtonCVELocal(const c
   fProfileGammaTPC_AntiLambda_hNeg(nullptr),
   fProfileGammaTPC_AntiLambda_Proton(nullptr),
   fProfileGammaTPC_AntiLambda_AntiProton(nullptr),
+
   fProfileGammaV0C_Lambda_hPos(nullptr),
   fProfileGammaV0C_Lambda_hNeg(nullptr),
   fProfileGammaV0C_Lambda_Proton(nullptr),
@@ -559,6 +683,7 @@ AliAnalysisTaskLambdaProtonCVELocal::AliAnalysisTaskLambdaProtonCVELocal(const c
   fProfileGammaV0A_AntiLambda_hNeg(nullptr),
   fProfileGammaV0A_AntiLambda_Proton(nullptr),
   fProfileGammaV0A_AntiLambda_AntiProton(nullptr),
+
   fProfileGammaZNC_Lambda_hPos(nullptr),
   fProfileGammaZNC_Lambda_hNeg(nullptr),
   fProfileGammaZNC_Lambda_Proton(nullptr),
@@ -574,7 +699,50 @@ AliAnalysisTaskLambdaProtonCVELocal::AliAnalysisTaskLambdaProtonCVELocal(const c
   fProfileGammaZNA_AntiLambda_hPos(nullptr),
   fProfileGammaZNA_AntiLambda_hNeg(nullptr),
   fProfileGammaZNA_AntiLambda_Proton(nullptr),
-  fProfileGammaZNA_AntiLambda_AntiProton(nullptr)
+  fProfileGammaZNA_AntiLambda_AntiProton(nullptr),
+
+  fProfileDelta_dpt_Lambda_hPos(nullptr),
+  fProfileDelta_dpt_Lambda_hNeg(nullptr),
+  fProfileDelta_dpt_Lambda_Proton(nullptr),
+  fProfileDelta_dpt_Lambda_AntiProton(nullptr),
+  fProfileDelta_dpt_AntiLambda_hPos(nullptr),
+  fProfileDelta_dpt_AntiLambda_hNeg(nullptr),
+  fProfileDelta_dpt_AntiLambda_Proton(nullptr),
+  fProfileDelta_dpt_AntiLambda_AntiProton(nullptr),
+  fProfileDelta_deta_Lambda_hPos(nullptr),
+  fProfileDelta_deta_Lambda_hNeg(nullptr),
+  fProfileDelta_deta_Lambda_Proton(nullptr),
+  fProfileDelta_deta_Lambda_AntiProton(nullptr),
+  fProfileDelta_deta_AntiLambda_hPos(nullptr),
+  fProfileDelta_deta_AntiLambda_hNeg(nullptr),
+  fProfileDelta_deta_AntiLambda_Proton(nullptr),
+  fProfileDelta_deta_AntiLambda_AntiProton(nullptr),
+  fProfileDelta_mpt_Lambda_hPos(nullptr),
+  fProfileDelta_mpt_Lambda_hNeg(nullptr),
+  fProfileDelta_mpt_Lambda_Proton(nullptr),
+  fProfileDelta_mpt_Lambda_AntiProton(nullptr),
+  fProfileDelta_mpt_AntiLambda_hPos(nullptr),
+  fProfileDelta_mpt_AntiLambda_hNeg(nullptr),
+  fProfileDelta_mpt_AntiLambda_Proton(nullptr),
+  fProfileDelta_mpt_AntiLambda_AntiProton(nullptr),
+
+  fHistDelPhi_Lambda_hPos(nullptr),
+  fHistDelPhi_Lambda_hNeg(nullptr),
+  fHistDelPhi_Lambda_Proton(nullptr),
+  fHistDelPhi_Lambda_AntiProton(nullptr),
+  fHistDelPhi_AntiLambda_hPos(nullptr),
+  fHistDelPhi_AntiLambda_hNeg(nullptr),
+  fHistDelPhi_AntiLambda_Proton(nullptr),
+  fHistDelPhi_AntiLambda_AntiProton(nullptr),
+
+  fHistSumPhiTPC_Lambda_hPos(nullptr),
+  fHistSumPhiTPC_Lambda_hNeg(nullptr),
+  fHistSumPhiTPC_Lambda_Proton(nullptr),
+  fHistSumPhiTPC_Lambda_AntiProton(nullptr),
+  fHistSumPhiTPC_AntiLambda_hPos(nullptr),
+  fHistSumPhiTPC_AntiLambda_hNeg(nullptr),
+  fHistSumPhiTPC_AntiLambda_Proton(nullptr),
+  fHistSumPhiTPC_AntiLambda_AntiProton(nullptr)
 {
   for (int i = 0; i < 3; i++) fVertex[i] = -999;
 
@@ -810,7 +978,7 @@ void AliAnalysisTaskLambdaProtonCVELocal::UserCreateOutputObjects()
   ////////////////////////
   // VZERO
   ////////////////////////
-  if (IsVZEROCalibOn) {
+  if (IsUseVZEROPlane) {
     if (!fListVZEROCalib) {
      std::cout<<("VZERO calibration list not found")<<std::endl;
      return;
@@ -850,11 +1018,13 @@ void AliAnalysisTaskLambdaProtonCVELocal::UserCreateOutputObjects()
   ////////////////////////
   // ZDC
   ////////////////////////
-  if (IsZDCCalibOn) {
+  if (IsUseZDCPlane) {
     if ((fPeriod.EqualTo("LHC10h")||fPeriod.EqualTo("LHC18q")||fPeriod.EqualTo("LHC18r")) && !fListZDCCalib) {
       std::cout<<("ZDC calibration list not found")<<std::endl;
       return;
     }
+    //TODO
+    if((fPeriod.EqualTo("LHC15o"))) return;
     tree = new TTree();
     fProfileForZNCGE = new TProfile();
     fProfileForZNAGE = new TProfile();
@@ -1103,27 +1273,59 @@ void AliAnalysisTaskLambdaProtonCVELocal::UserCreateOutputObjects()
   }
 
   //Flow QA
-  char chPlaneType[5];
-  for (int i = 0; i < 5; i++) {
-    if (i==0) sprintf(chPlaneType,"TPC");
-    if (i==1) sprintf(chPlaneType,"V0C");
-    if (i==2) sprintf(chPlaneType,"V0A");
-    if (i==3) sprintf(chPlaneType,"ZNC");
-    if (i==4) sprintf(chPlaneType,"ZNA");
-    fProfile2DRawFlowCentPthPos[i] = new TProfile2D(Form("fProfile2DRawFlowCentPthPos_%s",chPlaneType),"",10,0,100,25,0,5);
-    fProfile2DRawFlowCentPthNeg[i] = new TProfile2D(Form("fProfile2DRawFlowCentPthNeg_%s",chPlaneType),"",10,0,100,25,0,5);
-    fProfile2DRawFlowCentPtProton[i] = new TProfile2D(Form("fProfile2DRawFlowCentPtProton_%s",chPlaneType),"",10,0,100,25,0,5);
-    fProfile2DRawFlowCentPtAntiProton[i] = new TProfile2D(Form("fProfile2DRawFlowCentPtAntiProton_%s",chPlaneType),"",10,0,100,25,0,5);
-    fProfile2DRawFlowCentPtLambda[i] = new TProfile2D(Form("fProfile2DRawFlowCentPtLambda_%s",chPlaneType),"",10,0,100,25,0,5);
-    fProfile2DRawFlowCentPtAntiLambda[i] = new TProfile2D(Form("fProfile2DRawFlowCentPtAntiLambda_%s",chPlaneType),"",10,0,100,25,0,5);
-    fOutputList->Add(fProfile2DRawFlowCentPthPos[i]);
-    fOutputList->Add(fProfile2DRawFlowCentPthNeg[i]);
-    fOutputList->Add(fProfile2DRawFlowCentPtProton[i]);
-    fOutputList->Add(fProfile2DRawFlowCentPtAntiProton[i]);
-    fOutputList->Add(fProfile2DRawFlowCentPtLambda[i]);
-    fOutputList->Add(fProfile2DRawFlowCentPtAntiLambda[i]);
-  }
+  if (IsCheckPIDFlow) {
+    char chPlaneType[5];
+    for (int i = 0; i < 5; i++) {
+      if (i==0) sprintf(chPlaneType,"TPC");
+      if (i==1) sprintf(chPlaneType,"V0C");
+      if (i==2) sprintf(chPlaneType,"V0A");
+      if (i==3) sprintf(chPlaneType,"ZNC");
+      if (i==4) sprintf(chPlaneType,"ZNA");
+      fProfile2DRawFlowCentPthPos[i] = new TProfile2D(Form("fProfile2DRawFlowCentPthPos_%s",chPlaneType),"",10,0,100,25,0,5);
+      fProfile2DRawFlowCentPthNeg[i] = new TProfile2D(Form("fProfile2DRawFlowCentPthNeg_%s",chPlaneType),"",10,0,100,25,0,5);
+      fProfile2DRawFlowCentPtProton[i] = new TProfile2D(Form("fProfile2DRawFlowCentPtProton_%s",chPlaneType),"",10,0,100,25,0,5);
+      fProfile2DRawFlowCentPtAntiProton[i] = new TProfile2D(Form("fProfile2DRawFlowCentPtAntiProton_%s",chPlaneType),"",10,0,100,25,0,5);
+      fProfile2DRawFlowCentPtLambda[i] = new TProfile2D(Form("fProfile2DRawFlowCentPtLambda_%s",chPlaneType),"",10,0,100,25,0,5);
+      fProfile2DRawFlowCentPtAntiLambda[i] = new TProfile2D(Form("fProfile2DRawFlowCentPtAntiLambda_%s",chPlaneType),"",10,0,100,25,0,5);
+    }
 
+    fOutputList->Add(fProfile2DRawFlowCentPthNeg[0]);
+    fOutputList->Add(fProfile2DRawFlowCentPtProton[0]);
+    fOutputList->Add(fProfile2DRawFlowCentPthPos[0]);
+    fOutputList->Add(fProfile2DRawFlowCentPtAntiProton[0]);
+    fOutputList->Add(fProfile2DRawFlowCentPtLambda[0]);
+    fOutputList->Add(fProfile2DRawFlowCentPtAntiLambda[0]);
+
+    if (IsUseVZEROPlane) {
+      fOutputList->Add(fProfile2DRawFlowCentPthNeg[1]);
+      fOutputList->Add(fProfile2DRawFlowCentPtProton[1]);
+      fOutputList->Add(fProfile2DRawFlowCentPthPos[1]);
+      fOutputList->Add(fProfile2DRawFlowCentPtAntiProton[1]);
+      fOutputList->Add(fProfile2DRawFlowCentPtLambda[1]);
+      fOutputList->Add(fProfile2DRawFlowCentPtAntiLambda[1]);
+      fOutputList->Add(fProfile2DRawFlowCentPthNeg[2]);
+      fOutputList->Add(fProfile2DRawFlowCentPtProton[2]);
+      fOutputList->Add(fProfile2DRawFlowCentPthPos[2]);
+      fOutputList->Add(fProfile2DRawFlowCentPtAntiProton[2]);
+      fOutputList->Add(fProfile2DRawFlowCentPtLambda[2]);
+      fOutputList->Add(fProfile2DRawFlowCentPtAntiLambda[2]);
+    }
+
+    if (IsUseZDCPlane) {
+      fOutputList->Add(fProfile2DRawFlowCentPthNeg[3]);
+      fOutputList->Add(fProfile2DRawFlowCentPtProton[3]);
+      fOutputList->Add(fProfile2DRawFlowCentPthPos[3]);
+      fOutputList->Add(fProfile2DRawFlowCentPtAntiProton[3]);
+      fOutputList->Add(fProfile2DRawFlowCentPtLambda[3]);
+      fOutputList->Add(fProfile2DRawFlowCentPtAntiLambda[3]);
+      fOutputList->Add(fProfile2DRawFlowCentPthNeg[4]);
+      fOutputList->Add(fProfile2DRawFlowCentPtProton[4]);
+      fOutputList->Add(fProfile2DRawFlowCentPthPos[4]);
+      fOutputList->Add(fProfile2DRawFlowCentPtAntiProton[4]);
+      fOutputList->Add(fProfile2DRawFlowCentPtLambda[4]);
+      fOutputList->Add(fProfile2DRawFlowCentPtAntiLambda[4]);
+    }
+  }
 
   ////////////////////////
   // Results
@@ -1131,27 +1333,28 @@ void AliAnalysisTaskLambdaProtonCVELocal::UserCreateOutputObjects()
   // Plane we used
   fHist2DPsi2TPCPosCent = new TH2D("fHist2DPsi2TPCPosCent","",20,0,100,100,0,TMath::TwoPi());
   fHist2DPsi2TPCNegCent = new TH2D("fHist2DPsi2TPCNegCent","",20,0,100,100,0,TMath::TwoPi());
-  fHist2DPsi2V0CCent    = new TH2D("fHist2DPsi2V0CCent","",20,0,100,100,0,TMath::TwoPi());
-  fHist2DPsi2V0ACent    = new TH2D("fHist2DPsi2V0ACent","",20,0,100,100,0,TMath::TwoPi());
-  fHist2DPsi1ZNCCent    = new TH2D("fHist2DPsi1ZNCCent","",20,0,100,100,0,TMath::TwoPi());
-  fHist2DPsi1ZNACent    = new TH2D("fHist2DPsi1ZNACent","",20,0,100,100,0,TMath::TwoPi());
   fOutputList->Add(fHist2DPsi2TPCPosCent);
   fOutputList->Add(fHist2DPsi2TPCNegCent);
+  if (IsUseVZEROPlane) {
+  fHist2DPsi2V0CCent    = new TH2D("fHist2DPsi2V0CCent","",20,0,100,100,0,TMath::TwoPi());
+  fHist2DPsi2V0ACent    = new TH2D("fHist2DPsi2V0ACent","",20,0,100,100,0,TMath::TwoPi());
   fOutputList->Add(fHist2DPsi2V0CCent);
   fOutputList->Add(fHist2DPsi2V0ACent);
+  }
+  if (IsUseZDCPlane) {
+  fHist2DPsi1ZNCCent    = new TH2D("fHist2DPsi1ZNCCent","",20,0,100,100,0,TMath::TwoPi());
+  fHist2DPsi1ZNACent    = new TH2D("fHist2DPsi1ZNACent","",20,0,100,100,0,TMath::TwoPi());
   fOutputList->Add(fHist2DPsi1ZNCCent);
   fOutputList->Add(fHist2DPsi1ZNACent);
+  }
 
   //Resolution
   ///SideC-SideA Event Plane Correlations for Resolution Estimation
   fProfileTPCPsi2Correlation = new TProfile("fProfileTPCPsi2Correlation","TPCPos-TPCNeg Psi2 Res. vs Cent; Cent; Resolution",100,0,100.);
-  fProfileV0MPsi2Correlation = new TProfile("fProfileV0MPsi2Correlation","V0C-V0A Psi2 Res. vs Cent; Cent; Resolution",100,0,100.);
-  fProfileZDCPsi1Correlation = new TProfile("fProfileZDCPsi1Correlation","ZNC-ZNA Psi1 Res. vs Cent; Cent; Resolution",100,0,100.);
-  fProfileZDCPsi2Correlation = new TProfile("fProfileZDCPsi2Correlation","ZNC-ZNA Psi2 Res. vs Cent; Cent; Resolution",100,0,100.);
   fOutputList->Add(fProfileTPCPsi2Correlation);
+  if (IsUseVZEROPlane) {
+  fProfileV0MPsi2Correlation = new TProfile("fProfileV0MPsi2Correlation","V0C-V0A Psi2 Res. vs Cent; Cent; Resolution",100,0,100.);
   fOutputList->Add(fProfileV0MPsi2Correlation);
-  fOutputList->Add(fProfileZDCPsi1Correlation);
-  fOutputList->Add(fProfileZDCPsi2Correlation);
   ///V0X-TPC Event Plane Correlations for Resolution:
   fProfileV0CTPCPosPsi2Correlation = new TProfile("fProfileV0CTPCPosPsi2Correlation","V0C-TPCPos Psi2; Cent; Resolution",100,0,100.);
   fProfileV0ATPCPosPsi2Correlation = new TProfile("fProfileV0ATPCPosPsi2Correlation","V0A-TPCPos Psi2; Cent; Resolution",100,0,100.);
@@ -1161,6 +1364,17 @@ void AliAnalysisTaskLambdaProtonCVELocal::UserCreateOutputObjects()
   fOutputList->Add(fProfileV0ATPCPosPsi2Correlation);
   fOutputList->Add(fProfileV0CTPCNegPsi2Correlation);
   fOutputList->Add(fProfileV0ATPCNegPsi2Correlation);
+  }
+  if (IsUseZDCPlane)
+  {
+    fProfileZDCPsi1Correlation = new TProfile("fProfileZDCPsi1Correlation","ZNC-ZNA Psi1 Res. vs Cent; Cent; Resolution",100,0,100.);
+    fProfileZDCPsi2Correlation = new TProfile("fProfileZDCPsi2Correlation","ZNC-ZNA Psi2 Res. vs Cent; Cent; Resolution",100,0,100.);
+    fOutputList->Add(fProfileZDCPsi1Correlation);
+    fOutputList->Add(fProfileZDCPsi2Correlation);
+  }
+
+
+
 
   ///Lambda-X correlators
   ///Delta Correlators:
@@ -1208,6 +1422,7 @@ void AliAnalysisTaskLambdaProtonCVELocal::UserCreateOutputObjects()
 
   //V0C Plane
   ///Lambda - X
+  if (IsUseVZEROPlane) {
   fProfileGammaV0C_Lambda_hPos = new TProfile("fProfileGammaV0C_Lambda_hPos", "", 20, 0., 100.);
   fProfileGammaV0C_Lambda_hNeg = new TProfile("fProfileGammaV0C_Lambda_hNeg", "", 20, 0., 100.);
   fProfileGammaV0C_Lambda_Proton = new TProfile("fProfileGammaV0C_Lambda_Proton", "", 20, 0., 100.);
@@ -1247,9 +1462,11 @@ void AliAnalysisTaskLambdaProtonCVELocal::UserCreateOutputObjects()
   fOutputList->Add(fProfileGammaV0A_AntiLambda_hNeg);
   fOutputList->Add(fProfileGammaV0A_AntiLambda_Proton);
   fOutputList->Add(fProfileGammaV0A_AntiLambda_AntiProton);
+  }
 
   //ZNC Plane
   ///Lambda - X
+  if (IsUseZDCPlane) {
   fProfileGammaZNC_Lambda_hPos = new TProfile("fProfileGammaZNC_Lambda_hPos", "", 20, 0., 100.);
   fProfileGammaZNC_Lambda_hNeg = new TProfile("fProfileGammaZNC_Lambda_hNeg", "", 20, 0., 100.);
   fProfileGammaZNC_Lambda_Proton = new TProfile("fProfileGammaZNC_Lambda_Proton", "", 20, 0., 100.);
@@ -1289,6 +1506,109 @@ void AliAnalysisTaskLambdaProtonCVELocal::UserCreateOutputObjects()
   fOutputList->Add(fProfileGammaZNA_AntiLambda_hNeg);
   fOutputList->Add(fProfileGammaZNA_AntiLambda_Proton);
   fOutputList->Add(fProfileGammaZNA_AntiLambda_AntiProton);
+  }
+
+  if (IsFillDiffResult)
+  {
+    //diff pt
+    fProfileDelta_dpt_Lambda_hPos = new TProfile("fProfileDelta_dpt_Lambda_hPos","fProfileDelta_dpt_Lambda_hPos",30,-5,5);
+    fProfileDelta_dpt_Lambda_hNeg = new TProfile("fProfileDelta_dpt_Lambda_hNeg","fProfileDelta_dpt_Lambda_hNeg",30,-5,5);
+    fProfileDelta_dpt_Lambda_Proton = new TProfile("fProfileDelta_dpt_Lambda_Proton","fProfileDelta_dpt_Lambda_Proton",30,-5,5);
+    fProfileDelta_dpt_Lambda_AntiProton = new TProfile("fProfileDelta_dpt_Lambda_AntiProton","fProfileDelta_dpt_Lambda_AntiProton",30,-5,5);
+    fProfileDelta_dpt_AntiLambda_hPos = new TProfile("fProfileDelta_dpt_AntiLambda_hPos","fProfileDelta_dpt_AntiLambda_hPos",30,-5,5);
+    fProfileDelta_dpt_AntiLambda_hNeg = new TProfile("fProfileDelta_dpt_AntiLambda_hNeg","fProfileDelta_dpt_AntiLambda_hNeg",30,-5,5);
+    fProfileDelta_dpt_AntiLambda_Proton = new TProfile("fProfileDelta_dpt_AntiLambda_Proton","fProfileDelta_dpt_AntiLambda_Proton",30,-5,5);
+    fProfileDelta_dpt_AntiLambda_AntiProton= new TProfile("fProfileDelta_dpt_AntiLambda_AntiProton","fProfileDelta_dpt_AntiLambda_AntiProton",30,-5,5); 
+
+    //diff eta
+    fProfileDelta_deta_Lambda_hPos = new TProfile("fProfileDelta_deta_Lambda_hPos","fProfileDelta_deta_Lambda_hPos",20,-2,2);
+    fProfileDelta_deta_Lambda_hNeg = new TProfile("fProfileDelta_deta_Lambda_hNeg","fProfileDelta_deta_Lambda_hNeg",20,-2,2);
+    fProfileDelta_deta_Lambda_Proton = new TProfile("fProfileDelta_deta_Lambda_Proton","fProfileDelta_deta_Lambda_Proton",20,-2,2);
+    fProfileDelta_deta_Lambda_AntiProton = new TProfile("fProfileDelta_deta_Lambda_AntiProton","fProfileDelta_deta_Lambda_AntiProton",20,-2,2);
+    fProfileDelta_deta_AntiLambda_hPos = new TProfile("fProfileDelta_deta_AntiLambda_hPos","fProfileDelta_deta_AntiLambda_hPos",20,-2,2);
+    fProfileDelta_deta_AntiLambda_hNeg = new TProfile("fProfileDelta_deta_AntiLambda_hNeg","fProfileDelta_deta_AntiLambda_hNeg",20,-2,2);
+    fProfileDelta_deta_AntiLambda_Proton = new TProfile("fProfileDelta_deta_AntiLambda_Proton","fProfileDelta_deta_AntiLambda_Proton",20,-2,2);
+    fProfileDelta_deta_AntiLambda_AntiProton= new TProfile("fProfileDelta_deta_AntiLambda_AntiProton","fProfileDelta_deta_AntiLambda_AntiProton",20,-2,2); 
+
+    //mean pt
+    fProfileDelta_mpt_Lambda_hPos = new TProfile("fProfileDelta_mpt_Lambda_hPos","fProfileDelta_mpt_Lambda_hPos",15,0,5);
+    fProfileDelta_mpt_Lambda_hNeg = new TProfile("fProfileDelta_mpt_Lambda_hNeg","fProfileDelta_mpt_Lambda_hNeg",15,0,5);
+    fProfileDelta_mpt_Lambda_Proton = new TProfile("fProfileDelta_mpt_Lambda_Proton","fProfileDelta_mpt_Lambda_Proton",15,0,5);
+    fProfileDelta_mpt_Lambda_AntiProton = new TProfile("fProfileDelta_mpt_Lambda_AntiProton","fProfileDelta_mpt_Lambda_AntiProton",15,0,5);
+    fProfileDelta_mpt_AntiLambda_hPos = new TProfile("fProfileDelta_mpt_AntiLambda_hPos","fProfileDelta_mpt_AntiLambda_hPos",15,0,5);
+    fProfileDelta_mpt_AntiLambda_hNeg = new TProfile("fProfileDelta_mpt_AntiLambda_hNeg","fProfileDelta_mpt_AntiLambda_hNeg",15,0,5);
+    fProfileDelta_mpt_AntiLambda_Proton = new TProfile("fProfileDelta_mpt_AntiLambda_Proton","fProfileDelta_mpt_AntiLambda_Proton",15,0,5);
+    fProfileDelta_mpt_AntiLambda_AntiProton= new TProfile("fProfileDelta_mpt_AntiLambda_AntiProton","fProfileDelta_mpt_AntiLambda_AntiProton",15,0,5); 
+
+    //diff pt
+    fOutputList -> Add(fProfileDelta_dpt_Lambda_hPos);
+    fOutputList -> Add(fProfileDelta_dpt_Lambda_hNeg);
+    fOutputList -> Add(fProfileDelta_dpt_Lambda_Proton);
+    fOutputList -> Add(fProfileDelta_dpt_Lambda_AntiProton);
+    fOutputList -> Add(fProfileDelta_dpt_AntiLambda_hPos);
+    fOutputList -> Add(fProfileDelta_dpt_AntiLambda_hNeg);
+    fOutputList -> Add(fProfileDelta_dpt_AntiLambda_Proton);
+    fOutputList -> Add(fProfileDelta_dpt_AntiLambda_AntiProton);
+
+    //diff eta
+    fOutputList -> Add(fProfileDelta_deta_Lambda_hPos);
+    fOutputList -> Add(fProfileDelta_deta_Lambda_hNeg);
+    fOutputList -> Add(fProfileDelta_deta_Lambda_Proton);
+    fOutputList -> Add(fProfileDelta_deta_Lambda_AntiProton);
+    fOutputList -> Add(fProfileDelta_deta_AntiLambda_hPos);
+    fOutputList -> Add(fProfileDelta_deta_AntiLambda_hNeg);
+    fOutputList -> Add(fProfileDelta_deta_AntiLambda_Proton);
+    fOutputList -> Add(fProfileDelta_deta_AntiLambda_AntiProton);
+
+    //mean pt
+    fOutputList -> Add(fProfileDelta_mpt_Lambda_hPos);
+    fOutputList -> Add(fProfileDelta_mpt_Lambda_hNeg);
+    fOutputList -> Add(fProfileDelta_mpt_Lambda_Proton);
+    fOutputList -> Add(fProfileDelta_mpt_Lambda_AntiProton);
+    fOutputList -> Add(fProfileDelta_mpt_AntiLambda_hPos);
+    fOutputList -> Add(fProfileDelta_mpt_AntiLambda_hNeg);
+    fOutputList -> Add(fProfileDelta_mpt_AntiLambda_Proton);
+    fOutputList -> Add(fProfileDelta_mpt_AntiLambda_AntiProton);
+  }
+
+  if (IsFillDeltaPhiSumPhi)
+  {
+    fHistDelPhi_Lambda_hPos           = new TH2F("fHistDelPhi_Lambda_hPos","",8,0.,80.,64,-0.5*TMath::Pi(),1.5*TMath::Pi());
+    fHistDelPhi_Lambda_hNeg           = new TH2F("fHistDelPhi_Lambda_hNeg","",8,0.,80.,64,-0.5*TMath::Pi(),1.5*TMath::Pi());
+    fHistDelPhi_Lambda_Proton         = new TH2F("fHistDelPhi_Lambda_Proton","",8,0.,80.,64,-0.5*TMath::Pi(),1.5*TMath::Pi());
+    fHistDelPhi_Lambda_AntiProton     = new TH2F("fHistDelPhi_Lambda_AntiProton","",8,0.,80.,64,-0.5*TMath::Pi(),1.5*TMath::Pi());
+    fHistDelPhi_AntiLambda_hPos       = new TH2F("fHistDelPhi_AntiLambda_hPos","",8,0.,80.,64,-0.5*TMath::Pi(),1.5*TMath::Pi());
+    fHistDelPhi_AntiLambda_hNeg       = new TH2F("fHistDelPhi_AntiLambda_hNeg","",8,0.,80.,64,-0.5*TMath::Pi(),1.5*TMath::Pi());
+    fHistDelPhi_AntiLambda_Proton     = new TH2F("fHistDelPhi_AntiLambda_Proton","",8,0.,80.,64,-0.5*TMath::Pi(),1.5*TMath::Pi());
+    fHistDelPhi_AntiLambda_AntiProton = new TH2F("fHistDelPhi_AntiLambda_AntiProton","",8,0.,80.,64,-0.5*TMath::Pi(),1.5*TMath::Pi());
+
+    fHistSumPhiTPC_Lambda_hPos           = new TH2F("fHistSumPhiTPC_Lambda_hPos","",8,0.,80.,64,-0.5*TMath::Pi(),1.5*TMath::Pi());
+    fHistSumPhiTPC_Lambda_hNeg           = new TH2F("fHistSumPhiTPC_Lambda_hNeg","",8,0.,80.,64,-0.5*TMath::Pi(),1.5*TMath::Pi());
+    fHistSumPhiTPC_Lambda_Proton         = new TH2F("fHistSumPhiTPC_Lambda_Proton","",8,0.,80.,64,-0.5*TMath::Pi(),1.5*TMath::Pi());
+    fHistSumPhiTPC_Lambda_AntiProton     = new TH2F("fHistSumPhiTPC_Lambda_AntiProton","",8,0.,80.,64,-0.5*TMath::Pi(),1.5*TMath::Pi());
+    fHistSumPhiTPC_AntiLambda_hPos       = new TH2F("fHistSumPhiTPC_AntiLambda_hPos","",8,0.,80.,64,-0.5*TMath::Pi(),1.5*TMath::Pi());
+    fHistSumPhiTPC_AntiLambda_hNeg       = new TH2F("fHistSumPhiTPC_AntiLambda_hNeg","",8,0.,80.,64,-0.5*TMath::Pi(),1.5*TMath::Pi());
+    fHistSumPhiTPC_AntiLambda_Proton     = new TH2F("fHistSumPhiTPC_AntiLambda_Proton","",8,0.,80.,64,-0.5*TMath::Pi(),1.5*TMath::Pi());
+    fHistSumPhiTPC_AntiLambda_AntiProton = new TH2F("fHistSumPhiTPC_AntiLambda_AntiProton","",8,0.,80.,64,-0.5*TMath::Pi(),1.5*TMath::Pi());
+
+    fOutputList->Add(fHistDelPhi_Lambda_hPos);
+    fOutputList->Add(fHistDelPhi_Lambda_hNeg);
+    fOutputList->Add(fHistDelPhi_Lambda_Proton);
+    fOutputList->Add(fHistDelPhi_Lambda_AntiProton);
+    fOutputList->Add(fHistDelPhi_AntiLambda_hPos);
+    fOutputList->Add(fHistDelPhi_AntiLambda_hNeg);
+    fOutputList->Add(fHistDelPhi_AntiLambda_Proton);
+    fOutputList->Add(fHistDelPhi_AntiLambda_AntiProton);
+
+    fOutputList->Add(fHistSumPhiTPC_Lambda_hPos);
+    fOutputList->Add(fHistSumPhiTPC_Lambda_hNeg);
+    fOutputList->Add(fHistSumPhiTPC_Lambda_Proton);
+    fOutputList->Add(fHistSumPhiTPC_Lambda_AntiProton);
+    fOutputList->Add(fHistSumPhiTPC_AntiLambda_hPos);
+    fOutputList->Add(fHistSumPhiTPC_AntiLambda_hNeg);
+    fOutputList->Add(fHistSumPhiTPC_AntiLambda_Proton);
+    fOutputList->Add(fHistSumPhiTPC_AntiLambda_AntiProton);
+  }
 
   PostData(1,fOutputList);
   if (fDebug) Printf("UserCreateOutputObjects() Post Data Success!");
@@ -1350,7 +1670,7 @@ void AliAnalysisTaskLambdaProtonCVELocal::UserExec(Option_t *)
   else if (fTrigger.EqualTo("kINT7"))
   isTrigselected = mask & AliVEvent::kINT7;
   else if (fTrigger.EqualTo("kINT7+kCentral+kSemiCentral"))
-  isTrigselected = mask & AliVEvent::kINT7 + AliVEvent::kCentral + AliVEvent::kSemiCentral;
+  isTrigselected = mask & (AliVEvent::kINT7 + AliVEvent::kCentral + AliVEvent::kSemiCentral);
   if (isTrigselected == false) return;
   fEvtCount->Fill(3);
   if (fDebug) Printf("trigger done!");
@@ -1401,7 +1721,7 @@ void AliAnalysisTaskLambdaProtonCVELocal::UserExec(Option_t *)
   for (int i = 0; i < 20; ++i) {
       if (vz > -10+i*1 && vz < -10+(i+1)*1) {fVzBin = i; break;}
   }
-  if (fVzBin<-990) return;
+  if (fVzBin < 0) return;
   fEvtCount->Fill(5);
   if (fDebug) Printf("vertex done!");
 
@@ -1455,22 +1775,32 @@ void AliAnalysisTaskLambdaProtonCVELocal::UserExec(Option_t *)
   fHistCent[1]->Fill(fCent);
   fEvtCount->Fill(7);
   if (fDebug) Printf("pile-up done!");
-
   //----------------------------
   // VZERO Plane
   //----------------------------
-  if (!GetVZEROPlane()) return;
-  fEvtCount->Fill(8);
-  if (fDebug) Printf("Get VZERO Plane done!");
+  if (IsUseVZEROPlane) {
+    IsRightVZEROPlane = GetVZEROPlane();
+    if (IsRightVZEROPlane) {
+      fEvtCount->Fill(8);
+      if (fDebug) Printf("Get VZERO Plane done!");
+    }
+  }
   //----------------------------
   // ZDC Plane
   //----------------------------
-  if (fPeriod.EqualTo("LHC10h")) if (!GetZDCPlane()) return;
-  if (fPeriod.EqualTo("LHC18q")
-  || fPeriod.EqualTo("LHC18r"))  if (!GetZDCPlaneLsFit()) return;
+  if (IsUseZDCPlane) {
+    if (fPeriod.EqualTo("LHC10h")) 
+      IsRightZDCPlane = GetZDCPlane();
+    if (fPeriod.EqualTo("LHC18q") || fPeriod.EqualTo("LHC18r"))  
+      IsRightZDCPlane = GetZDCPlaneLsFit();
+    if (fPeriod.EqualTo("LHC15o")) 
+      IsRightZDCPlane = false;
 
-  fEvtCount->Fill(9);
-  if (fDebug) Printf("Get ZDC Plane done!");
+    if (IsRightZDCPlane) {
+      fEvtCount->Fill(9);
+      if (fDebug) Printf("Get ZDC Plane done!");
+    }
+  }
   //----------------------------
   // Loop Tracks / Fill Vectors
   //----------------------------
@@ -1491,20 +1821,22 @@ void AliAnalysisTaskLambdaProtonCVELocal::UserExec(Option_t *)
   //----------------------------
   fHist2DPsi2TPCPosCent -> Fill(fCent,    fPsi2TPCPos);
   fHist2DPsi2TPCNegCent -> Fill(fCent,    fPsi2TPCNeg);
-  fHist2DPsi2V0CCent    -> Fill(centSPD1, fPsi2V0C);
-  fHist2DPsi2V0ACent    -> Fill(centSPD1, fPsi2V0A);
-  fHist2DPsi1ZNCCent    -> Fill(fCent,    fPsi1ZNC);
-  fHist2DPsi1ZNACent    -> Fill(fCent,    fPsi1ZNA);
-
   fProfileTPCPsi2Correlation -> Fill(fCent, TMath::Cos(2*(fPsi2TPCNeg - fPsi2TPCPos)));
-  fProfileV0MPsi2Correlation -> Fill(fCent, TMath::Cos(2*(fPsi2V0C - fPsi2V0A)));
-  fProfileZDCPsi1Correlation -> Fill(fCent, TMath::Cos(1*(fPsi1ZNC - fPsi1ZNA)));
-  fProfileZDCPsi2Correlation -> Fill(fCent, TMath::Cos(2*(fPsi1ZNC - fPsi1ZNA)));
-
-  fProfileV0CTPCPosPsi2Correlation -> Fill(fCent, TMath::Cos(2*(fPsi2V0C - fPsi2TPCPos)));
-  fProfileV0ATPCPosPsi2Correlation -> Fill(fCent, TMath::Cos(2*(fPsi2V0A - fPsi2TPCPos)));
-  fProfileV0CTPCNegPsi2Correlation -> Fill(fCent, TMath::Cos(2*(fPsi2V0C - fPsi2TPCNeg)));
-  fProfileV0ATPCNegPsi2Correlation -> Fill(fCent, TMath::Cos(2*(fPsi2V0A - fPsi2TPCNeg)));
+  if (IsUseVZEROPlane) {
+    fHist2DPsi2V0CCent    -> Fill(centSPD1, fPsi2V0C);
+    fHist2DPsi2V0ACent    -> Fill(centSPD1, fPsi2V0A);
+    fProfileV0MPsi2Correlation -> Fill(fCent, TMath::Cos(2*(fPsi2V0C - fPsi2V0A)));
+    fProfileV0CTPCPosPsi2Correlation -> Fill(fCent, TMath::Cos(2*(fPsi2V0C - fPsi2TPCPos)));
+    fProfileV0ATPCPosPsi2Correlation -> Fill(fCent, TMath::Cos(2*(fPsi2V0A - fPsi2TPCPos)));
+    fProfileV0CTPCNegPsi2Correlation -> Fill(fCent, TMath::Cos(2*(fPsi2V0C - fPsi2TPCNeg)));
+    fProfileV0ATPCNegPsi2Correlation -> Fill(fCent, TMath::Cos(2*(fPsi2V0A - fPsi2TPCNeg)));
+  }
+  if (IsUseZDCPlane) {
+    fHist2DPsi1ZNCCent    -> Fill(fCent, fPsi1ZNC);
+    fHist2DPsi1ZNACent    -> Fill(fCent, fPsi1ZNA);
+    fProfileZDCPsi1Correlation -> Fill(fCent, TMath::Cos(1*(fPsi1ZNC - fPsi1ZNA)));
+    fProfileZDCPsi2Correlation -> Fill(fCent, TMath::Cos(2*(fPsi1ZNC - fPsi1ZNA)));
+  }
   fEvtCount->Fill(13);
   //----------------------------
   // Get Lambda Vector
@@ -1521,7 +1853,7 @@ void AliAnalysisTaskLambdaProtonCVELocal::UserExec(Option_t *)
   //------------------
   // Post output data.
   //------------------
-  if (fDebug) Printf("analysis done!");
+  // if (fDebug) Printf("analysis done!");
   PostData(1,fOutputList);
 }
 
@@ -1688,12 +2020,12 @@ bool AliAnalysisTaskLambdaProtonCVELocal::GetZDCPlane()
   float towerEnegryZNCGE[5] = {0};
   float towerEnegryZNAGE[5] = {0};
 
-  if(IsZDCCalibOn) {
-    for (int iTower = 0; iTower < 5; ++iTower) {
-      fProfileZNCTowerMeanEnegry[0]->Fill(iTower+0.5, towerEnegryZNC[iTower]);
-      fProfileZNATowerMeanEnegry[0]->Fill(iTower+0.5, towerEnegryZNA[iTower]);
-    }
+
+  for (int iTower = 0; iTower < 5; ++iTower) {
+    fProfileZNCTowerMeanEnegry[0]->Fill(iTower+0.5, towerEnegryZNC[iTower]);
+    fProfileZNATowerMeanEnegry[0]->Fill(iTower+0.5, towerEnegryZNA[iTower]);
   }
+  
 
   //Loop Over ZDC Towers
   //Gain Equalization
@@ -1702,12 +2034,11 @@ bool AliAnalysisTaskLambdaProtonCVELocal::GetZDCPlane()
     towerEnegryZNAGE[iTower] = towerEnegryZNA[iTower] / (fProfileForZNAGE->GetBinContent(iTower + 1)) * (fProfileForZNAGE->GetBinContent(2));
   }
 
-  if(IsZDCCalibOn) {
-    for (int iTower = 0; iTower < 5; ++iTower) {
-      fProfileZNCTowerMeanEnegry[1]->Fill(iTower+0.5, towerEnegryZNCGE[iTower]);
-      fProfileZNATowerMeanEnegry[1]->Fill(iTower+0.5, towerEnegryZNAGE[iTower]);
-    }
+  for (int iTower = 0; iTower < 5; ++iTower) {
+    fProfileZNCTowerMeanEnegry[1]->Fill(iTower+0.5, towerEnegryZNCGE[iTower]);
+    fProfileZNATowerMeanEnegry[1]->Fill(iTower+0.5, towerEnegryZNAGE[iTower]);
   }
+
 
   float QxC = 0, QyC = 0, MC  = 0;
   float QxA = 0, QyA = 0, MA  = 0;
@@ -1762,11 +2093,8 @@ bool AliAnalysisTaskLambdaProtonCVELocal::GetZDCPlane()
 
   float QxCMean = fHn4DForZNCQxRC -> GetBinContent(fHn4DForZNCQxRC->GetBin(fillPosition));
   float QyCMean = fHn4DForZNCQyRC -> GetBinContent(fHn4DForZNCQyRC->GetBin(fillPosition));
-  float MCMean  = fHn4DForZNCMtRC -> GetBinContent(fHn4DForZNCMtRC->GetBin(fillPosition));
   float QxAMean = fHn4DForZNAQxRC -> GetBinContent(fHn4DForZNAQxRC->GetBin(fillPosition));
   float QyAMean = fHn4DForZNAQyRC -> GetBinContent(fHn4DForZNAQyRC->GetBin(fillPosition));
-  float MAMean  = fHn4DForZNAMtRC -> GetBinContent(fHn4DForZNAMtRC->GetBin(fillPosition));
-
   int entriesC = fHn4DForZNCCountsRC -> GetBinContent(fHn4DForZNCCountsRC->GetBin(fillPosition));
   int entriesA = fHn4DForZNACountsRC -> GetBinContent(fHn4DForZNACountsRC->GetBin(fillPosition));
 
@@ -1837,7 +2165,6 @@ bool AliAnalysisTaskLambdaProtonCVELocal::GetZDCPlaneLsFit()
     if(fZNCTowerRawAOD[iTower] < 1.e-6) return false;
   }
 
-
   double towZNCraw1GainEq = 0, towZNCraw2GainEq = 0, towZNCraw3GainEq = 0, towZNCraw4GainEq = 0;
   towZNCraw1GainEq = fZNCTowerRawAOD[1] * fHZDCCparameters->GetBinContent(1);
   towZNCraw2GainEq = fZNCTowerRawAOD[2] * fHZDCCparameters->GetBinContent(2);
@@ -1864,7 +2191,7 @@ bool AliAnalysisTaskLambdaProtonCVELocal::GetZDCPlaneLsFit()
   for(int i = 0; i < 4; i++) {
     // ZNC 
     // get energy
-    EZNC = towZNC[i+1];
+    // EZNC = towZNC[i+1];
     // build ZDCC centroid
     wZNC = TMath::Max(0., 4.0 + TMath::Log(towZNC[i+1]/fZNCTowerRawAOD[0]));
     numXZNC += xZDCC[i]*wZNC;
@@ -1873,15 +2200,15 @@ bool AliAnalysisTaskLambdaProtonCVELocal::GetZDCPlaneLsFit()
         
     // ZNA part
     // get energy
-    EZNA = towZNA[i+1];
+    // EZNA = towZNA[i+1];
     // build ZDCA centroid
     wZNA = TMath::Max(0., 4.0 + TMath::Log(towZNA[i+1]/fZNATowerRawAOD[0]));
     numXZNA += xZDCA[i]*wZNA;
     numYZNA += yZDCA[i]*wZNA;
     denZNA += wZNA;
   }
-  if (denZNC==0) return false;
-  if (denZNA==0) return false;
+  if (fabs(denZNC) < 1.e-6) return false;
+  if (fabs(denZNA) < 1.e-6) return false;
 
   double ZDCCxPosFromLogWeight = numXZNC/denZNC;
   double ZDCCyPosFromLogWeight = numYZNC/denZNC;
@@ -1901,6 +2228,7 @@ bool AliAnalysisTaskLambdaProtonCVELocal::GetZDCPlaneLsFit()
 
   double psiZNCGE = GetEventPlane(ZDCCxPosFromLogWeight,ZDCCyPosFromLogWeight,1);
   double psiZNAGE = GetEventPlane(ZDCAxPosFromLogWeight,ZDCAyPosFromLogWeight,1);
+  if (TMath::IsNaN(psiZNCGE) || TMath::IsNaN(psiZNAGE)) return false;
 
   fHist2DCalibPsi1ZNCCent[0] ->Fill(fCent,psiZNCGE);
   fHist2DCalibPsi1ZNACent[0] ->Fill(fCent,psiZNAGE);
@@ -1930,7 +2258,8 @@ bool AliAnalysisTaskLambdaProtonCVELocal::GetZDCPlaneLsFit()
   fProfileZDCQyAQyCCent[1] -> Fill(fCent,QyZNA*QyZNC);
 
   double psiZNCRC = GetEventPlane(QxZNC,QyZNC,1);
-  double psiZNARC = GetEventPlane(QxZNA,QyZNC,1);
+  double psiZNARC = GetEventPlane(QxZNA,QyZNA,1);
+  if (TMath::IsNaN(psiZNCRC) || TMath::IsNaN(psiZNARC)) return false;
 
   fHist2DCalibPsi1ZNCCent[1] ->Fill(fCent,psiZNCRC);
   fHist2DCalibPsi1ZNACent[1] ->Fill(fCent,psiZNARC);
@@ -1981,7 +2310,7 @@ bool AliAnalysisTaskLambdaProtonCVELocal::LoopTracks()
     }
 
     if (pt > fPlanePtMin && pt < fPlanePtMax) {
-      //TODO Use pT as weight for better resolution?
+      ///TODO Use Pt as weight for Better resolution?
       if (eta >= fEtaGapPos) {
         SumQ2xTPCPos   += weight * TMath::Cos(2 * phi);
         SumQ2yTPCPos   += weight * TMath::Sin(2 * phi);
@@ -2000,15 +2329,13 @@ bool AliAnalysisTaskLambdaProtonCVELocal::LoopTracks()
     }
 
     bool isItProttrk = CheckPIDofParticle(track,3); // 3=proton
-    isItProttrk *= (pt < fProtonPtMax);
-
     int code = 0;
     if (charge > 0) {
       code = 999;
-      if (isItProttrk) code = 2212;
+      if (isItProttrk && pt < fProtonPtMax && pt > fProtonPtMin) code = 2212;
     } else {  /// charge < 0
       code = -999;
-      if (isItProttrk) code = -2212;
+      if (isItProttrk && pt < fAntiProtonPtMax && pt > fAntiProtonPtMin) code = -2212;
     }
 
     vecPDGCode.push_back(code);
@@ -2096,6 +2423,7 @@ bool AliAnalysisTaskLambdaProtonCVELocal::LoopV0s()
         vecLambdaCode.push_back(code);
         vecLambdaPhi.push_back(phi);
         vecLambdaPt.push_back(pt);
+        vecLambdaEta.push_back(eta);
         vecDaughterPosID.push_back(id_posDaughter);
         vecDaughterNegID.push_back(id_negDaughter);
       }
@@ -2127,6 +2455,7 @@ bool AliAnalysisTaskLambdaProtonCVELocal::LoopV0s()
         vecLambdaCode.push_back(code);
         vecLambdaPhi.push_back(phi);
         vecLambdaPt.push_back(pt);
+        vecLambdaEta.push_back(eta);
         vecDaughterPosID.push_back(id_posDaughter);
         vecDaughterNegID.push_back(id_negDaughter);
       }
@@ -2144,6 +2473,7 @@ bool AliAnalysisTaskLambdaProtonCVELocal::PairLambda()
     int    code_lambda    = vecLambdaCode[jLambda];
     double phi_lambda     = vecLambdaPhi[jLambda];
     double pt_lambda      = vecLambdaPt[jLambda];
+    double eta_lambda     = vecLambdaEta[jLambda];
     int    id_posDaughter = vecDaughterPosID[jLambda];
     int    id_negDaughter = vecDaughterNegID[jLambda];
     //Remove AutoCorrelation:
@@ -2219,20 +2549,27 @@ bool AliAnalysisTaskLambdaProtonCVELocal::PairLambda()
     if (IsCheckPIDFlow) {
       if (code_lambda == 3122) {
         fProfile2DRawFlowCentPtLambda[0]->Fill(fCent, pt_lambda, TMath::Cos(2 * (phi_lambda - fPsi2PosTPCNoAuto)));
+        if(IsUseVZEROPlane){
         fProfile2DRawFlowCentPtLambda[1]->Fill(fCent, pt_lambda, TMath::Cos(2 * (phi_lambda - fPsi2V0C)));
         fProfile2DRawFlowCentPtLambda[2]->Fill(fCent, pt_lambda, TMath::Cos(2 * (phi_lambda - fPsi2V0A)));
+        }
+        if(IsUseZDCPlane){
         fProfile2DRawFlowCentPtLambda[3]->Fill(fCent, pt_lambda, TMath::Cos(2 * (phi_lambda - fPsi1ZNC)));
         fProfile2DRawFlowCentPtLambda[4]->Fill(fCent, pt_lambda, TMath::Cos(2 * (phi_lambda - fPsi1ZNA)));
+        }
       }
-
       if (code_lambda == -3122) {
         fProfile2DRawFlowCentPtAntiLambda[0]->Fill(fCent, pt_lambda, TMath::Cos(2 * (phi_lambda - fPsi2PosTPCNoAuto)));
+        if(IsUseVZEROPlane){
         fProfile2DRawFlowCentPtAntiLambda[1]->Fill(fCent, pt_lambda, TMath::Cos(2 * (phi_lambda - fPsi2V0C)));
         fProfile2DRawFlowCentPtAntiLambda[2]->Fill(fCent, pt_lambda, TMath::Cos(2 * (phi_lambda - fPsi2V0A)));
+        }
+        if(IsUseZDCPlane){
         fProfile2DRawFlowCentPtAntiLambda[3]->Fill(fCent, pt_lambda, TMath::Cos(2 * (phi_lambda - fPsi1ZNC)));
         fProfile2DRawFlowCentPtAntiLambda[4]->Fill(fCent, pt_lambda, TMath::Cos(2 * (phi_lambda - fPsi1ZNA)));
+        }
       }
-    }// check PID flow over.
+    }// check PID flow done.
 
     for (std::vector<double>::size_type iTrk = 0; iTrk < vecPhi.size(); iTrk++) {
       int    code = vecPDGCode[iTrk];
@@ -2254,68 +2591,212 @@ bool AliAnalysisTaskLambdaProtonCVELocal::PairLambda()
       double gammaZNA  = TMath::Cos(phi_lambda + phi - 2 *fPsi1ZNA);
 
       if (code > 0 && code_lambda ==  3122) {
+        if (IsFillDiffResult) {
+          if(fCent > 30. && fCent < 40.) {
+            double dpt = pt_lambda - pt;
+            double deta = eta_lambda - eta;
+            double mpt = 0.5 * (pt_lambda + pt);
+            fProfileDelta_dpt_Lambda_hPos  -> Fill(dpt, delta);
+            fProfileDelta_deta_Lambda_hPos -> Fill(deta,delta);
+            fProfileDelta_mpt_Lambda_hPos  -> Fill(mpt, delta);
+          }
+        }
+        if (IsFillDeltaPhiSumPhi) {
+          fHistDelPhi_Lambda_hPos          -> Fill(fCent,RangePhi(phi_lambda-phi));
+          fHistSumPhiTPC_Lambda_hPos       -> Fill(fCent,RangePhi(phi_lambda + phi - 2 *fPsiNTPCNoAuto));
+        }
         fProfileDelta_Lambda_hPos        -> Fill(fCent, delta);
         fProfileGammaTPC_Lambda_hPos     -> Fill(fCent, gammaTPC);
-        fProfileGammaV0C_Lambda_hPos     -> Fill(fCent, gammaV0C);
-        fProfileGammaV0A_Lambda_hPos     -> Fill(fCent, gammaV0A);
-        fProfileGammaZNC_Lambda_hPos     -> Fill(fCent, gammaZNC);
-        fProfileGammaZNA_Lambda_hPos     -> Fill(fCent, gammaZNA);
+        if (IsUseVZEROPlane) {
+          fProfileGammaV0C_Lambda_hPos     -> Fill(fCent, gammaV0C);
+          fProfileGammaV0A_Lambda_hPos     -> Fill(fCent, gammaV0A);
+        }
+        if (IsUseVZEROPlane) {
+          fProfileGammaZNC_Lambda_hPos     -> Fill(fCent, gammaZNC);
+          fProfileGammaZNA_Lambda_hPos     -> Fill(fCent, gammaZNA);
+        }
       }
       if (code < 0 && code_lambda ==  3122) {
+        if (IsFillDiffResult) {
+        if(fCent > 30. && fCent < 40.) {
+          double dpt = pt_lambda - pt;
+          double deta = eta_lambda - eta;
+          double mpt = 0.5 * (pt_lambda + pt);
+          fProfileDelta_dpt_Lambda_hNeg  -> Fill(dpt, delta);
+          fProfileDelta_deta_Lambda_hNeg -> Fill(deta,delta);
+          fProfileDelta_mpt_Lambda_hNeg  -> Fill(mpt, delta);
+        }
+        }
+        if (IsFillDeltaPhiSumPhi) {
+        fHistDelPhi_Lambda_hNeg          -> Fill(fCent,RangePhi(phi_lambda-phi));
+        fHistSumPhiTPC_Lambda_hNeg       -> Fill(fCent,RangePhi(phi_lambda + phi - 2 *fPsiNTPCNoAuto));
+        }
         fProfileDelta_Lambda_hNeg        -> Fill(fCent, delta);
         fProfileGammaTPC_Lambda_hNeg     -> Fill(fCent, gammaTPC);
+        if (IsUseVZEROPlane) {
         fProfileGammaV0C_Lambda_hNeg     -> Fill(fCent, gammaV0C);
         fProfileGammaV0A_Lambda_hNeg     -> Fill(fCent, gammaV0A);
+        }
+        if (IsUseZDCPlane) {
         fProfileGammaZNC_Lambda_hNeg     -> Fill(fCent, gammaZNC);
         fProfileGammaZNA_Lambda_hNeg     -> Fill(fCent, gammaZNA);
+        }
       }
       if (code > 0 && code_lambda == -3122) {
+        if (IsFillDiffResult) {
+        if(fCent > 30. && fCent < 40.) {
+          double dpt = pt_lambda - pt;
+          double deta = eta_lambda - eta;
+          double mpt = 0.5 * (pt_lambda + pt);
+          fProfileDelta_dpt_AntiLambda_hPos  -> Fill(dpt, delta);
+          fProfileDelta_deta_AntiLambda_hPos -> Fill(deta,delta);
+          fProfileDelta_mpt_AntiLambda_hPos  -> Fill(mpt, delta);
+        }
+        }
+        if (IsFillDeltaPhiSumPhi) {
+        fHistDelPhi_AntiLambda_hPos      -> Fill(fCent,RangePhi(phi_lambda-phi));
+        fHistSumPhiTPC_AntiLambda_hPos   -> Fill(fCent,RangePhi(phi_lambda + phi - 2 *fPsiNTPCNoAuto));
+        }
         fProfileDelta_AntiLambda_hPos    -> Fill(fCent, delta);
         fProfileGammaTPC_AntiLambda_hPos -> Fill(fCent, gammaTPC);
+        if (IsUseVZEROPlane) {
         fProfileGammaV0C_AntiLambda_hPos -> Fill(fCent, gammaV0C);
         fProfileGammaV0A_AntiLambda_hPos -> Fill(fCent, gammaV0A);
+        }
+        if (IsUseZDCPlane) {
         fProfileGammaZNC_AntiLambda_hPos -> Fill(fCent, gammaZNC);
         fProfileGammaZNA_AntiLambda_hPos -> Fill(fCent, gammaZNA);
+        }
       }
       if (code < 0 && code_lambda == -3122) {
+        if (IsFillDiffResult) {
+        if(fCent > 30. && fCent < 40.) {
+          double dpt = pt_lambda - pt;
+          double deta = eta_lambda - eta;
+          double mpt = 0.5 * (pt_lambda + pt);
+          fProfileDelta_dpt_AntiLambda_hNeg  -> Fill(dpt, delta);
+          fProfileDelta_deta_AntiLambda_hNeg -> Fill(deta,delta);
+          fProfileDelta_mpt_AntiLambda_hNeg  -> Fill(mpt, delta);
+        }
+        }
+        if (IsFillDeltaPhiSumPhi) {
+        fHistDelPhi_AntiLambda_hNeg      -> Fill(fCent,RangePhi(phi_lambda-phi));
+        fHistSumPhiTPC_AntiLambda_hNeg   -> Fill(fCent,RangePhi(phi_lambda + phi - 2 *fPsiNTPCNoAuto));
+        }
         fProfileDelta_AntiLambda_hNeg    -> Fill(fCent, delta);
         fProfileGammaTPC_AntiLambda_hNeg -> Fill(fCent, gammaTPC);
+        if (IsUseVZEROPlane) {
         fProfileGammaV0C_AntiLambda_hNeg -> Fill(fCent, gammaV0C);
         fProfileGammaV0A_AntiLambda_hNeg -> Fill(fCent, gammaV0A);
+        }
+        if (IsUseZDCPlane) {
         fProfileGammaZNC_AntiLambda_hNeg -> Fill(fCent, gammaZNC);
         fProfileGammaZNA_AntiLambda_hNeg -> Fill(fCent, gammaZNA);
+        }
       }
       if (code ==  2212 && code_lambda ==  3122) {
+        if (IsFillDiffResult) {
+        if(fCent > 30. && fCent < 40.) {
+          double dpt = pt_lambda - pt;
+          double deta = eta_lambda - eta;
+          double mpt = 0.5 * (pt_lambda + pt);
+          fProfileDelta_dpt_Lambda_Proton  -> Fill(dpt, delta);
+          fProfileDelta_deta_Lambda_Proton -> Fill(deta,delta);
+          fProfileDelta_mpt_Lambda_Proton  -> Fill(mpt, delta);
+        }
+        }
+        if (IsFillDeltaPhiSumPhi) {
+        fHistDelPhi_Lambda_Proton        -> Fill(fCent,RangePhi(phi_lambda-phi));
+        fHistSumPhiTPC_Lambda_Proton     -> Fill(fCent,RangePhi(phi_lambda + phi - 2 *fPsiNTPCNoAuto));
+        }
         fProfileDelta_Lambda_Proton      -> Fill(fCent, delta);
         fProfileGammaTPC_Lambda_Proton   -> Fill(fCent, gammaTPC);
+        if (IsUseVZEROPlane) {
         fProfileGammaV0C_Lambda_Proton   -> Fill(fCent, gammaV0C);
         fProfileGammaV0A_Lambda_Proton   -> Fill(fCent, gammaV0A);
+        }
+        if (IsUseZDCPlane) {
         fProfileGammaZNC_Lambda_Proton   -> Fill(fCent, gammaZNC);
         fProfileGammaZNA_Lambda_Proton   -> Fill(fCent, gammaZNA);
+        }
       }
       if (code == -2212 && code_lambda ==  3122) {
+        if (IsFillDiffResult) {
+        if(fCent > 30. && fCent < 40.) {
+          double dpt = pt_lambda - pt;
+          double deta = eta_lambda - eta;
+          double mpt = 0.5 * (pt_lambda + pt);
+          fProfileDelta_dpt_Lambda_AntiProton  -> Fill(dpt, delta);
+          fProfileDelta_deta_Lambda_AntiProton -> Fill(deta,delta);
+          fProfileDelta_mpt_Lambda_AntiProton  -> Fill(mpt, delta);
+        }
+        }
+        if (IsFillDeltaPhiSumPhi) {
+        fHistDelPhi_Lambda_AntiProton      -> Fill(fCent,RangePhi(phi_lambda-phi));
+        fHistSumPhiTPC_Lambda_AntiProton   -> Fill(fCent,RangePhi(phi_lambda + phi - 2 *fPsiNTPCNoAuto));
+        }
         fProfileDelta_Lambda_AntiProton    -> Fill(fCent, delta);
         fProfileGammaTPC_Lambda_AntiProton -> Fill(fCent, gammaTPC);
+        if (IsUseVZEROPlane) {
         fProfileGammaV0C_Lambda_AntiProton -> Fill(fCent, gammaV0C);
         fProfileGammaV0A_Lambda_AntiProton -> Fill(fCent, gammaV0A);
+        }
+        if (IsUseZDCPlane) {
         fProfileGammaZNC_Lambda_AntiProton -> Fill(fCent, gammaZNC);
         fProfileGammaZNA_Lambda_AntiProton -> Fill(fCent, gammaZNA);
+        }
       }
       if (code ==  2212 && code_lambda == -3122) {
+        if (IsFillDiffResult) {
+        if(fCent > 30. && fCent < 40.) {
+          double dpt = pt_lambda - pt;
+          double deta = eta_lambda - eta;
+          double mpt = 0.5 * (pt_lambda + pt);
+          fProfileDelta_dpt_AntiLambda_Proton  -> Fill(dpt, delta);
+          fProfileDelta_deta_AntiLambda_Proton -> Fill(deta,delta);
+          fProfileDelta_mpt_AntiLambda_Proton  -> Fill(mpt, delta);
+        }
+        }
+        if (IsFillDeltaPhiSumPhi) {
+        fHistDelPhi_AntiLambda_Proton      -> Fill(fCent,RangePhi(phi_lambda-phi));
+        fHistSumPhiTPC_AntiLambda_Proton   -> Fill(fCent,RangePhi(phi_lambda + phi - 2 *fPsiNTPCNoAuto));
+        }
         fProfileDelta_AntiLambda_Proton    -> Fill(fCent, delta);
         fProfileGammaTPC_AntiLambda_Proton -> Fill(fCent, gammaTPC);
+        if (IsUseVZEROPlane) {
         fProfileGammaV0C_AntiLambda_Proton -> Fill(fCent, gammaV0C);
         fProfileGammaV0A_AntiLambda_Proton -> Fill(fCent, gammaV0A);
+        }
+        if (IsUseZDCPlane) {
         fProfileGammaZNC_AntiLambda_Proton -> Fill(fCent, gammaZNC);
         fProfileGammaZNA_AntiLambda_Proton -> Fill(fCent, gammaZNA);
+        }
       }
       if (code == -2212 && code_lambda == -3122) {
+        if (IsFillDiffResult) {
+        if(fCent > 30. && fCent < 40.) {
+          double dpt = pt_lambda - pt;
+          double deta = eta_lambda - eta;
+          double mpt = 0.5 * (pt_lambda + pt);
+          fProfileDelta_dpt_AntiLambda_AntiProton  -> Fill(dpt, delta);
+          fProfileDelta_deta_AntiLambda_AntiProton -> Fill(deta,delta);
+          fProfileDelta_mpt_AntiLambda_AntiProton  -> Fill(mpt, delta);
+        }
+        }
+        if (IsFillDeltaPhiSumPhi) {
+        fHistDelPhi_AntiLambda_AntiProton      -> Fill(fCent,RangePhi(phi_lambda-phi));
+        fHistSumPhiTPC_AntiLambda_AntiProton   -> Fill(fCent,RangePhi(phi_lambda + phi - 2 *fPsiNTPCNoAuto));
+        }
         fProfileDelta_AntiLambda_AntiProton    -> Fill(fCent, delta);
         fProfileGammaTPC_AntiLambda_AntiProton -> Fill(fCent, gammaTPC);
+        if (IsUseVZEROPlane) {
         fProfileGammaV0C_AntiLambda_AntiProton -> Fill(fCent, gammaV0C);
         fProfileGammaV0A_AntiLambda_AntiProton -> Fill(fCent, gammaV0A);
+        }
+        if (IsUseZDCPlane) {
         fProfileGammaZNC_AntiLambda_AntiProton -> Fill(fCent, gammaZNC);
         fProfileGammaZNA_AntiLambda_AntiProton -> Fill(fCent, gammaZNA);
+        }
       }
     }// (Anti)Lambda-X pair done
   }/// loop over charge particle array
@@ -2329,34 +2810,50 @@ bool AliAnalysisTaskLambdaProtonCVELocal::PairLambda()
       if (code > 0) {
         if (eta > 0) fProfile2DRawFlowCentPthPos[0]->Fill(fCent, pt, TMath::Cos(2 * (phi-fPsi2TPCNeg)));
         else         fProfile2DRawFlowCentPthPos[0]->Fill(fCent, pt, TMath::Cos(2 * (phi-fPsi2TPCPos)));
+        if (IsUseVZEROPlane) {
         fProfile2DRawFlowCentPthPos[1]->Fill(fCent, pt, TMath::Cos(2 * (phi - fPsi2V0C)));
         fProfile2DRawFlowCentPthPos[2]->Fill(fCent, pt, TMath::Cos(2 * (phi - fPsi2V0A)));
+        }
+        if (IsUseZDCPlane) {
         fProfile2DRawFlowCentPthPos[3]->Fill(fCent, pt, TMath::Cos(2 * (phi - fPsi1ZNC)));
         fProfile2DRawFlowCentPthPos[4]->Fill(fCent, pt, TMath::Cos(2 * (phi - fPsi1ZNA)));
+        }
       }
       if (code < 0) {
         if (eta > 0) fProfile2DRawFlowCentPthNeg[0]->Fill(fCent, pt, TMath::Cos(2 * (phi-fPsi2TPCNeg)));
         else         fProfile2DRawFlowCentPthNeg[0]->Fill(fCent, pt, TMath::Cos(2 * (phi-fPsi2TPCPos)));
+        if (IsUseVZEROPlane) {
         fProfile2DRawFlowCentPthNeg[1]->Fill(fCent, pt, TMath::Cos(2 * (phi - fPsi2V0C)));
         fProfile2DRawFlowCentPthNeg[2]->Fill(fCent, pt, TMath::Cos(2 * (phi - fPsi2V0A)));
+        }
+        if (IsUseZDCPlane) {
         fProfile2DRawFlowCentPthNeg[3]->Fill(fCent, pt, TMath::Cos(2 * (phi - fPsi1ZNC)));
         fProfile2DRawFlowCentPthNeg[4]->Fill(fCent, pt, TMath::Cos(2 * (phi - fPsi1ZNA)));
+        }
       }
       if (code == 2212) {
         if (eta > 0) fProfile2DRawFlowCentPtProton[0]->Fill(fCent, pt, TMath::Cos(2 * (phi-fPsi2TPCNeg)));
         else         fProfile2DRawFlowCentPtProton[0]->Fill(fCent, pt, TMath::Cos(2 * (phi-fPsi2TPCPos)));
+        if (IsUseVZEROPlane) {
         fProfile2DRawFlowCentPtProton[1]->Fill(fCent, pt, TMath::Cos(2 * (phi - fPsi2V0C)));
         fProfile2DRawFlowCentPtProton[2]->Fill(fCent, pt, TMath::Cos(2 * (phi - fPsi2V0A)));
+        }
+        if (IsUseZDCPlane) {
         fProfile2DRawFlowCentPtProton[3]->Fill(fCent, pt, TMath::Cos(2 * (phi - fPsi1ZNC)));
         fProfile2DRawFlowCentPtProton[4]->Fill(fCent, pt, TMath::Cos(2 * (phi - fPsi1ZNA)));
+        }
       }
       if (code == -2212) {
         if (eta > 0) fProfile2DRawFlowCentPtAntiProton[0]->Fill(fCent, pt, TMath::Cos(2 * (phi-fPsi2TPCNeg)));
         else         fProfile2DRawFlowCentPtAntiProton[0]->Fill(fCent, pt, TMath::Cos(2 * (phi-fPsi2TPCPos)));
+        if (IsUseVZEROPlane) {
         fProfile2DRawFlowCentPtAntiProton[1]->Fill(fCent, pt, TMath::Cos(2 * (phi - fPsi2V0C)));
         fProfile2DRawFlowCentPtAntiProton[2]->Fill(fCent, pt, TMath::Cos(2 * (phi - fPsi2V0A)));
+        }
+        if (IsUseZDCPlane) {
         fProfile2DRawFlowCentPtAntiProton[3]->Fill(fCent, pt, TMath::Cos(2 * (phi - fPsi1ZNC)));
         fProfile2DRawFlowCentPtAntiProton[4]->Fill(fCent, pt, TMath::Cos(2 * (phi - fPsi1ZNA)));
+        }
       }
     }
   }////--------- PID Flow hist are Filled ----------
@@ -2395,6 +2892,7 @@ void AliAnalysisTaskLambdaProtonCVELocal::ResetVectors()
   std::vector<int>().swap(vecLambdaCode);
   std::vector<double>().swap(vecLambdaPhi);
   std::vector<double>().swap(vecLambdaPt);
+  std::vector<double>().swap(vecLambdaEta);
   std::vector<int>().swap(vecDaughterPosID);
   std::vector<int>().swap(vecDaughterNegID);
 }
@@ -2406,7 +2904,7 @@ bool AliAnalysisTaskLambdaProtonCVELocal::LoadCalibHistForThisRun()
   if (fPeriod.EqualTo("LHC10h")) {
     // 10h VZERO Calibration Histograms is Global
     // 10h ZDC Calibration Histograms
-    if (IsZDCCalibOn) {
+    if (IsUseZDCPlane) {
       tree -> Reset();
       fProfileForZNCGE    ->Reset();
       fProfileForZNAGE    ->Reset();
@@ -2466,11 +2964,11 @@ bool AliAnalysisTaskLambdaProtonCVELocal::LoadCalibHistForThisRun()
 
   if (fPeriod.EqualTo("LHC15o")) {
     // 15o VZERO Calibration Histograms
-    if (IsVZEROCalibOn) {
+    if (IsUseVZEROPlane) {
       hMultV0 -> Reset();
       for (int i = 0; i < 2; i++) {
         hQx2mV0[i] -> Reset();
-        hQx2mV0[i] -> Reset();
+        hQy2mV0[i] -> Reset();
       }
       hMultV0    = ((TH1D*) contMult ->GetObject(fRunNum));
       hQx2mV0[0] = ((TH1D*) contQxncm->GetObject(fRunNum));
@@ -2495,10 +2993,11 @@ bool AliAnalysisTaskLambdaProtonCVELocal::LoadCalibHistForThisRun()
   }
 
   if (fPeriod.EqualTo("LHC18q") || fPeriod.EqualTo("LHC18r")) {
-    if (IsVZEROCalibOn) {
+    //18q/r VZERO
+    if (IsUseVZEROPlane) {
       for (int i = 0; i < 2; i++) {
-        hQx2mV0[i] -> Reset();
-        hQx2mV0[i] -> Reset();
+        hQx2mV0[i] ->Reset();
+        hQy2mV0[i] ->Reset();
       }
       hQx2mV0[0] = ((TH1D*) contQxncm->GetObject(fRunNum));
       hQy2mV0[0] = ((TH1D*) contQyncm->GetObject(fRunNum));
@@ -2522,7 +3021,7 @@ bool AliAnalysisTaskLambdaProtonCVELocal::LoadCalibHistForThisRun()
       if (!hCorrectNUANeg) return false;
     }
     //18q/r ZDC
-    if (IsZDCCalibOn) {
+    if (IsUseZDCPlane) {
       fHZDCCparameters -> Reset();
       fHZDCAparameters -> Reset();
       fHZDCCparameters = (TH1D*)(fListZDCCalib->FindObject(Form("Run %d", fRunNum))->FindObject(Form("fZDCCparameters[%d]",fRunNum)));
@@ -2566,7 +3065,6 @@ bool AliAnalysisTaskLambdaProtonCVELocal::RejectEvtMultComp() // 15o_pass1, old 
       double Eta  = aodTrk->Eta();
       double Pt    = aodTrk->Pt();
       double Phi  = aodTrk->Phi();
-      double charge = aodTrk->Charge();
       if (Pt<0.2 || Pt>5.0 || TMath::Abs(Eta)>0.8 || aodTrk->GetTPCNcls()<fNclsCut || aodTrk->GetTPCsignal()<10.0) continue;
       if (aodTrk->TestFilterBit(1) && aodTrk->Chi2perNDF()>0.2)  multTPCFE++;
       if (!aodTrk->TestFilterBit(16) || aodTrk->Chi2perNDF()<0.1)   continue;
@@ -2593,7 +3091,7 @@ bool AliAnalysisTaskLambdaProtonCVELocal::RejectEvtMultComp() // 15o_pass1, old 
       else return false;
     }
 
-    if (fMultComp.EqualTo("pileupByGlobalTPC1") ) { // A.Dobrin
+    if (fMultComp.EqualTo("pileupByGlobalTPC1")) { // A.Dobrin
       if (multTPCFE-1.78*multGlobal<62.87 && multTPCFE-1.48*multGlobal>-36.73) {
         fHist2DMultMultQA[4]->Fill(multGlobal,multTPCFE);
         return true;
@@ -2693,7 +3191,7 @@ bool AliAnalysisTaskLambdaProtonCVELocal::RejectEvtTPCITSfb32TOF ()
 
 //---------------------------------------------------
 
-bool AliAnalysisTaskLambdaProtonCVELocal::AODPileupCheck ()
+bool AliAnalysisTaskLambdaProtonCVELocal::AODPileupCheck()
 {
   Int_t isPileup = fAOD->IsPileupFromSPD(3);
   if (isPileup !=0 && fPeriod.EqualTo("LHC16t")) return false; // LHC16t : pPb
@@ -3097,4 +3595,13 @@ double AliAnalysisTaskLambdaProtonCVELocal::GetEventPlane(double qx, double qy, 
 }
 
 //---------------------------------------------------
+
+double AliAnalysisTaskLambdaProtonCVELocal::RangePhi(double phi)
+{
+  while (phi >= 1.5*TMath::Pi())
+  phi -= TMath::TwoPi();
+  while (phi < -0.5*TMath::Pi())
+  phi += TMath::TwoPi();
+  return phi;
+}
 

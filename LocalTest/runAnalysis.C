@@ -18,14 +18,14 @@
 void runAnalysis()
 {
     // Dataset
-    TString dataset = "LHC10h";
+    TString dataset = "LHC18q";
     // set if you want to run the analysis locally (kTRUE), or on grid (kFALSE)
     // if you run on grid, specify test mode (kTRUE) or full grid model (kFALSE)
     Bool_t local      = kFALSE;
     Bool_t gridTest   = kFALSE;
-    Bool_t gridRun    = kTRUE;
+    Bool_t gridRun    = kFALSE;
     Bool_t gridMerge  = kFALSE;
-    Bool_t localMerge = kFALSE;
+    Bool_t localMerge = kTRUE;
 
     if (gridMerge || localMerge) gridRun = kFALSE;
     if (gridRun) {
@@ -99,7 +99,7 @@ void runAnalysis()
         alienHandler->SetAnalysisSource("AliAnalysisTaskLambdaProtonCVELocal.cxx");
         // select the aliphysics version. all other packages
         // are LOADED AUTOMATICALLY!
-        alienHandler->SetAliPhysicsVersion("vAN-20220316_ROOT6-1");
+        alienHandler->SetAliPhysicsVersion("vAN-20220429_ROOT6-1");
         // set the Alien API version
         alienHandler->SetAPIVersion("V1.1x");
 
@@ -116,13 +116,13 @@ void runAnalysis()
             alienHandler->AddRunNumber(139510);
             alienHandler->AddRunNumber(139507);
             alienHandler->AddRunNumber(139505);
-            // alienHandler->AddRunNumber(139503);
-            // alienHandler->AddRunNumber(139465);
-            // alienHandler->AddRunNumber(139438);
-            // alienHandler->AddRunNumber(139437);
-            // alienHandler->AddRunNumber(139360);
-            // alienHandler->AddRunNumber(139329);
-            // alienHandler->AddRunNumber(139328);
+            alienHandler->AddRunNumber(139503);
+            alienHandler->AddRunNumber(139465);
+            alienHandler->AddRunNumber(139438);
+            alienHandler->AddRunNumber(139437);
+            alienHandler->AddRunNumber(139360);
+            alienHandler->AddRunNumber(139329);
+            alienHandler->AddRunNumber(139328);
             // alienHandler->AddRunNumber(139314);
             // alienHandler->AddRunNumber(139310);
             }
@@ -436,16 +436,16 @@ void runAnalysis()
           // MC has no prefix, data has prefix 000
           alienHandler->SetRunPrefix("000");
           if(groupNumber == 1) {
-            // alienHandler->AddRunNumber(296269);
-            // alienHandler->AddRunNumber(296270); 
-            // alienHandler->AddRunNumber(296547);
-            // alienHandler->AddRunNumber(296472);
-            // alienHandler->AddRunNumber(295581);
+            alienHandler->AddRunNumber(296269);
+            alienHandler->AddRunNumber(296270); 
+            alienHandler->AddRunNumber(296547);
+            alienHandler->AddRunNumber(296472);
+            alienHandler->AddRunNumber(295581);
             alienHandler->AddRunNumber(295584);
             alienHandler->AddRunNumber(295585);
             alienHandler->AddRunNumber(295586);
-          }
-          if(groupNumber == 2) {
+          // }
+          // if(groupNumber == 2) {
             alienHandler->AddRunNumber(295587);
             alienHandler->AddRunNumber(295588);
             alienHandler->AddRunNumber(295589);
@@ -758,10 +758,10 @@ void runAnalysis()
         }
 
         // define the output folders
-        if (dataset.EqualTo("LHC10h")) alienHandler->SetGridWorkingDir("LambdaProtonCVELocal/LHC10h");
-        if (dataset.EqualTo("LHC15o")) alienHandler->SetGridWorkingDir("LambdaProtonCVELocal/LHC15o");
-        if (dataset.EqualTo("LHC18q")) alienHandler->SetGridWorkingDir("LambdaProtonCVELocal/LHC18q");
-        if (dataset.EqualTo("LHC18r")) alienHandler->SetGridWorkingDir("LambdaProtonCVELocal/LHC18r");
+        if (dataset.EqualTo("LHC10h")) alienHandler->SetGridWorkingDir("LambdaProtonDiffAndCPhi/LHC10h");
+        if (dataset.EqualTo("LHC15o")) alienHandler->SetGridWorkingDir("LambdaProtonDiffAndCPhi/LHC15o");
+        if (dataset.EqualTo("LHC18q")) alienHandler->SetGridWorkingDir("LambdaProtonDiffAndCPhi/LHC18q");
+        if (dataset.EqualTo("LHC18r")) alienHandler->SetGridWorkingDir("LambdaProtonDiffAndCPhi/LHC18r");
         alienHandler->SetGridOutputDir("output");
 
         // connect the alien plugin to the manager

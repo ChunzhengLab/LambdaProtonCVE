@@ -7,19 +7,21 @@
 #include "AliAnalysisTaskLambdaProtonCVELocal.h"
 
 AliAnalysisTaskLambdaProtonCVELocal* AddTaskLambdaProtonCVELocal(
-  int               debug=1, // debug level controls amount of output statements
-  TString   trigger="kINT7",
-  TString   period="LHC18r",
-  int         filterBit=768, // AOD filter bit selection
-  bool       v0calibOn=true,
-  bool      zdccalibOn=true,
-  bool         QAVZERO=true,
-  bool           QAZDC=true,
-  bool           QATPC=true,
-  bool          doNUE=false,
-  bool           doNUA=true,
-  bool    checkPIDFlow=true,
-  TString        uniqueID=""
+  int                    debug=1, // debug level controls amount of output statements
+  TString        trigger="kINT7",
+  TString        period="LHC18q",
+  int              filterBit=768, // AOD filter bit selection
+  bool             useVZERO=false,
+  bool               useZDC=false,
+  bool              QAVZERO=false,
+  bool                QAZDC=false,
+  bool                QATPC=true,
+  bool               doNUE=false,
+  bool                doNUA=true,
+  bool         checkPIDFlow=true,
+  bool       fillDiffResult=true,
+  bool   fillDeltaPhiSumPhi=true,
+  TString            uniqueID=""
   )
 {  
   // Creates a pid task and adds it to the analysis manager
@@ -50,11 +52,13 @@ AliAnalysisTaskLambdaProtonCVELocal* AddTaskLambdaProtonCVELocal(
   task->SetFilterBit(filterBit);
   task->SetNUEOn(doNUE);
   task->SetNUAOn(doNUA);  
-  task->IfVZEROCalibOn(v0calibOn);
-  task->IfZDCCalibOn(zdccalibOn);
+  task->IfUseVZEROPlane(useVZERO);
+  task->IfUseZDCPlane(useZDC);
   task->IfQAVZERO(QAVZERO);
   task->IfQAZDC(QAZDC);
   task->IfCheckPIDFlow(checkPIDFlow);
+  task->IfFillDiffResult(fillDiffResult);
+  task->IfFillDeltaPhiSumPhi(fillDeltaPhiSumPhi);
 
   //=========================================================================
   //Read in Files
@@ -115,7 +119,7 @@ AliAnalysisTaskLambdaProtonCVELocal* AddTaskLambdaProtonCVELocal(
     } else std::cout<<"!!!!!!!!!!!!!!!NUA List not Found!!!!!!!!!!!!!!!"<<std::endl;
   }
 
-  if (v0calibOn) {
+  if (useVZERO) {
     if (period.EqualTo("LHC10h")) {
       if(filterBit == 1)   fNUAFile = TFile::Open("../CalibFiles/LHC10h/10hNUAFB1.root","READ");
       if(filterBit == 768) fNUAFile = TFile::Open("../CalibFiles/LHC10h/10hNUAFB768.root","READ");
@@ -139,7 +143,7 @@ AliAnalysisTaskLambdaProtonCVELocal* AddTaskLambdaProtonCVELocal(
     } else std::cout<<"!!!!!!!!!!!!!!!VZERO List not Found!!!!!!!!!!!!!!!"<<std::endl;
   }
 
-  if (zdccalibOn) {
+  if (useZDC) {
     if (period.EqualTo("LHC10h")) {
       fZDCCalibFile = TFile::Open("../CalibFiles/LHC10h/ZDCCalibFile.root","READ");
       fZDCCalibList = dynamic_cast <TList*> (fZDCCalibFile->Get("ZDCCalibList"));

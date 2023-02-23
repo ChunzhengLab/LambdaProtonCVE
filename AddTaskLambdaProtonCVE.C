@@ -11,8 +11,8 @@ AliAnalysisTaskLambdaProtonCVE* AddTaskLambdaProtonCVE(
   TString   trigger="kINT7",
   TString   period="LHC18r",
   int         filterBit=768, // AOD filter bit selection
-  bool       v0calibOn=true,
-  bool      zdccalibOn=true,
+  bool        useVZERO=true,
+  bool          useZDC=true,
   bool         QAVZERO=true,
   bool           QAZDC=true,
   bool           QATPC=true,
@@ -50,8 +50,8 @@ AliAnalysisTaskLambdaProtonCVE* AddTaskLambdaProtonCVE(
   task->SetFilterBit(filterBit);
   task->SetNUEOn(doNUE);
   task->SetNUAOn(doNUA);  
-  task->IfVZEROCalibOn(v0calibOn);
-  task->IfZDCCalibOn(zdccalibOn);
+  task->IfUseVZEROPlane(useVZERO);
+  task->IfUseZDCPlane(useZDC);
   task->IfQAVZERO(QAVZERO);
   task->IfQAZDC(QAZDC);
   task->IfCheckPIDFlow(checkPIDFlow);
@@ -116,7 +116,7 @@ AliAnalysisTaskLambdaProtonCVE* AddTaskLambdaProtonCVE(
     } else std::cout<<"!!!!!!!!!!!!!!!NUA List not Found!!!!!!!!!!!!!!!"<<std::endl;
   }
 
-  if (v0calibOn) {
+  if (useVZERO) {
     if (period.EqualTo("LHC10h")) {
       fVZEROCalibFile = TFile::Open("alien:///alice/cern.ch/user/c/chunzhen/CalibFiles/LHC10h/10hQnCalib.root","READ");
       fVZEROCalibList = dynamic_cast <TList*> (fVZEROCalibFile->Get("10hlistqncalib"));
@@ -139,7 +139,7 @@ AliAnalysisTaskLambdaProtonCVE* AddTaskLambdaProtonCVE(
     } else std::cout<<"!!!!!!!!!!!!!!!VZERO List not Found!!!!!!!!!!!!!!!"<<std::endl;
   }
 
-  if (zdccalibOn) {
+  if (useZDC) {
     if (period.EqualTo("LHC10h")) {
       fZDCCalibFile = TFile::Open("alien:///alice/cern.ch/user/c/chunzhen/CalibFiles/LHC10h/ZDCCalibFile.root","READ");
       fZDCCalibList = dynamic_cast <TList*> (fZDCCalibFile->Get("ZDCCalibList"));
@@ -170,11 +170,21 @@ AliAnalysisTaskLambdaProtonCVE* AddTaskLambdaProtonCVE(
     AliAnalysisDataContainer* cinput  = mgr->GetCommonInputContainer();
     TString outputFileName = mgr->GetCommonFileName();
     std::cout<<"outputfileName::::==========:::"<<outputFileName<<std::endl;
-    AliAnalysisDataContainer* coutput = mgr->CreateContainer(Form("output_%s", uniqueID.Data()), TList::Class(), 
+    AliAnalysisDataContainer* coutput = mgr->CreateContainer(Form("outputQA_%s", uniqueID.Data()), TList::Class(), 
+                                                             AliAnalysisManager::kOutputContainer,
+                                                             Form("%s:%s", outputFileName.Data(), uniqueID.Data()));
+    AliAnalysisDataContainer* coutput = mgr->CreateContainer(Form("LambdaQA_%s", uniqueID.Data()), TList::Class(), 
+                                                             AliAnalysisManager::kOutputContainer,
+                                                             Form("%s:%s", outputFileName.Data(), uniqueID.Data()));
+    AliAnalysisDataContainer* coutput = mgr->CreateContainer(Form("Flow_%s", uniqueID.Data()), TList::Class(), 
+                                                             AliAnalysisManager::kOutputContainer,
+                                                             Form("%s:%s", outputFileName.Data(), uniqueID.Data()));
+    AliAnalysisDataContainer* coutput = mgr->CreateContainer(Form("PlaneQA_%s", uniqueID.Data()), TList::Class(), 
                                                              AliAnalysisManager::kOutputContainer,
                                                              Form("%s:%s", outputFileName.Data(), uniqueID.Data()));
     mgr->ConnectInput (task, 0, cinput);
     mgr->ConnectOutput(task, 1, coutput);
+    mgr->ConnectOutput(task, 1, coutputQA);
 
   //==============================================================
   // Return task pointer at the end
